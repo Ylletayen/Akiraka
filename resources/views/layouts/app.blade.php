@@ -86,10 +86,9 @@
     <script>
         // 1. Entrar desde Landing al Main
         function entrarAlSitio() {
-            document.getElementById('landing-view').classList.add('d-none');
-            document.getElementById('main-view').classList.remove('d-none');
-            window.scrollTo(0, 0);
-        }
+    document.getElementById('landing-view').classList.add('d-none');
+    document.getElementById('project-view').classList.remove('d-none');
+}
 
         // 2. Lógica de Hover (Previsualización)
         document.querySelectorAll('.project-link').forEach(link => {
@@ -136,6 +135,8 @@
             document.getElementById('main-view').classList.remove('d-none');
             window.scrollTo(0, 0);
         }
+
+        
     </script>
 </body>
 </html>
