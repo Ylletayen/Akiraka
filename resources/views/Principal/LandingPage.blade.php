@@ -1,15 +1,29 @@
-<div id="landing-view">
-    <header class="landing-header">
-        <div class="logo-container">
-            <div class="triangles">
-                <div class="triangle"></div><div class="triangle middle"></div><div class="triangle"></div>
+<div id="landing-view" class="vh-100 d-flex flex-column">
+    <header class="container-fluid py-4 px-5 d-flex justify-content-between align-items-center bg-white">
+        <div class="logo-wrapper d-flex flex-column align-items-center">
+            <div class="custom-logo-triangles">
+                <div class="tri-1"></div>
+                <div class="tri-2"></div>
+                <div class="tri-3"></div>
             </div>
-            <div class="logo-text">ESTUDIO AKIRAKA</div>
+            <span class="logo-brand-text mt-1">ESTUDIO AKIRAKA</span>
         </div>
-        <nav class="landing-nav">
-            <a href="#">About</a> <a href="#">Projects</a> <a href="#">Contact</a>
-            <div class="social-icons"><i class="fa-brands fa-instagram"></i></div>
+
+        <nav class="d-none d-lg-flex align-items-center gap-4">
+            <a href="#" class="nav-link-akira">ABOUT</a>
+            <a href="#" class="nav-link-akira">PROJECTS</a>
+            <a href="#" class="nav-link-akira">CONSTRUCTION</a>
+            <a href="#" class="nav-link-akira">CONTACT</a>
+            <div class="social-links-akira d-flex gap-2 ms-3">
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+            </div>
         </nav>
     </header>
-    <div class="landing-image-area" onclick="entrarAlSitio()"></div>
+
+    <div class="landing-hero-image flex-grow-1" onclick="entrarAlSitio()">
+        <div class="enter-overlay d-flex align-items-end justify-content-center pb-5">
+            <span class="btn-enter">EXPLORAR ESTUDIO</span>
+        </div>
+    </div>
 </div>
