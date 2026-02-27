@@ -21,9 +21,11 @@
         </nav>
     </header>
 
-    <div class="landing-hero-image flex-grow-1" onclick="entrarAlSitio()">
+    <div class="landing-hero-image flex-grow-1">
         <div class="enter-overlay d-flex align-items-end justify-content-center pb-5">
-            <span class="btn-enter">EXPLORAR ESTUDIO</span>
+            <a href="{{ route('project.detail') }}" class="btn-enter text-decoration-none text-white">
+                EXPLORAR ESTUDIO
+            </a>
         </div>
     </div>
 </div>
