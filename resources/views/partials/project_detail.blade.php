@@ -121,7 +121,8 @@
 
     <header class="site-header-main">
         <span class="brand-name">Akiraka Studio,</span>
-        <span class="nav-links-main"> Noticias, Obras, Info, Contacto.</span>
+        <a href="{{ route('info') }}" class="nav-link-akira">Info ,</a>
+        <a href="{{ route('contacto') }}" class="nav-link-akira">Contacto</a>
     </header>
 
     <main class="main-content-grid">

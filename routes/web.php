@@ -9,3 +9,13 @@ Route::get('/', function () {
 Route::get('/proyecto', function () {
     return view('partials.project_detail'); 
 })->name('project.detail');
+
+
+Route::get('/info', function () {
+    return view('agregados.info'); 
+})->name('info');
+
+Route::get('/contacto', function () {
+    return view('agregados.contacto'); 
+})->name('contacto');
+
