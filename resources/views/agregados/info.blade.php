@@ -57,26 +57,52 @@
 </div>
 
     <div class="akira-description">
-        Estudio Akiraka fue fundado en la Ciudad de México como una práctica dedicada a la arquitectura contemporánea, explorando la relación entre materialidad, luz y espacio.
+          <br>¿QUÌENES SOMOS?</br>
+        Somos AKIRAKA, un estudio de arquitectura que encuentra su nombre y filosofía en el concepto japonés de 明か (akiraka), que significa claro, evidente y brillante. Creado por el arq. Akira Kameta, mexicano - japonés, que lleva su percepción de ambos mundos a una interpretación de solución de los proyectos.
     </div>
+
+       <div class="akira-description">
+        <br>VALORES DE LA EMPRESA</br>
+        -Colaboración y Empatía: Se establece una relación con el cliente y la comunidad, diseñando desde un entendimiento profundo de sus necesidades para lograr un éxito compartido.
+       <br> -Impacto Regenerativo: El enfoque supera la sostenibilidad convencional buscando la regeneración activa de los ecosistemas y el fortalecimiento del tejido social.
+       <br> -Materialidad Sostenible: La madera de origen responsable es la protagonista ("materia viva"), valorada por su estética, capacidad de secuestro de carbono y beneficios biológicos.
+        <br>-Simplicidad y Honestidad: Se apuesta por la claridad conceptual para transformar ideas complejas en soluciones ejecutables (ideales para la autoconstrucción) y una transparencia radical en cuanto a costos, plazos y origen de los materiales.
+    </div>
+
 
     <div class="team-grid">
         <div>
             <div class="team-title">Equipo actual</div>
             <ul class="team-list">
-                <li>pendiente --- <span class="text-muted-akira">(nombre trabajador)</span></li>
-                <li>pendiente --- <span class="text-muted-akira">(nombre trabajador)</span></li>
-                <li>pendiente --- <span class="text-muted-akira">(nombre trabajador)</span></li>
+                <li>Arq. Alberto Akira Kameta Miyamoto  <span class="text-muted-akira"> <br> Arquitecto mexicano japonés, egresado de la universidad Iberoamericana, estudios de postgrado en diseño y construcción sostenible.
+</span></li>
+                <li>  Arq. Ana Regnia Torres Tapia <span class="text-muted-akira"> <br>Arquitecta egresada de la Universidad Anáhuac Norte, Ciudad de México, Proyectos</span></li>
+                <li> Alejandra <span class="text-muted-akira"> Licenciada en derecho </span></li>
             </ul>
         </div>
         <div>
-            <div class="team-title">Anteriores</div>
+
+            <div class="team-title">Roles dentro de la empresa</div>
             <ul class="team-list">
-                <li>Nombre anterior 1</li>
-                <li>Nombre anterior 2</li>
-                <li>Nombre anterior 3</li>
+                <li>Dirección general: Arq. Akira </li>
+                <li>Área de proyectos: Arq. Ana </li>
+                <li>Área Administrativa: Lic. Alejandra  </li>
             </ul>
         </div>
+
+
+                <div>
+           <div style="text-align:text- right;">
+            <p>ESTUDIO DE ARQUITECTURA AKIRAKA                                                                          
+            <br>Parque Santa María 10, Santa María Ahuacatlán,
+            <br>51200 Valle de Bravo, Estado de México
+            <br>Cel. 722 165 5901                                                                                           
+            <br>C.E: administracion@akirakastudio.com y akiraka.estudio@gmail.com</p>
+            </div>
+
+        </div>
+
+
     </div>
 </div>
 @endsection

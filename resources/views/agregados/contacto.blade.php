@@ -127,29 +127,32 @@
     <div class="row contact-group-section mb-5">
         <div class="col-md-4 mb-4">
             <span class="contact-label">Proyectos y Eventos</span>
-            <a href="mailto:info@estudioakiraka.com" class="contact-value-reset">info@estudioakiraka.com</a>
+            <a href="mailto:info@estudioakiraka.com" class="contact-value-reset"><br>akiraka.estudio@gmail.com
+<br>administracion@akirakastudio.com</a>
         </div>
 
         <div class="col-md-4 mb-4">
             <span class="contact-label">Prensa</span>
-            <a href="mailto:press@estudioakiraka.com" class="contact-value-reset">press@estudioakiraka.com</a>
+            <a href="mailto:press@estudioakiraka.com" class="contact-value-reset">proyectos@akirakastudio.com</a>
         </div>
 
         <div class="col-md-4 mb-4">
             <span class="contact-label">Oportunidades laborales</span>
-            <a href="mailto:hr@estudioakiraka.com" class="contact-value-reset">hr@estudioakiraka.com</a>
+            <a href="mailto:hr@estudioakiraka.com" class="contact-value-reset"> <br>dirección@akirakastudio.com
+<br>studio@akirakastudio.com</a>
         </div>
     </div>
 
     <div class="location-group border-top pt-4 mb-5">
         <div class="row">
             <div class="col-md-6 mb-3">
-                <span class="location-year-label">CDMX</span>
-                <span class="contact-value-reset">+52 (55) 0000 0000</span>
+                <span class="location-year-label">Telefono</span>
+                <span class="contact-value-reset"><br>+52 722 165 5901</span>
             </div>
             <div class="col-md-6 mb-3">
-                <span class="location-year-label">NY</span>
-                <span class="contact-value-reset">+1 (212) 000 0000</span>
+                <span class="location-year-label"> Direccion </span>
+                <span class="contact-value-reset"><br>Parque Santa María 10, Santa María Ahuacatlán,
+51200 Valle de Bravo, Estado de México</span>
             </div>
         </div>
     </div>
