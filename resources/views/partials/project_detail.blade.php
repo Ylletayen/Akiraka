@@ -120,7 +120,8 @@
     </style>
 
     <header class="site-header-main">
-        <span class="brand-name">Akiraka Studio,</span>
+        <a href="{{ route('project.detail') }}" style="text-decoration: none; color: inherit; font-weight: normal;">
+        Estudio Akiraka ,</a>
         <a href="{{ route('info') }}" class="nav-link-akira">Info ,</a>
         <a href="{{ route('contacto') }}" class="nav-link-akira">Contacto</a>
     </header>
@@ -132,7 +133,7 @@
                 <ul class="project-list">
                     <li>Proyectos</li>
                     <li class="indent-1">En proceso</li>
-                    <li class="indent-2"><a href="#" class="project-link" data-img="{{ asset('img/valle.jpg') }}">Residencial Valle de Bravo</a></li>
+                    <li class="indent-2"><a href="{{ route('project.main', 1) }}" class="project-link" data-img="ruta/a/tu/imagen.jpg">Residencial Valle de Bravo</a></li>
                     <li class="indent-2"><a href="#" class="project-link" data-img="{{ asset('img/pabellon.jpg') }}">Pabellón Efímero CDMX</a></li>
                     <li class="indent-2"><a href="#" class="project-link" data-img="{{ asset('img/cultural.jpg') }}">Centro Cultural Akiraka 2026</a></li>
                 </ul>

@@ -46,11 +46,15 @@
 
 <div class="akira-container">
     <div class="akira-header">
-      <a href="{{ route('project.detail') }}" style="text-decoration: none; color: inherit;">
-    <strong>Estudio Akiraka</strong></a>
+    <a href="{{ route('project.detail') }}" style="text-decoration: none; color: inherit; font-weight: normal;">
+        Estudio Akiraka
+    </a>
 
-        <span class="text-muted-akira">Noticias, Obras, Info, Contacto.</span>
-    </div>
+    <span class="text-muted-akira">
+        <a href="{{ route('info') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Info</a>, 
+        <a href="{{ route('contacto') }}" style="text-decoration: none; color: inherit;">Contacto</a>.
+    </span>
+</div>
 
     <div class="akira-description">
         Estudio Akiraka fue fundado en la Ciudad de México como una práctica dedicada a la arquitectura contemporánea, explorando la relación entre materialidad, luz y espacio.
