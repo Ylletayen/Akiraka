@@ -2,10 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\AuthController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('landing');
 
 Route::get('/proyecto', function () {
     return view('partials.project_detail'); 
@@ -18,5 +20,21 @@ Route::get('/info', function () {
 Route::get('/contacto', function () {
     return view('agregados.contacto'); 
 })->name('contacto');
+
+Route::post('/login', [LoginController::class, 'login'])->name('login');
+
+//  Ruta para cerrar sesión
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// 4. Ruta del Dashboard
+Route::get('/dashboard/main', function () {
+    return view('dashboard.main');
+})->middleware('auth')->name('dashboard.main');
+
+Route::get('/registro', function () {
+    return view('dashboard.registro');
+})->name('registro.index');
+
+Route::post('/registro', [AuthController::class, 'store'])->name('registro.store');
 
 Route::get('/proyecto/{id}', [ProjectController::class, 'show'])->name('project.main');
