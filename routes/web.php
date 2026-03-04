@@ -21,10 +21,10 @@ Route::get('/contacto', function () {
     return view('agregados.contacto'); 
 })->name('contacto');
 
-Route::post('/login', [LoginController::class, 'login'])->name('login');
 
-//  Ruta para cerrar sesión
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // 4. Ruta del Dashboard
 Route::get('/dashboard/main', function () {

@@ -10,16 +10,18 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+   public function login(Request $request)
     {
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
+        // Hacemos match del 'email' del formulario con la columna 'correo' de tu BD
         if (Auth::attempt(['correo' => $credentials['email'], 'password' => $credentials['password']])) {
             $request->session()->regenerate();
 
+            // Redirección exitosa al dashboard
             return redirect()->route('dashboard.main');
         }
 
@@ -27,7 +29,6 @@ class AuthController extends Controller
             'email' => 'Acceso denegado. Verifica tus credenciales.',
         ]);
     }
-
     public function logout(Request $request)
     {
         Auth::logout();
