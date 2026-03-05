@@ -190,7 +190,8 @@
                         <a class="nav-link" href="#"><i class="fas fa-pencil-alt me-2"></i> Proyectos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-globe me-2"></i> Quienes somos</a>
+                        <a class="nav-link {{ request()->routeIs('dashboard.quienes_somos') ? 'active' : '' }}" 
+                        href="{{ route('dashboard.quienes_somos') }}"><i class="fas fa-globe me-2"></i> Quienes somos</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#"><i class="fas fa-envelope me-2"></i> Contacto</a>
@@ -199,14 +200,8 @@
                         <a class="nav-link" href="#"><i class="fas fa-comments me-2"></i> Mensajes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-cog me-2"></i> Opciones</a>
-                        <a class="nav-link {{ request()->routeIs('dashboard.quienes_somos') ? 'active' : '' }}" 
-                        href="{{ route('dashboard.quienes_somos') }}"><i class="fas fa-globe me-2"></i> Quienes somos <span class="icon-badge">⚡</span></a>
-                    </li>
-
-                    <li class="nav-item">
                         <a class="nav-link" href="{{ route('dashboard.opciones') }}">
-                            <i class="fas fa-globe me-2"></i> Opciones <span class="icon-badge">⚡</span>
+                            <i class="fas fa-globe me-2"></i> Opciones</span>
                         </a>
                     </li>
                 </ul>
