@@ -185,7 +185,8 @@
                         <a class="nav-link" href="#"><i class="fas fa-pencil-alt me-2"></i> Proyectos <span class="icon-badge">⚡</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-globe me-2"></i> Quienes somos <span class="icon-badge">⚡</span></a>
+                        <a class="nav-link {{ request()->routeIs('dashboard.quienes_somos') ? 'active' : '' }}" 
+                        href="{{ route('dashboard.quienes_somos') }}"><i class="fas fa-globe me-2"></i> Quienes somos <span class="icon-badge">⚡</span></a>
                     </li>
 
                     <li class="nav-item">
