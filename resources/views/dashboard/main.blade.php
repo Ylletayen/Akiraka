@@ -200,6 +200,14 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#"><i class="fas fa-cog me-2"></i> Opciones</a>
+                        <a class="nav-link {{ request()->routeIs('dashboard.quienes_somos') ? 'active' : '' }}" 
+                        href="{{ route('dashboard.quienes_somos') }}"><i class="fas fa-globe me-2"></i> Quienes somos <span class="icon-badge">⚡</span></a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('dashboard.opciones') }}">
+                            <i class="fas fa-globe me-2"></i> Opciones <span class="icon-badge">⚡</span>
+                        </a>
                     </li>
                 </ul>
             </div>
