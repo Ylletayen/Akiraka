@@ -38,3 +38,7 @@ Route::get('/registro', function () {
 Route::post('/registro', [AuthController::class, 'store'])->name('registro.store');
 
 Route::get('/proyecto/{id}', [ProjectController::class, 'show'])->name('project.main');
+
+Route::get('/dashboard/opciones', function () {
+    return view('dashboard.opciones');
+})->middleware('auth')->name('dashboard.opciones');
