@@ -169,23 +169,37 @@
             color: #fff;
             transform: scale(1.05);
         }
+        .logo-img {
+            width: 30px;
+            height: 40px;
+            object-fit: cover;
+        }
     </style>
 
     <div class="dashboard-container">
         <!-- Sidebar -->
         <aside class="sidebar text-center">
             <div>
-                <img src="{{ asset('images/logo_akiraka.png') }}" alt="Logo">
+           <img src="{{ asset('images/logo_akiraka.png') }}" alt="Logo" class="logo-img">
                 <p class="small mb-4">Akiraka Estudio</p>
-                <ul class="nav flex-column">
+                <ul class="nav flex-column text-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-home me-2"></i> Inicio <span class="icon-badge">⚡</span></a>
+                        <a class="nav-link" href="#"><i class="fas fa-home me-2 "></i> Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-pencil-alt me-2"></i> Proyectos <span class="icon-badge">⚡</span></a>
+                        <a class="nav-link" href="#"><i class="fas fa-pencil-alt me-2"></i> Proyectos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-globe me-2"></i> Quienes somos <span class="icon-badge">⚡</span></a>
+                        <a class="nav-link" href="#"><i class="fas fa-globe me-2"></i> Quienes somos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-envelope me-2"></i> Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-comments me-2"></i> Mensajes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-cog me-2"></i> Opciones</a>
                     </li>
                 </ul>
             </div>
@@ -193,11 +207,11 @@
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit" class="nav-link border-top pt-3 w-100 text-start" style="background:none; border:none;">
-                        <i class="fas fa-sign-out-alt me-2"></i> Salir <span class="icon-badge">⚡</span>
+                        <i class="fas fa-sign-out-alt me-2"></i> Salir <span class="icon-badge">
                     </button>
                 </form>
                 <div class="mt-4 text-center small">
-                    <img src="{{ asset('images/logo_footer.png') }}" style="width: 40px;" class="mb-2">
+                    
                     <p>Akiraka<br>Dirección<br>Derechos reservados</p>
                 </div>
             </div>
@@ -254,8 +268,6 @@
                     </div>
                 </div>
             </div>
-
-            <a href="{{ route('landing') }}" class="btn-back-center mt-5">REGRESAR AL ESTUDIO</a>
         </main>
     </div>
 </div>

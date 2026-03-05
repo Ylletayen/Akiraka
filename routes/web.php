@@ -21,6 +21,9 @@ Route::get('/contacto', function () {
     return view('agregados.contacto'); 
 })->name('contacto');
 
+Route::get('/login', function () {
+    return view('dashboard.login');
+})->name('login.form');
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
