@@ -2,9 +2,9 @@
 
 @section('content')
 
-@include('dashboard.login')
+@include('dashboard.login.login')
 
-@include('dashboard.registro')
+@include('dashboard.login.registro')
 
 <style>
     /* Estilos del botón de entrada con animación de pulso */
