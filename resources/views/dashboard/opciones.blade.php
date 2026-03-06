@@ -22,56 +22,6 @@
             align-items: stretch;
         }
 
-        /* ================= SIDEBAR ================= */
-        .sidebar {
-            width: 260px;
-            background-color: #1c1c1c;
-            color: #fff;
-            padding: 25px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            z-index: 10; /* Asegurar que el sidebar quede por encima de fondos */
-        }
-
-        .sidebar img.logo-sidebar {
-            width: 80px;
-            border-radius: 50%;
-            margin-bottom: 10px;
-            background-color: #fff;
-            padding: 5px;
-        }
-
-        .nav-link {
-            color: #fff;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #2c2c2c;
-            border-radius: 8px;
-            padding: 10px 15px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            text-decoration: none;
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            font-size: 0.9rem;
-        }
-
-        .nav-link:hover, .nav-link.active { 
-            background-color: #4b4b4b; 
-            color: #fff;
-        }
-
-        .icon-badge {
-            background-color: #10b981;
-            color: #fff;
-            border-radius: 4px;
-            padding: 2px 6px;
-            font-size: 0.75rem;
-        }
-
         /* ================= MAIN CONTENT (FONDO DEGRADADO) ================= */
         .main-content {
             flex-grow: 1;
@@ -389,48 +339,9 @@
     </style>
 
     <div class="dashboard-container">
-        <!-- ================= SIDEBAR ================= -->
-        <aside class="sidebar">
-            <div>
-                <div class="text-center">
-                    <img src="{{ asset('logo.png') }}" alt="Logo" class="logo-sidebar">
-                    <p class="small mb-4 text-uppercase" style="letter-spacing: 2px;">Akiraka Estudio</p>
-                </div>
-                
-                <ul class="nav flex-column" style="list-style: none; padding: 0;">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('dashboard.main') }}"><i class="fas fa-home me-2"></i> Inicio </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-pencil-alt me-2"></i> Proyectos </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('dashboard.quienes_somos') ? 'active' : '' }}" 
-                        href="{{ route('dashboard.quienes_somos') ?? '#' }}"><i class="fas fa-users me-2"></i> Quienes somos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-envelope me-2"></i> Mensajes </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('dashboard.opciones') }}"><i class="fas fa-cog me-2"></i> Opciones </a>
-                    </li>
-                </ul>
-            </div>
-            
-            <div>
-                <!-- Confirmación nativa mantenida para el Logout para mayor seguridad estructural -->
-                <form action="{{ route('logout') }}" method="POST" style="margin: 0;" onsubmit="return confirm('¿Estás seguro de que deseas cerrar sesión?');">
-                    @csrf
-                    <button type="submit" class="nav-link border-top pt-3 w-100 text-start" style="background:none; border:none; cursor:pointer;">
-                        <i class="fas fa-sign-out-alt me-2"></i> Salir
-                    </button>
-                </form>
-                <div class="mt-4 text-center" style="font-size: 0.75rem; color: #888;">
-                    <p class="mb-1 text-uppercase">Akiraka Estudio</p>
-                    <p class="mb-0">© {{ date('Y') }} Derechos reservados</p>
-                </div>
-            </div>
-        </aside>
+        <!-- ================= INCLUIR SIDEBAR ================= -->
+        <!-- Aquí llamamos a la vista sidebar.blade.php que crearon -->
+        @include('partials.sidebar')
 
         <!-- ================= MAIN CONTENT ================= -->
         <main class="main-content">
