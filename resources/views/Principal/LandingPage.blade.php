@@ -32,6 +32,13 @@
     .logo-wrapper:hover {
         opacity: 0.7;
     }
+
+    /* Clase para controlar el tamaño del logo real */
+    .logo-img-landing {
+        height: 45px; /* Puedes subir o bajar este valor para hacer el logo más grande o pequeño */
+        width: auto;
+        object-fit: contain;
+    }
 </style>
 
 <div id="landing-view" class="vh-100 d-flex flex-column">
@@ -41,11 +48,10 @@
              onclick="abrirLogin()" 
              style="cursor: pointer;" 
              title="Acceso Administración">
-            <div class="custom-logo-triangles">
-                <div class="tri-1"></div>
-                <div class="tri-2"></div>
-                <div class="tri-3"></div>
-            </div>
+            
+            <!-- AQUÍ ESTÁ EL LOGO REAL REEMPLAZANDO A LOS TRIÁNGULOS -->
+            <img src="{{ asset('images/logo_akiraka.png') }}" alt="Logo Akiraka" class="logo-img-landing">
+            
             <span class="logo-brand-text mt-1">ESTUDIO AKIRAKA</span>
         </div>
 

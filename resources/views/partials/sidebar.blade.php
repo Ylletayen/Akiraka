@@ -133,14 +133,14 @@
             <a class="nav-link {{ request()->routeIs('dashboard.opciones') ? 'active' : '' }}" 
                 href="{{ route('dashboard.opciones') }}">
                 <div><i class="fas fa-cog me-3"></i> Opciones</div>
-    </a>
-</li>
+            </a>
+            </li>
         </ul>
     </div>
     
     <div>
-        <form action="{{ route('logout') }}" method="POST" style="margin: 0;" 
-              onsubmit="return confirm('¿Estás seguro de que deseas cerrar sesión?');">
+        <!-- Se removió el onsubmit con la alerta de confirmación -->
+        <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
             @csrf
             <button type="submit" class="nav-link w-100 text-start" 
                     style="background:none; border:none; cursor:pointer; padding-left: 15px;">
