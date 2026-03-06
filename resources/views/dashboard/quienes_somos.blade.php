@@ -155,31 +155,31 @@
     </style>
 
     <div class="dashboard-container">
-        <aside class="sidebar">
+<aside class="sidebar">
             <div>
                 <div class="text-center">
-                    <img src="{{ asset('logo.png') }}" alt="Logo" class="logo-sidebar">
+                    <img src="{{ asset('images/logo_akiraka.png') }}" alt="Logo" class="logo-img">
                     <p class="small mb-4 text-uppercase" style="letter-spacing: 2px;">Akiraka Estudio</p>
                 </div>
                 
                 <ul class="nav flex-column" style="list-style: none; padding: 0;">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('dashboard.main') }}"><i class="fas fa-home me-2"></i> Inicio <span class="icon-badge">⚡</span></a>
+                        <a class="nav-link" href="{{ route('dashboard.main') }}"><i class="fas fa-home me-2"></i> Inicio <span class="icon-badge"></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-pencil-alt me-2"></i> Proyectos <span class="icon-badge">⚡</span></a>
+                        <a class="nav-link" href="#"><i class="fas fa-pencil-alt me-2"></i> Proyectos <span class="icon-badge"></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('dashboard.quienes_somos') }}"><i class="fas fa-globe me-2"></i> Quienes somos <span class="icon-badge">⚡</span></a>
+                        <a class="nav-link active" href="{{ route('dashboard.quienes_somos') }}"><i class="fas fa-globe me-2"></i> Quienes somos <span class="icon-badge"></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-newspaper me-2"></i> Publicaciones <span class="icon-badge">⚡</span></a>
+                        <a class="nav-link" href="#"><i class="fas fa-newspaper me-2"></i> Publicaciones <span class="icon-badge"></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-envelope me-2"></i> Mensajes <span class="icon-badge">⚡</span></a>
+                         <a href="{{ route('mensajes') }}" class="nav-link active"><i class="fas fa-globe me-2"></i>Mensajes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('dashboard.opciones') }}"><i class="fas fa-cog me-2"></i> Opciones <span class="icon-badge">⚡</span></a>
+                        <a class="nav-link" href="{{ route('dashboard.opciones') }}"><i class="fas fa-cog me-2"></i> Opciones <span class="icon-badge"></a>
                     </li>
                 </ul>
             </div>
@@ -188,7 +188,7 @@
                 <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
                     @csrf
                     <button type="submit" class="nav-link border-top pt-3 w-100 text-start" style="background:none; border:none; cursor:pointer;">
-                        <i class="fas fa-sign-out-alt me-2"></i> Salir <span class="icon-badge">⚡</span>
+                        <i class="fas fa-sign-out-alt me-2"></i> Salir <span class="icon-badge">
                     </button>
                 </form>
                 <div class="mt-4 text-center" style="font-size: 0.75rem; color: #888;">

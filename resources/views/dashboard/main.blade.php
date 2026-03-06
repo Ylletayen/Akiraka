@@ -180,7 +180,7 @@
         <!-- Sidebar -->
         <aside class="sidebar text-center">
             <div>
-           <img src="{{ asset('images/logo_akiraka.png') }}" alt="Logo" class="logo-img">
+             <img src="{{ asset('images/logo_akiraka.png') }}" alt="Logo" class="logo-img">
                 <p class="small mb-4">Akiraka Estudio</p>
                 <ul class="nav flex-column text-center">
                     <li class="nav-item">
@@ -197,7 +197,7 @@
                         <a class="nav-link" href="#"><i class="fas fa-envelope me-2"></i> Contacto</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-comments me-2"></i> Mensajes</a>
+                          <a href="{{ route('mensajes') }}" class="nav-link active"><i class="fas fa-globe me-2"></i>Mensajes</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('dashboard.opciones') }}">

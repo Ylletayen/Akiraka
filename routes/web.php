@@ -49,3 +49,8 @@ Route::get('/dashboard/opciones', function () {
 Route::get('/dashboard/quienes-somos', function () {
     return view('dashboard.quienes_somos');
 })->middleware('auth')->name('dashboard.quienes_somos');
+
+///dash mensajes 
+Route::get('/mensajes', function () {
+    return view('dashboard.mensajes');
+})->name('mensajes');
