@@ -3,7 +3,7 @@
 @section('content')
 <div class="dash-admin-view">
     <style>
-        /* ================= BASE ================= */
+        /* ================= TODA TU BASE ORIGINAL INTACTA ================= */
         .dash-admin-view {
             min-height: 100vh;
             background: #f8f8f8;
@@ -21,7 +21,7 @@
             align-items: stretch;
         }
 
-        /* ================= SIDEBAR ================= */
+        /* Estilos del Sidebar mantenidos para que el Partial se vea bien */
         .sidebar {
             width: 260px;
             background: #1c1c1c;
@@ -60,7 +60,7 @@
             background: #4b4b4b;
         }
 
-        /* ================= MAIN ================= */
+        /* ================= ESTILOS DE MENSAJES ================= */
         .main-content {
             flex-grow: 1;
             background: #fff;
@@ -78,17 +78,9 @@
             align-items: center;
         }
 
-        .header-section h1 {
-            font-size: 2rem;
-            margin: 0;
-        }
+        .header-section h1 { font-size: 2rem; margin: 0; }
 
-        /* ================= MENSAJES ================= */
-        .message-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+        .message-list { list-style: none; padding: 0; margin: 0; }
 
         .message-item {
             display: flex;
@@ -99,38 +91,19 @@
             cursor: pointer;
         }
 
-        .message-item:hover {
-            background: #fafafa;
-        }
+        .message-item:hover { background: #fafafa; }
 
-        .message-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
+        .message-left { display: flex; align-items: center; gap: 20px; }
 
-        .message-name {
-            font-size: 1.3rem;
-        }
+        .message-name { font-size: 1.3rem; }
 
-        .message-subject {
-            color: #888;
-            font-size: .9rem;
-        }
+        .message-subject { color: #888; font-size: .9rem; }
 
-        .message-date {
-            font-size: .8rem;
-            font-weight: bold;
-        }
+        .message-date { font-size: .8rem; font-weight: bold; }
 
-        .btn-delete {
-            border: none;
-            background: none;
-            cursor: pointer;
-            font-size: 1rem;
-        }
+        .btn-delete { border: none; background: none; cursor: pointer; font-size: 1rem; }
 
-        /* ================= MODAL ================= */
+        /* ================= ESTILOS DE MODAL ================= */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -152,82 +125,20 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
         }
 
-        .modal-box h3 {
-            margin-top: 0;
-        }
+        .modal-actions { margin-top: 20px; display: flex; gap: 10px; }
 
-        .modal-actions {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-        }
+        .modal-actions button { padding: 10px 20px; border: none; cursor: pointer; }
 
-        .modal-actions button {
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-        }
+        .btn-dark { background: #000; color: #fff; }
 
-        .btn-dark {
-            background: #000;
-            color: #fff;
-        }
+        .btn-light { background: #eee; }
 
-        .btn-light {
-            background: #eee;
-        }
-
-        textarea {
-            width: 100%;
-            height: 120px;
-            padding: 10px;
-            margin-top: 10px;
-            border: 1px solid #ccc;
-        }
+        textarea { width: 100%; height: 120px; padding: 10px; margin-top: 10px; border: 1px solid #ccc; }
     </style>
 
     <div class="dashboard-container">
-        <aside class="sidebar">
-            <div>
-                <div class="text-center">
-                    <img src="{{ asset('images/logo_akiraka.png') }}" alt="Logo" class="logo-img">
-                    <p class="small mb-4 text-uppercase" style="letter-spacing: 2px;">Akiraka Estudio</p>
-                </div>
-                
-                <ul class="nav flex-column" style="list-style: none; padding: 0;">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('dashboard.main') }}"><i class="fas fa-home me-2"></i> Inicio <span class="icon-badge"></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-pencil-alt me-2"></i> Proyectos <span class="icon-badge"></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('dashboard.quienes_somos') }}"><i class="fas fa-globe me-2"></i> Quienes somos <span class="icon-badge"></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-newspaper me-2"></i> Publicaciones <span class="icon-badge"></a>
-                    </li>
-                    <li class="nav-item">
-                         <a href="{{ route('mensajes') }}" class="nav-link active"><i class="fas fa-globe me-2"></i>Mensajes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('dashboard.opciones') }}"><i class="fas fa-cog me-2"></i> Opciones <span class="icon-badge"></a>
-                    </li>
-                </ul>
-            </div>
-            
-            <div>
-                <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
-                    @csrf
-                    <button type="submit" class="nav-link border-top pt-3 w-100 text-start" style="background:none; border:none; cursor:pointer;">
-                        <i class="fas fa-sign-out-alt me-2"></i> Salir <span class="icon-badge">
-                    </button>
-                </form>
-                <div class="mt-4 text-center" style="font-size: 0.75rem; color: #888;">
-                    <p class="mb-0">© {{ date('Y') }} AKIRAKA ESTUDIO</p>
-                </div>
-            </div>
-        </aside>
+        
+        @include('partials.sidebar')
 
         <div class="main-content">
             <div class="header-section">

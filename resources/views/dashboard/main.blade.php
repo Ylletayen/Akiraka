@@ -18,10 +18,9 @@
             width: 100%;
             max-width: 1400px;
             gap: 20px;
-            align-items: stretch; /* Sidebar se adapta al alto del main content */
+            align-items: stretch;
         }
 
-        /* Sidebar adaptativa */
         .sidebar {
             width: 260px;
             background-color: #1c1c1c;
@@ -62,7 +61,6 @@
             font-size: 0.75rem;
         }
 
-        /* Main content */
         .main-content {
             flex-grow: 1;
             background-color: #fff;
@@ -150,25 +148,6 @@
             color: #111;
         }
 
-        .btn-back-center {
-            display: inline-block;
-            padding: 20px 60px;
-            border: 2px solid #111;
-            background: transparent;
-            color: #111;
-            text-decoration: none;
-            font-size: 1.1rem;
-            letter-spacing: 3px;
-            margin-top: 40px;
-            transition: all 0.4s ease;
-            border-radius: 8px;
-        }
-
-        .btn-back-center:hover {
-            background-color: #111;
-            color: #fff;
-            transform: scale(1.05);
-        }
         .logo-img {
             width: 30px;
             height: 40px;
@@ -177,50 +156,9 @@
     </style>
 
     <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="sidebar text-center">
-            <div>
-             <img src="{{ asset('images/logo_akiraka.png') }}" alt="Logo" class="logo-img">
-                <p class="small mb-4">Akiraka Estudio</p>
-                <ul class="nav flex-column text-center">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-home me-2 "></i> Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-pencil-alt me-2"></i> Proyectos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('dashboard.quienes_somos') ? 'active' : '' }}" 
-                        href="{{ route('dashboard.quienes_somos') }}"><i class="fas fa-globe me-2"></i> Quienes somos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-envelope me-2"></i> Contacto</a>
-                    </li>
-                    <li class="nav-item">
-                          <a href="{{ route('mensajes') }}" class="nav-link active"><i class="fas fa-globe me-2"></i>Mensajes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('dashboard.opciones') }}">
-                            <i class="fas fa-globe me-2"></i> Opciones</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="nav-link border-top pt-3 w-100 text-start" style="background:none; border:none;">
-                        <i class="fas fa-sign-out-alt me-2"></i> Salir <span class="icon-badge">
-                    </button>
-                </form>
-                <div class="mt-4 text-center small">
-                    
-                    <p>Akiraka<br>Dirección<br>Derechos reservados</p>
-                </div>
-            </div>
-        </aside>
+        
+        @include('partials.sidebar')
 
-        <!-- Main Content -->
         <main class="main-content">
             <div class="header-welcome text-center">
                 <h1>Bienvenido(a)</h1>

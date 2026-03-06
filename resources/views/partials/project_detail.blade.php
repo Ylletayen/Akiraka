@@ -120,7 +120,7 @@
     </style>
 
     <header class="site-header-main">
-        <a href="{{ route('project.detail') }}" style="text-decoration: none; color: inherit; font-weight: normal;">
+        <a href="{{ route('project.detail') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">
         Estudio Akiraka ,</a>
         <a href="{{ route('info') }}" class="nav-link-akira">Info ,</a>
         <a href="{{ route('contacto') }}" class="nav-link-akira">Contacto</a>

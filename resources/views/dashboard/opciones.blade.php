@@ -409,9 +409,6 @@
                         href="{{ route('dashboard.quienes_somos') ?? '#' }}"><i class="fas fa-users me-2"></i> Quienes somos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-address-book me-2"></i> Contacto</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="#"><i class="fas fa-envelope me-2"></i> Mensajes </a>
                     </li>
                     <li class="nav-item">

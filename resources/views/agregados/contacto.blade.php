@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <style>
-    /* Estilos generales del contenedor - similar al ancho de la imagen de referencia */
+    /* ================= ESTILOS BASE DEL ESTUDIO ================= */
     .akira-container {
         max-width: 1100px; 
         margin: 0 auto;
@@ -13,7 +13,6 @@
         color: #1a1a1a;
     }
 
-    /* Estilo general para todos los enlaces tipo texto */
     .akira-link-reset {
         text-decoration: none;
         color: inherit;
@@ -22,22 +21,19 @@
     }
 
     .akira-link-reset:hover {
-        opacity: 0.6; /* Efecto sutil al pasar el mouse */
+        opacity: 0.6;
         color: #000;
     }
 
-    /* Estilo para el nombre de la marca en el header */
     .brand-name-header {
         font-size: 1.1rem;
-        font-weight: normal; /* Asegurar que el nombre del estudio no esté en negrita */
+        font-weight: normal;
     }
 
-    /* Clase específica para poner solo un enlace en negrita */
     .nav-link-bold {
         font-weight: bold;
     }
 
-    /* Estilo para las etiquetas de contacto (Proyectos, Prensa, etc.) */
     .contact-label {
         font-weight: bold;
         display: block;
@@ -46,7 +42,6 @@
         color: #1a1a1a;
     }
 
-    /* Estilo para los valores (correos, teléfonos) - gris intermedio */
     .contact-value-reset {
         text-decoration: none;
         color: #666; 
@@ -58,7 +53,6 @@
         color: #000;
     }
 
-    /* Estilo para la instrucción superior - cursiva minimalista */
     .contact-instruction {
         font-style: italic;
         font-size: 0.95rem;
@@ -66,7 +60,6 @@
         color: #666;
     }
 
-    /* Estilo para los años o abreviaturas de ubicación (gris claro) */
     .location-year-label {
         color: #ccc;
         font-size: 0.85rem;
@@ -75,11 +68,41 @@
         width: 40px;
     }
 
-    /* --- ESTILOS DE REDES SOCIALES (ICONOS CIRCULARES) --- */
+    /* ================= SECCIÓN DEL MAPA (DISEÑO ARQUITECTÓNICO) ================= */
+    .map-section {
+        margin-top: 60px;
+        border-top: 1px solid #eee;
+        padding-top: 40px;
+    }
+
+    .map-wrapper {
+        width: 100%;
+        height: 500px;
+        filter: grayscale(100%); /* Efecto minimalista en blanco y negro */
+        border: 1px solid #111;
+        transition: filter 0.5s ease;
+        margin-bottom: 20px;
+    }
+
+    .map-wrapper:hover {
+        filter: grayscale(0%); /* El color vuelve al interactuar */
+    }
+
+    .map-caption {
+        font-size: 0.85rem;
+        color: #888;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* ================= REDES SOCIALES (ICONOS CIRCULARES) ================= */
     .social-group-section {
         margin-top: 50px;
         border-top: 1px solid #eee;
         padding-top: 30px;
+        text-align: center;
     }
 
     .social-label-heading {
@@ -90,7 +113,6 @@
         color: #1a1a1a;
     }
 
-    /* Botón circular minimalista para redes sociales */
     .social-btn-circle {
         display: inline-flex;
         align-items: center;
@@ -101,7 +123,7 @@
         border: 1px solid #1a1a1a;
         color: #1a1a1a;
         text-decoration: none;
-        font-size: 1.2rem; /* Tamaño del icono */
+        font-size: 1.2rem;
         margin-right: 10px;
         transition: all 0.3s ease;
     }
@@ -114,12 +136,10 @@
 
 <div class="akira-container">
     <header class="site-header-main mb-5">
-        <a href="{{ route('project.detail') }}" class="akira-link-reset me-1">
-            <span class="brand-name-header">Akiraka Studio,</span>
-        </a>
-        
-        <a href="{{ route('info') }}" class="akira-link-reset me-1">Info ,</a>
-        <a href="{{ route('contacto') }}" class="akira-link-reset nav-link-bold">Contacto</a>
+        <a href="{{ route('project.detail') }}" style="text-decoration: none; color: inherit; font-weight: normal;">
+        Estudio Akiraka, </a>
+        <a href="{{ route('info') }}" style="text-decoration: none; color: inherit;">Info</a>, 
+        <a href="{{ route('contacto') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Contacto</a>.
     </header>
 
     <p class="contact-instruction">Si deseas contactarnos, por favor envía un correo a la dirección designada.</p>
@@ -127,37 +147,63 @@
     <div class="row contact-group-section mb-5">
         <div class="col-md-4 mb-4">
             <span class="contact-label">Proyectos y Eventos</span>
-            <a href="mailto:info@estudioakiraka.com" class="contact-value-reset"><br>akiraka.estudio@gmail.com
-<br>administracion@akirakastudio.com</a>
+            <div class="contact-value-reset">
+                akiraka.estudio@gmail.com<br>
+                administracion@akirakastudio.com
+            </div>
         </div>
 
         <div class="col-md-4 mb-4">
             <span class="contact-label">Prensa</span>
-            <a href="mailto:press@estudioakiraka.com" class="contact-value-reset">proyectos@akirakastudio.com</a>
+            <div class="contact-value-reset">proyectos@akirakastudio.com</div>
         </div>
 
         <div class="col-md-4 mb-4">
             <span class="contact-label">Oportunidades laborales</span>
-            <a href="mailto:hr@estudioakiraka.com" class="contact-value-reset"> <br>dirección@akirakastudio.com
-<br>studio@akirakastudio.com</a>
+            <div class="contact-value-reset">
+                dirección@akirakastudio.com<br>
+                studio@akirakastudio.com
+            </div>
         </div>
     </div>
 
     <div class="location-group border-top pt-4 mb-5">
         <div class="row">
             <div class="col-md-6 mb-3">
-                <span class="location-year-label">Telefono</span>
+                <span class="location-year-label">Teléfono</span>
                 <span class="contact-value-reset"><br>+52 722 165 5901</span>
             </div>
             <div class="col-md-6 mb-3">
-                <span class="location-year-label"> Direccion </span>
-                <span class="contact-value-reset"><br>Parque Santa María 10, Santa María Ahuacatlán,
-51200 Valle de Bravo, Estado de México</span>
+                <span class="location-year-label">Dirección</span>
+                <span class="contact-value-reset"><br>Espacio Odisea. Parque Santa María 10, <br>Barrio, Sta Maria Ahuacatlan, 51200 Valle de Bravo, Méx.</span>
             </div>
         </div>
     </div>
 
-    <div class="social-group-section text-center">
+    <div class="map-section">
+        <span class="contact-label mb-3" style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 2px;">Ubicación / Espacio Odisea</span>
+        <div class="map-wrapper">
+            <iframe 
+                width="100%" 
+                height="100%" 
+                frameborder="0" 
+                scrolling="no" 
+                marginheight="0" 
+                marginwidth="0" 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d467.4589255627712!2d-100.1363651761623!3d19.189445173707252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cd647e9a15bc7b%3A0x59426b73189edf87!2sEspacio%20Odisea!5e0!3m2!1ses-419!2smx!4v1709673000000!5m2!1ses-419!2smx"
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy">
+            </iframe>
+        </div>
+        
+        <div class="map-caption">
+            <i class="bi bi-geo-alt-fill"></i> 
+            Parque Santa María 10, Barrio, Sta Maria Ahuacatlan, 51200 Valle de Bravo, Méx.
+        </div>
+    </div>
+
+    <div class="social-group-section">
         <span class="social-label-heading">Síguenos</span>
         
         <a href="https://www.instagram.com/akiraka.estudio/" target="_blank" class="social-btn-circle" title="Instagram">
