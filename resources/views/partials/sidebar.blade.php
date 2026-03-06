@@ -130,11 +130,11 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('dashboard.opciones.opciones') ? 'active' : '' }}" 
-                   href="{{ route('dashboard.opciones.opciones') }}">
-                    <div><i class="fas fa-cog me-3"></i> Opciones</div>
-                </a>
-            </li>
+            <a class="nav-link {{ request()->routeIs('dashboard.opciones') ? 'active' : '' }}" 
+                href="{{ route('dashboard.opciones') }}">
+                <div><i class="fas fa-cog me-3"></i> Opciones</div>
+    </a>
+</li>
         </ul>
     </div>
     
