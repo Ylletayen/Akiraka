@@ -7,6 +7,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OpcionesController;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\MensajesController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -90,3 +92,7 @@ Route::get('/dashboard/usuarios', [UsuarioController::class, 'index'])
 Route::put('/dashboard/usuarios/{id}/rol', [UsuarioController::class, 'updateRol'])
     ->middleware('auth')
     ->name('usuarios.updateRol');
+
+Route::get('/dashboard/mensajes', [MensajesController::class, 'index'])
+    ->middleware('auth')
+    ->name('dashboard.mensajes');
