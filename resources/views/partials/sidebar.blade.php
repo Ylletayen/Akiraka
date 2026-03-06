@@ -15,13 +15,21 @@
 
     .sidebar .text-center {
         margin-bottom: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Garantiza un centrado absoluto del logo y el texto */
     }
 
+    /* Estilos actualizados para la imagen del logo (Recorte Circular) */
     .sidebar img.logo-sidebar {
-        width: 80px;
+        width: 100px;  /* Ancho y alto iguales para un círculo perfecto */
+        height: 100px;
+        object-fit: contain;
+        background-color: #ffffff; /* Fondo blanco sólido */
+        border-radius: 50%; /* Hace el recorte completamente circular */
+        padding: 22px 15px; /* Espacio interno ajustado para el logo alargado */
         margin-bottom: 15px;
-        /* Si tu logo es oscuro y no se ve en el fondo negro, descomenta la siguiente línea: */
-        /* filter: brightness(0) invert(1); */ 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25); /* Sombra suave para despegarlo */
     }
 
     .sidebar p.small {
@@ -96,8 +104,8 @@
 <aside class="sidebar">
     <div>
         <div class="text-center">
-            <!-- Asumiendo que logo.png está en public/ -->
-            <img src="{{ asset('logo.png') }}" alt="Logo" class="logo-sidebar">
+            <!-- Imagen real del logo conservada -->
+            <img src="{{ asset('images/logo_akiraka.png') }}" alt="Logo Akiraka" class="logo-sidebar">
             <p class="small mb-4 text-uppercase" style="letter-spacing: 2px;">Akiraka Estudio</p>
         </div>
         
@@ -110,7 +118,8 @@
             </li>
             <li class="nav-item">
                <a class="nav-link {{ request()->routeIs('dashboard.usuarios') ? 'active' : '' }}" 
-                 href="{{ route('dashboard.usuarios') }}"><div><i class="fas fa-envelope me-3"></i> Usuarios</div>
+                 href="{{ route('dashboard.usuarios') }}">
+                 <div><i class="fas fa-user-shield me-3"></i> Usuarios</div>
                 </a>
             </li>
             <li class="nav-item">
@@ -127,7 +136,8 @@
             </li>
             <li class="nav-item">
                <a class="nav-link {{ request()->routeIs('mensajes') ? 'active' : '' }}" 
-                 href="{{ route('mensajes') }}"><div><i class="fas fa-envelope me-3"></i> Mensajes</div>
+                 href="{{ route('mensajes') }}">
+                 <div><i class="fas fa-envelope me-3"></i> Mensajes</div>
                 </a>
             </li>
             <li class="nav-item">
