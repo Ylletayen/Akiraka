@@ -114,7 +114,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link {{ request()->routeIs('dashboard.proyectos') ? 'active' : '' }}" 
+                   href="{{ route('dashboard.proyectos') }}">
                     <div><i class="fas fa-pencil-alt me-3"></i> Proyectos</div>
                 </a>
             </li>

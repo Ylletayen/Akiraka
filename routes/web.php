@@ -8,6 +8,7 @@ use App\Http\Controllers\OpcionesController;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\MensajesController;
+use App\Models\Proyecto;
 
 
 Route::get('/', function () {
@@ -15,8 +16,23 @@ Route::get('/', function () {
 })->name('landing');
 
 Route::get('/proyecto', function () {
-    return view('partials.project_detail'); 
+    // Jalamos los proyectos para la vista pública
+    $proyectosEnProceso = \App\Models\Proyecto::where('id_estado', 1)->get();
+    $proyectosConstruidos = \App\Models\Proyecto::where('id_estado', 2)->get();
+    
+    return view('partials.project_detail', compact('proyectosEnProceso', 'proyectosConstruidos')); 
 })->name('project.detail');
+
+// PROYECTOS
+Route::prefix('dashboard')->middleware('auth')->group(function () {
+    
+    Route::get('/proyectos', [ProjectController::class, 'index'])->name('dashboard.proyectos');
+    
+    // Rutas CRUD para el modal
+    Route::post('/proyectos', [ProjectController::class, 'store'])->name('proyectos.store');
+    Route::put('/proyectos/{id}', [ProjectController::class, 'update'])->name('proyectos.update');
+    Route::delete('/proyectos/{id}', [ProjectController::class, 'destroy'])->name('proyectos.destroy');
+});
 
 Route::get('/info', function () {
     return view('agregados.informacion.info'); 

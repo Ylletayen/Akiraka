@@ -2,27 +2,58 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Proyecto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProjectController extends Controller
 {
-    public function show($id) 
+    public function index()
     {
-        // Definimos los datos aquí para que la vista no "truene"
-        $proyecto_titulo = "Residencial Valle de Bravo";
+        // Traemos todos los proyectos
+        $proyectos = Proyecto::all();
         
-        $slides = [
-            [
-                'img' => 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-                'desc' => 'El proyecto nace de la necesidad de integrar la arquitectura con el entorno boscoso. Se utilizaron materiales locales como piedra volcánica.'
-            ],
-            [
-                'img' => 'https://images.unsplash.com/photo-1600607687940-4e524cb35497?auto=format&fit=crop&w=1200&q=80',
-                'desc' => 'La estructura principal se eleva del suelo para minimizar el impacto en el terreno natural, permitiendo que la vegetación siga su curso.'
-            ]
-        ];
+        // Traemos los estados disponibles para el select del modal (ej. En Progreso, Terminado)
+        $estados = DB::table('estados_proyecto')->get();
 
-        // Pasamos las variables a la vista usando compact()
-        return view('partials.main_view', compact('proyecto_titulo', 'slides'));
+        return view('dashboard.proyectos.proyecto', compact('proyectos', 'estados'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'titulo' => 'required|string|max:150',
+            'descripcion' => 'nullable|string',
+            'costo_inicial' => 'nullable|numeric',
+            'costo_final' => 'nullable|numeric',
+            'id_estado' => 'nullable|exists:estados_proyecto,id_estado'
+        ]);
+
+        Proyecto::create($request->all());
+        
+        return redirect()->back()->with('success', 'Proyecto registrado correctamente.');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'titulo' => 'required|string|max:150',
+            'descripcion' => 'nullable|string',
+            'costo_inicial' => 'nullable|numeric',
+            'costo_final' => 'nullable|numeric',
+            'id_estado' => 'nullable|exists:estados_proyecto,id_estado'
+        ]);
+
+        $proyecto = Proyecto::findOrFail($id);
+        $proyecto->update($request->all());
+
+        return redirect()->back()->with('success', 'Proyecto actualizado exitosamente.');
+    }
+
+    public function destroy($id)
+    {
+        Proyecto::findOrFail($id)->delete();
+        
+        return redirect()->back()->with('success', 'Proyecto eliminado del portafolio.');
     }
 }

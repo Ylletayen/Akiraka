@@ -17,11 +17,21 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        // Hacemos match del 'email' del formulario con la columna 'correo' de tu BD
         if (Auth::attempt(['correo' => $credentials['email'], 'password' => $credentials['password']])) {
-            $request->session()->regenerate();
+            
+            // FILTRO DE SEGURIDAD: Si el rol es 4 (Pendiente), lo botamos
+            if (Auth::user()->id_rol == 4) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
 
-            // Redirección exitosa al dashboard
+                return back()->withErrors([
+                    'email' => 'Tu cuenta ha sido registrada pero sigue en proceso de validación por un administrador.',
+                ]);
+            }
+
+            // Si pasa el filtro, lo dejamos entrar normal
+            $request->session()->regenerate();
             return redirect()->route('dashboard.main');
         }
 
@@ -55,9 +65,9 @@ class AuthController extends Controller
             'correo' => $request->correo,
             'password' => Hash::make($request->password),
             'foto' => $rutaFoto,
-            'id_rol' => $request->id_rol,
+            'id_rol' => 4, // <-- Le clavamos el rol "Pendiente" por defecto
         ]);
 
-        return redirect()->route('landing')->with('success', 'Usuario registrado con éxito.');
+        return redirect()->route('landing')->with('success', 'Usuario registrado con éxito. Tu cuenta está en proceso de validación.');
     }
 }
