@@ -3,6 +3,7 @@
 @section('content')
 <div class="dash-admin-view">
     <style>
+        /* ================= ESTILOS BASE DEL DASHBOARD ================= */
         .dash-admin-view {
             min-height: 100vh;
             background-color: #f8f8f8;
@@ -21,46 +22,7 @@
             align-items: stretch;
         }
 
-        .sidebar {
-            width: 260px;
-            background-color: #1c1c1c;
-            color: #fff;
-            padding: 25px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .sidebar img {
-            width: 80px;
-            border-radius: 50%;
-            margin-bottom: 10px;
-        }
-
-        .nav-link {
-            color: #fff;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #2c2c2c;
-            border-radius: 8px;
-            padding: 10px 15px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .nav-link:hover { background-color: #3a3a3a; text-decoration: none; }
-
-        .icon-badge {
-            background-color: #555;
-            color: #fff;
-            border-radius: 4px;
-            padding: 2px 6px;
-            font-size: 0.75rem;
-        }
-
+        /* ================= MAIN CONTENT (Inicio) ================= */
         .main-content {
             flex-grow: 1;
             background-color: #fff;
@@ -157,8 +119,10 @@
 
     <div class="dashboard-container">
         
+        <!-- ================= INCLUIR SIDEBAR CENTRALIZADO ================= -->
         @include('partials.sidebar')
 
+        <!-- ================= MAIN CONTENT ================= -->
         <main class="main-content">
             <div class="header-welcome text-center">
                 <h1>Bienvenido(a)</h1>
