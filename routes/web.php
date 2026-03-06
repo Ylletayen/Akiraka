@@ -47,17 +47,17 @@ Route::post('/registro', [AuthController::class, 'store'])->name('registro.store
 
 Route::get('/proyecto/{id}', [ProjectController::class, 'show'])->name('project.main');
 
-Route::get('/dashboard/opciones', function () {
-    return view('dashboard.opciones');
-})->middleware('auth')->name('dashboard.opciones.opciones');
+Route::get('/dashboard/opciones', [OpcionesController::class, 'index'])
+    ->middleware('auth')
+    ->name('dashboard.opciones');
 
-Route::get('/dashboard/opciones', [OpcionesController::class, 'index'])->middleware('auth')->name('dashboard.opciones.opciones');
+Route::put('/dashboard/opciones/perfil', [OpcionesController::class, 'updatePerfil'])
+    ->middleware('auth')
+    ->name('opciones.perfil.update');
 
-// Recibir el formulario de perfil admin (Actualizar nombre/contraseña)
-Route::put('/dashboard/opciones/perfil', [OpcionesController::class, 'updatePerfil'])->middleware('auth')->name('opciones.perfil.update');
-
-// Recibir el formulario de datos públicos
-Route::put('/dashboard/opciones/publicos', [OpcionesController::class, 'updatePublicos'])->middleware('auth')->name('opciones.publicos.update');
+Route::put('/dashboard/opciones/publicos', [OpcionesController::class, 'updatePublicos'])
+    ->middleware('auth')
+    ->name('opciones.publicos.update');
 
 //QUIENES SOMOS
 Route::get('/dashboard/quienes-somos', [EquipoController::class, 'index'])
