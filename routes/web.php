@@ -49,9 +49,9 @@ Route::get('/proyecto/{id}', [ProjectController::class, 'show'])->name('project.
 
 Route::get('/dashboard/opciones', function () {
     return view('dashboard.opciones');
-})->middleware('auth')->name('dashboard.opciones');
+})->middleware('auth')->name('dashboard.opciones.opciones');
 
-Route::get('/dashboard/opciones', [OpcionesController::class, 'index'])->middleware('auth')->name('dashboard.opciones');
+Route::get('/dashboard/opciones', [OpcionesController::class, 'index'])->middleware('auth')->name('dashboard.opciones.opciones');
 
 // Recibir el formulario de perfil admin (Actualizar nombre/contraseña)
 Route::put('/dashboard/opciones/perfil', [OpcionesController::class, 'updatePerfil'])->middleware('auth')->name('opciones.perfil.update');
@@ -62,7 +62,7 @@ Route::put('/dashboard/opciones/publicos', [OpcionesController::class, 'updatePu
 //QUIENES SOMOS
 Route::get('/dashboard/quienes-somos', [EquipoController::class, 'index'])
     ->middleware('auth')
-    ->name('dashboard.quienes_somos');
+    ->name('dashboard.equipo.quienes_somos');
 
 Route::post('/dashboard/equipo', [EquipoController::class, 'store'])
     ->middleware('auth')

@@ -13,7 +13,7 @@ class EquipoController extends Controller
         $miembros = Equipo::with('usuario')->get();
         $usuariosDisponibles = User::all(); 
         
-        return view('dashboard.quienes_somos', compact('miembros', 'usuariosDisponibles'));
+        return view('dashboard.equipo.quienes_somos', compact('miembros', 'usuariosDisponibles'));
     }
 
     public function store(Request $request)

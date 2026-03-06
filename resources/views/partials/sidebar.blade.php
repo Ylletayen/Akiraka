@@ -114,8 +114,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('dashboard.quienes_somos') ? 'active' : '' }}" 
-                   href="{{ route('dashboard.quienes_somos') ?? '#' }}">
+                <a class="nav-link {{ request()->routeIs('dashboard.equipo.quienes_somos') ? 'active' : '' }}" 
+                   href="{{ route('dashboard.equipo.quienes_somos') ?? '#' }}">
                     <div><i class="fas fa-users me-3"></i> Quienes somos</div>
                 </a>
             </li>
@@ -125,8 +125,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('dashboard.opciones') ? 'active' : '' }}" 
-                   href="{{ route('dashboard.opciones') }}">
+                <a class="nav-link {{ request()->routeIs('dashboard.opciones.opciones') ? 'active' : '' }}" 
+                   href="{{ route('dashboard.opciones.opciones') }}">
                     <div><i class="fas fa-cog me-3"></i> Opciones</div>
                 </a>
             </li>
