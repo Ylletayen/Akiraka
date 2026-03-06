@@ -5,6 +5,8 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OpcionesController;
+use App\Http\Controllers\EquipoController;
+use App\Http\Controllers\UsuarioController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -55,11 +57,36 @@ Route::put('/dashboard/opciones/perfil', [OpcionesController::class, 'updatePerf
 // Recibir el formulario de datos públicos
 Route::put('/dashboard/opciones/publicos', [OpcionesController::class, 'updatePublicos'])->middleware('auth')->name('opciones.publicos.update');
 
-Route::get('/dashboard/quienes-somos', function () {
-    return view('dashboard.quienes_somos');
-})->middleware('auth')->name('dashboard.quienes_somos');
+//QUIENES SOMOS
+Route::get('/dashboard/quienes-somos', [EquipoController::class, 'index'])
+    ->middleware('auth')
+    ->name('dashboard.quienes_somos');
+
+Route::post('/dashboard/equipo', [EquipoController::class, 'store'])
+    ->middleware('auth')
+    ->name('equipo.store');
+
+Route::put('/dashboard/equipo/{id}', [EquipoController::class, 'update'])
+    ->middleware('auth')
+    ->name('equipo.update');
+
+Route::delete('/dashboard/equipo/{id}', [EquipoController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('equipo.destroy');
+
+Route::resource('equipo', EquipoController::class)->names([
+    'index' => 'dashboard.quienes_somos',]);
 
 ///dash mensajes 
 Route::get('/mensajes', function () {
     return view('dashboard.mensajes');
 })->name('mensajes');
+
+// USUARIOS
+Route::get('/dashboard/usuarios', [UsuarioController::class, 'index'])
+    ->middleware('auth')
+    ->name('usuarios.index');
+
+Route::put('/dashboard/usuarios/{id}/rol', [UsuarioController::class, 'updateRol'])
+    ->middleware('auth')
+    ->name('usuarios.updateRol');
