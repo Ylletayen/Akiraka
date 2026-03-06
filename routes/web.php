@@ -59,10 +59,10 @@ Route::put('/dashboard/opciones/perfil', [OpcionesController::class, 'updatePerf
 // Recibir el formulario de datos públicos
 Route::put('/dashboard/opciones/publicos', [OpcionesController::class, 'updatePublicos'])->middleware('auth')->name('opciones.publicos.update');
 
-//QUIENES SOMOS
+// QUIENES SOMOS
 Route::get('/dashboard/quienes-somos', [EquipoController::class, 'index'])
     ->middleware('auth')
-    ->name('dashboard.equipo.quienes_somos');
+    ->name('dashboard.equipo.quienes_somos'); // <-- Aquí está la magia, ya coincide con tu vista
 
 Route::post('/dashboard/equipo', [EquipoController::class, 'store'])
     ->middleware('auth')
@@ -75,24 +75,22 @@ Route::put('/dashboard/equipo/{id}', [EquipoController::class, 'update'])
 Route::delete('/dashboard/equipo/{id}', [EquipoController::class, 'destroy'])
     ->middleware('auth')
     ->name('equipo.destroy');
-
-Route::resource('equipo', EquipoController::class)->names([
-    'index' => 'dashboard.quienes_somos',]);
+    
 
 ///dash mensajes 
 Route::get('/mensajes', function () {
-    return view('dashboard.mensajes');
+    return view('dashboard.mensajes.mensajes');
 })->name('mensajes');
 
 // USUARIOS
-Route::get('/dashboard/usuarios', [UsuarioController::class, 'index'])
-    ->middleware('auth')
-    ->name('usuarios.index');
+Route::prefix('dashboard')->middleware('auth')->group(function () {
+    
+    // El nombre de esta ruta DEBE coincidir con el route('dashboard.usuarios') de tu sidebar
+    Route::get('/usuarios', [UsuarioController::class, 'index'])->name('dashboard.usuarios');
+    
+    // Rutas para el modal de crear, actualizar y eliminar
+    Route::post('/usuarios', [UsuarioController::class, 'store'])->name('usuarios.store');
+    Route::put('/usuarios/{id}', [UsuarioController::class, 'update'])->name('usuarios.update');
+    Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
+});
 
-Route::put('/dashboard/usuarios/{id}/rol', [UsuarioController::class, 'updateRol'])
-    ->middleware('auth')
-    ->name('usuarios.updateRol');
-
-Route::get('/dashboard/mensajes', [MensajesController::class, 'index'])
-    ->middleware('auth')
-    ->name('dashboard.mensajes');

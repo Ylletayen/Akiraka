@@ -20,7 +20,7 @@ class UsuarioController extends Controller
         $usuarios = User::all();
         $roles = DB::table('roles')->get(); 
 
-        return view('dashboard.usuarios', compact('usuarios', 'roles'));
+        return view('dashboard.usuarios.usuario', compact('usuarios', 'roles'));
     }
 
     public function updateRol(Request $request, $id)

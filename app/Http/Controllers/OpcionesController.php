@@ -12,7 +12,7 @@ class OpcionesController extends Controller
     public function index()
     {
         // Esto solo carga la vista que acabamos de hacer
-        return view('dashboard.opciones');
+        return view('dashboard.opciones.opciones');
     }
 
     public function updatePerfil(Request $request)
