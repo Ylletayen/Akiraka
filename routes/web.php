@@ -27,7 +27,7 @@ Route::get('/contacto', function () {
 })->name('contacto');
 
 Route::get('/login', function () {
-    return view('dashboard.dash.main');
+    return view('dashboard.login.login');
 })->name('login.form');
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
@@ -40,7 +40,7 @@ Route::get('/dashboard/main', function () {
 })->middleware('auth')->name('dashboard.main');
 
 Route::get('/registro', function () {
-    return view('dashboard.registro');
+    return view('dashboard.login.registro');
 })->name('registro.index');
 
 Route::post('/registro', [AuthController::class, 'store'])->name('registro.store');
