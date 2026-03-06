@@ -19,15 +19,15 @@ Route::get('/proyecto', function () {
 })->name('project.detail');
 
 Route::get('/info', function () {
-    return view('agregados.info'); 
+    return view('agregados.informacion.info'); 
 })->name('info');
 
 Route::get('/contacto', function () {
-    return view('agregados.contacto'); 
+    return view('agregados.contacto.contacto'); 
 })->name('contacto');
 
 Route::get('/login', function () {
-    return view('dashboard.login');
+    return view('dashboard.dash.main');
 })->name('login.form');
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
@@ -36,7 +36,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // 4. Ruta del Dashboard
 Route::get('/dashboard/main', function () {
-    return view('dashboard.main');
+    return view('dashboard.dash.main');
 })->middleware('auth')->name('dashboard.main');
 
 Route::get('/registro', function () {
