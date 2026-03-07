@@ -134,16 +134,35 @@
         .btn-light { background: #eee; }
 
         textarea { width: 100%; height: 120px; padding: 10px; margin-top: 10px; border: 1px solid #ccc; }
-        /* MENSAJE NO LEÍDO */
-        .message-unread .message-name{
-            font-weight:bold;
-            color:#000;
+        /* MENSAJE NO LEIDO */
+        .no-leido .message-name{
+            font-weight: bold;
         }
 
-        .message-unread .message-subject{
-            font-weight:bold;      
-            color:#000;
-        } 
+        .no-leido .message-subject{
+            font-weight: bold;
+        }
+
+        /* CIRCULO DE NOTIFICACION */
+        .notificacion{
+            display:none;
+        }
+
+        .no-leido .notificacion{
+            display:inline-block;
+            width:8px;
+            height:8px;
+            background:red;
+            border-radius:50%;
+            margin-right:6px;
+            animation:parpadear 1s infinite;
+        }
+
+        @keyframes parpadear{
+            0%{opacity:1;}
+            50%{opacity:.2;}
+            100%{opacity:1;}
+        }
 
     </style>
 
@@ -158,24 +177,24 @@
             </div>
 
             <ul class="message-list">
-                <li class="message-item message-unread"onclick="abrirMensaje(this,'Elena Firne','Consulta de presupuesto','Estimados, quisiera información sobre costos de remodelación.')">
+               <li class="message-item no-leido"onclick="abrirMensaje(this,'Elena Firne','Consulta de presupuesto','Estimados, quisiera información sobre costos de remodelación.')">
                     <div class="message-left">
                         <div class="message-name"> Elena Firne</div>
                         <div class="message-subject">Consulta de presupuesto</div>
                     </div>
                     <div>
-                        <span class="message-date">05 FEB</span>
+                        <span class="text-sm text-gray-500"><span class="notificacion"></span> 05/03/2026</span>
                         <button class="btn-delete" onclick="abrirEliminar(event,'Elena Firne')">🗑</button>
                     </div>
                 </li>
 
-                <li class="message-item message-unread" onclick="abrirMensaje(this,'Maria Ana','Colaboración Editorial','Nos gustaría colaborar con su estudio en una publicación.')">
+                <li class="message-item no-leido" onclick="abrirMensaje(this,'Maria Ana','Colaboración Editorial','Nos gustaría colaborar con su estudio en una publicación.')">
                     <div class="message-left">
                         <div class="message-name">Maria Ana</div>
                         <div class="message-subject">Colaboración Editorial</div>
                     </div>
                     <div>
-                        <span class="message-date">04 FEB</span>
+                       <span class="text-sm text-gray-500"><span class="notificacion"></span> 04/04/2026</span>
                         <button class="btn-delete" onclick="abrirEliminar(event,'Maria Ana')">🗑</button>
                     </div>
                 </li>
@@ -217,14 +236,13 @@
     </div>
 
     <script>
-        function abrirMensaje(elemento,nombre,asunto,contenido) {
-
+           function abrirMensaje(elemento,nombre,asunto,contenido) {
             document.getElementById("tituloMensaje").innerText = nombre + " - " + asunto;
             document.getElementById("contenidoMensaje").innerText = contenido;
             document.getElementById("modalMensaje").style.display = "flex";
 
             // quitar estado no leído
-            elemento.classList.remove("message-unread");
+            elemento.classList.remove("no-leido");
         }
 
         function abrirResponder() {
@@ -244,13 +262,12 @@
             document.getElementById("modalEliminar").style.display = "none";
         }
         function marcarTodos(){
-        let mensajes = document.querySelectorAll(".message-item");
+            let mensajes = document.querySelectorAll(".message-item");
 
-        mensajes.forEach(function(msg){
-            msg.classList.remove("message-unread");
-        });
+            mensajes.forEach(function(msg){
+                msg.classList.remove("no-leido");
+            });
         }
-        
     </script>
 </div>
 @endsection
