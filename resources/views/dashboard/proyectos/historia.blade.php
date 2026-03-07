@@ -34,6 +34,16 @@
             @if(session('success'))
                 <div class="alert alert-dark mb-4">{{ session('success') }}</div>
             @endif
+            
+            @if($errors->any())
+                <div class="alert alert-danger mb-4">
+                    <ul class="mb-0">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <div class="upload-card">
                 <form action="{{ route('proyectos.historias.store', $proyecto->id_proyecto) }}" method="POST" enctype="multipart/form-data">

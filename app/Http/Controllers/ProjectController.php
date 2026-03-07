@@ -79,7 +79,8 @@ class ProjectController extends Controller
     public function storeHistoria(Request $request, $id)
     {
         $request->validate([
-            'imagen' => 'required|image|max:5120', // Máximo 5MB
+            // Subimos el límite a 15MB (15360 kb)
+            'imagen' => 'required|image|max:15360', 
             'descripcion' => 'required|string'
         ]);
 
