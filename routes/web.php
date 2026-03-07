@@ -16,9 +16,20 @@ Route::get('/', function () {
 })->name('landing');
 
 Route::get('/proyecto', function () {
-    // Jalamos los proyectos para la vista pública
-    $proyectosEnProceso = \App\Models\Proyecto::where('id_estado', 1)->get();
-    $proyectosConstruidos = \App\Models\Proyecto::where('id_estado', 2)->get();
+    // Jalamos los proyectos y les adjuntamos su primera imagen de la historia (como portada)
+    $proyectosEnProceso = \App\Models\Proyecto::where('id_estado', 1)->get()->map(function ($proyecto) {
+        $proyecto->portada = \Illuminate\Support\Facades\DB::table('imagenes_proyecto')
+                                ->where('id_proyecto', $proyecto->id_proyecto)
+                                ->value('url_imagen'); // Toma solo la primera imagen que encuentre
+        return $proyecto;
+    });
+
+    $proyectosConstruidos = \App\Models\Proyecto::where('id_estado', 2)->get()->map(function ($proyecto) {
+        $proyecto->portada = \Illuminate\Support\Facades\DB::table('imagenes_proyecto')
+                                ->where('id_proyecto', $proyecto->id_proyecto)
+                                ->value('url_imagen');
+        return $proyecto;
+    });
     
     return view('partials.project_detail', compact('proyectosEnProceso', 'proyectosConstruidos')); 
 })->name('project.detail');
@@ -32,6 +43,11 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
     Route::post('/proyectos', [ProjectController::class, 'store'])->name('proyectos.store');
     Route::put('/proyectos/{id}', [ProjectController::class, 'update'])->name('proyectos.update');
     Route::delete('/proyectos/{id}', [ProjectController::class, 'destroy'])->name('proyectos.destroy');
+
+    // Rutas para la Historia de cada Proyecto
+    Route::get('/proyectos/{id}/historia', [ProjectController::class, 'historias'])->name('proyectos.historias');
+    Route::post('/proyectos/{id}/historia', [ProjectController::class, 'storeHistoria'])->name('proyectos.historias.store');
+    Route::delete('/proyectos/historia/{id_imagen}', [ProjectController::class, 'destroyHistoria'])->name('proyectos.historias.destroy');
 });
 
 Route::get('/info', function () {

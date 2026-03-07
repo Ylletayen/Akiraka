@@ -142,6 +142,8 @@
                                 </span>
                             </td>
                             <td style="text-align: right;">
+                                <a href="{{ route('proyectos.historias', $proyecto->id_proyecto) }}" class="btn-action-minimal" style="color: #10b981; text-decoration: none;">+ Historia</a>
+                                
                                 <button class="btn-action-minimal" onclick="editarProyecto({{ json_encode($proyecto) }})">Editar</button>
                                 
                                 <form action="{{ route('proyectos.destroy', $proyecto->id_proyecto) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este proyecto definitivamente?');">

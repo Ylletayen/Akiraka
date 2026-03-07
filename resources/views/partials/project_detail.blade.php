@@ -129,22 +129,42 @@
     <main class="main-content-grid">
         <section>
             <h2 class="column-title">Obras</h2>
+            
             <div class="list-group">
                 <ul class="project-list">
                     <li>Proyectos</li>
                     <li class="indent-1">En proceso</li>
-                    <li class="indent-2"><a href="{{ route('project.main', 1) }}" class="project-link" data-img="ruta/a/tu/imagen.jpg">Residencial Valle de Bravo</a></li>
-                    <li class="indent-2"><a href="#" class="project-link" data-img="{{ asset('img/pabellon.jpg') }}">Pabellón Efímero CDMX</a></li>
-                    <li class="indent-2"><a href="#" class="project-link" data-img="{{ asset('img/cultural.jpg') }}">Centro Cultural Akiraka 2026</a></li>
+                    
+                    @forelse($proyectosEnProceso as $proyecto)
+                        <li class="indent-2">
+                            <a href="{{ route('project.main', $proyecto->id_proyecto) }}" 
+                               class="project-link" 
+                               data-img="{{ $proyecto->portada ? asset('storage/' . $proyecto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
+                                {{ $proyecto->titulo }}
+                            </a>
+                        </li>
+                    @empty
+                        <li class="indent-2" style="color: #ccc; font-style: italic; font-size: 0.85rem;">Ningún proyecto en proceso.</li>
+                    @endforelse
                 </ul>
             </div>
 
             <div class="list-group">
                 <ul class="project-list">
                     <li>Construidos</li>
-                    <li><span class="year-label">2025</span> <a href="#" class="project-link" data-img="{{ asset('img/casa-bosque.jpg') }}">Casa Bosque</a></li>
-                    <li><span class="year-label">2024</span> <a href="#" class="project-link" data-img="{{ asset('img/estudio.jpg') }}">Estudio de Pintura Nómada</a></li>
-                    <li><span class="year-label">2023</span> <a href="#" class="project-link" data-img="{{ asset('img/terraza.jpg') }}">Terraza Akiraka</a></li>
+                    
+                    @forelse($proyectosConstruidos as $proyecto)
+                        <li>
+                            <span class="year-label">{{ date('Y') }}</span> 
+                            <a href="{{ route('project.main', $proyecto->id_proyecto) }}" 
+                               class="project-link" 
+                               data-img="{{ $proyecto->portada ? asset('storage/' . $proyecto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
+                                {{ $proyecto->titulo }}
+                            </a>
+                        </li>
+                    @empty
+                        <li style="color: #ccc; font-style: italic; font-size: 0.85rem;">Ningún proyecto finalizado.</li>
+                    @endforelse
                 </ul>
             </div>
         </section>
