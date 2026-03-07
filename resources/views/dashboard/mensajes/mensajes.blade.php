@@ -134,6 +134,17 @@
         .btn-light { background: #eee; }
 
         textarea { width: 100%; height: 120px; padding: 10px; margin-top: 10px; border: 1px solid #ccc; }
+        /* MENSAJE NO LEÍDO */
+        .message-unread .message-name{
+            font-weight:bold;
+            color:#000;
+        }
+
+        .message-unread .message-subject{
+            font-weight:bold;      
+            color:#000;
+        } 
+
     </style>
 
     <div class="dashboard-container">
@@ -143,13 +154,13 @@
         <div class="main-content">
             <div class="header-section">
                 <h1>Mensajes</h1>
-                <span>Marcar todos como leídos</span>
+                <span onclick="marcarTodos()" style="cursor:pointer;">Marcar todos como leídos</span>
             </div>
 
             <ul class="message-list">
-                <li class="message-item" onclick="abrirMensaje('Elena Firne','Consulta de presupuesto','Estimados, quisiera información sobre costos de remodelación.')">
+                <li class="message-item message-unread"onclick="abrirMensaje(this,'Elena Firne','Consulta de presupuesto','Estimados, quisiera información sobre costos de remodelación.')">
                     <div class="message-left">
-                        <div class="message-name">• Elena Firne</div>
+                        <div class="message-name"> Elena Firne</div>
                         <div class="message-subject">Consulta de presupuesto</div>
                     </div>
                     <div>
@@ -158,7 +169,7 @@
                     </div>
                 </li>
 
-                <li class="message-item" onclick="abrirMensaje('Maria Ana','Colaboración Editorial','Nos gustaría colaborar con su estudio en una publicación.')">
+                <li class="message-item message-unread" onclick="abrirMensaje(this,'Maria Ana','Colaboración Editorial','Nos gustaría colaborar con su estudio en una publicación.')">
                     <div class="message-left">
                         <div class="message-name">Maria Ana</div>
                         <div class="message-subject">Colaboración Editorial</div>
@@ -206,10 +217,14 @@
     </div>
 
     <script>
-        function abrirMensaje(nombre, asunto, contenido) {
+        function abrirMensaje(elemento,nombre,asunto,contenido) {
+
             document.getElementById("tituloMensaje").innerText = nombre + " - " + asunto;
             document.getElementById("contenidoMensaje").innerText = contenido;
             document.getElementById("modalMensaje").style.display = "flex";
+
+            // quitar estado no leído
+            elemento.classList.remove("message-unread");
         }
 
         function abrirResponder() {
@@ -228,6 +243,14 @@
             document.getElementById("modalResponder").style.display = "none";
             document.getElementById("modalEliminar").style.display = "none";
         }
+        function marcarTodos(){
+        let mensajes = document.querySelectorAll(".message-item");
+
+        mensajes.forEach(function(msg){
+            msg.classList.remove("message-unread");
+        });
+        }
+        
     </script>
 </div>
 @endsection
