@@ -82,16 +82,16 @@
             gap: 40px;
         }
 
-        /* --- NUEVOS ESTILOS PARA EL HOVER PREVIEW --- */
+        /* --- ESTILOS PARA EL HOVER PREVIEW --- */
         .hover-preview {
             position: fixed;
             pointer-events: none;
-            width: 320px; /* Ajusta el tamaño que desees */
+            width: 320px;
             height: 220px;
             overflow: hidden;
             opacity: 0;
             z-index: 10000;
-            transform: translate(15px, -50%); /* Se desplaza un poco a la derecha del cursor */
+            transform: translate(15px, -50%);
             transition: opacity 0.4s ease, transform 0.2s ease-out;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
@@ -106,10 +106,44 @@
             opacity: 1;
         }
 
+        /* --- ESTILOS DEL MODAL A PANTALLA COMPLETA --- */
+        .akira-modal-fullscreen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #fdfdfd; 
+            z-index: 100000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            overflow-y: auto;
+            padding-top: 60px; 
+        }
+
+        .akira-modal-fullscreen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-close-btn {
+            position: fixed;
+            top: 30px; right: 40px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 100001;
+            background: none; border: none;
+            font-family: Arial, sans-serif;
+            color: #111;
+            transition: transform 0.3s ease;
+        }
+
+        .modal-close-btn:hover {
+            transform: scale(1.1);
+        }
+
         /* Responsivo básico */
         @media (max-width: 900px) {
             .main-content-grid { grid-template-columns: repeat(2, 1fr); }
-            .hover-preview { display: none; } /* Ocultar en móviles para mejor experiencia */
+            .hover-preview { display: none; }
         }
 
         @media (max-width: 600px) {
@@ -200,15 +234,24 @@
         <img src="" alt="Preview" id="preview-img">
     </div>
 
+    <div id="historia-modal" class="akira-modal-fullscreen">
+        <button class="modal-close-btn" onclick="cerrarModalHistoria()">✕</button>
+        <div id="historia-content"></div>
+    </div>
+
 </div>
 
 <script>
-    // 1. Lógica del Hover Preview
     const previewContainer = document.getElementById('hover-preview');
     const previewImg = document.getElementById('preview-img');
     const projectLinks = document.querySelectorAll('.project-link');
+    
+    // Variables para el Modal
+    const modalHistoria = document.getElementById('historia-modal');
+    const modalContent = document.getElementById('historia-content');
 
     projectLinks.forEach(link => {
+        // 1. Lógica del Hover Preview (Ya la tenías)
         link.addEventListener('mouseenter', () => {
             const imageSrc = link.getAttribute('data-img');
             if(imageSrc) {
@@ -218,7 +261,6 @@
         });
 
         link.addEventListener('mousemove', (e) => {
-            // Sigue al mouse
             previewContainer.style.left = e.clientX + 'px';
             previewContainer.style.top = e.clientY + 'px';
         });
@@ -226,7 +268,39 @@
         link.addEventListener('mouseleave', () => {
             previewContainer.classList.remove('active');
         });
+
+        // 2. NUEVO: Lógica del Click para el Modal AJAX
+        link.addEventListener('click', function(e) {
+            const url = this.getAttribute('href');
+            
+            // Si el enlace es estático (#), dejamos que actúe normal (no abre modal)
+            if(url === '#' || url === '') return;
+
+            // Si es una ruta válida, detenemos la redirección y abrimos el modal
+            e.preventDefault(); 
+            
+            modalHistoria.classList.add('active');
+            modalContent.innerHTML = '<div style="text-align:center; padding-top: 20vh; font-family: Garamond, serif; font-size: 1.5rem; color: #888;">Cargando historia...</div>';
+
+            // Petición al servidor
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    modalContent.innerHTML = html;
+                })
+                .catch(error => {
+                    modalContent.innerHTML = '<div style="text-align:center; padding-top: 20vh; color: #d9534f;">Hubo un error al cargar la historia.</div>';
+                    console.error('Error:', error);
+                });
+        });
     });
+
+    // Función para cerrar el modal AJAX
+    function cerrarModalHistoria() {
+        modalHistoria.classList.remove('active');
+        // Limpiamos el contenido para que el próximo proyecto empiece en blanco
+        setTimeout(() => { modalContent.innerHTML = ''; }, 400);
+    }
 
     function regresarAlLanding() {
         window.location.href = "{{ url('/') }}"; 
