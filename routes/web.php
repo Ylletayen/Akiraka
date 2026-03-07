@@ -5,6 +5,8 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OpcionesController;
+use App\Http\Controllers\MensajesController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -60,6 +62,6 @@ Route::get('/dashboard/quienes-somos', function () {
 })->middleware('auth')->name('dashboard.quienes_somos');
 
 ///dash mensajes 
-Route::get('/mensajes', function () {
-    return view('dashboard.mensajes');
-})->name('mensajes');
+Route::get('/dashboard/mensajes', [MensajesController::class, 'index'])
+    ->middleware('auth')
+    ->name('dashboard.mensajes');

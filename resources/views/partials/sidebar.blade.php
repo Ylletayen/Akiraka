@@ -120,9 +120,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('mensajes') ? 'active' : '' }}" 
-                   href="{{ route('mensajes') ?? '#' }}">
-                    <div><i class="fas fa-envelope me-3"></i> Mensajes</div>
+               <a class="nav-link {{ request()->routeIs('dashboard.mensajes') ? 'active' : '' }}" 
+                 href="{{ route('dashboard.mensajes') }}"><div><i class="fas fa-envelope me-3"></i> Mensajes</div>
                 </a>
             </li>
             <li class="nav-item">
