@@ -68,7 +68,27 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // 4. Ruta del Dashboard
 Route::get('/dashboard/main', function () {
-    return view('dashboard.dash.main');
+    // 1. Estadísticas rápidas
+    $totalProyectos = \App\Models\Proyecto::count();
+    $inversionTotal = \App\Models\Proyecto::sum('costo_inicial');
+
+    // 2. Traer 3 proyectos en proceso con su portada
+    $proyectosEnProceso = \App\Models\Proyecto::where('id_estado', 1)->take(3)->get()->map(function ($proyecto) {
+        $proyecto->portada = \Illuminate\Support\Facades\DB::table('imagenes_proyecto')
+                                ->where('id_proyecto', $proyecto->id_proyecto)
+                                ->value('url_imagen');
+        return $proyecto;
+    });
+
+    // 3. Traer 2 proyectos construidos/futuros (asumiendo estado 2)
+    $proyectosFuturos = \App\Models\Proyecto::where('id_estado', 2)->take(2)->get()->map(function ($proyecto) {
+        $proyecto->portada = \Illuminate\Support\Facades\DB::table('imagenes_proyecto')
+                                ->where('id_proyecto', $proyecto->id_proyecto)
+                                ->value('url_imagen');
+        return $proyecto;
+    });
+
+    return view('dashboard.dash.main', compact('totalProyectos', 'inversionTotal', 'proyectosEnProceso', 'proyectosFuturos'));
 })->middleware('auth')->name('dashboard.main');
 
 Route::get('/registro', function () {
