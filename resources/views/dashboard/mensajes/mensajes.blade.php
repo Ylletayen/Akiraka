@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+
+@php
+use Illuminate\Support\Str;
+@endphp
+
 <div class="dash-admin-view">
     <style>
         /* ================= TODA TU BASE ORIGINAL INTACTA ================= */
@@ -21,7 +26,6 @@
             align-items: stretch;
         }
 
-        /* Estilos del Sidebar mantenidos para que el Partial se vea bien */
         .sidebar {
             width: 260px;
             background: #1c1c1c;
@@ -60,7 +64,6 @@
             background: #4b4b4b;
         }
 
-        /* ================= ESTILOS DE MENSAJES ================= */
         .main-content {
             flex-grow: 1;
             background: #fff;
@@ -103,7 +106,6 @@
 
         .btn-delete { border: none; background: none; cursor: pointer; font-size: 1rem; }
 
-        /* ================= ESTILOS DE MODAL ================= */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -134,19 +136,11 @@
         .btn-light { background: #eee; }
 
         textarea { width: 100%; height: 120px; padding: 10px; margin-top: 10px; border: 1px solid #ccc; }
-        /* MENSAJE NO LEIDO */
-        .no-leido .message-name{
-            font-weight: bold;
-        }
 
-        .no-leido .message-subject{
-            font-weight: bold;
-        }
+        .no-leido .message-name{ font-weight: bold; }
+        .no-leido .message-subject{ font-weight: bold; }
 
-        /* CIRCULO DE NOTIFICACION */
-        .notificacion{
-            display:none;
-        }
+        .notificacion{ display:none; }
 
         .no-leido .notificacion{
             display:inline-block;
@@ -163,7 +157,6 @@
             50%{opacity:.2;}
             100%{opacity:1;}
         }
-
     </style>
 
     <div class="dashboard-container">
@@ -172,7 +165,6 @@
 
         <div class="main-content">
 
-        <!-- EL TOPBAR LIMPIO VA AQUÍ ARRIBA -->
             @include('partials.topbar')
             
             <div class="header-section">
@@ -180,29 +172,49 @@
                 <span onclick="marcarTodos()" style="cursor:pointer;">Marcar todos como leídos</span>
             </div>
 
-            <ul class="message-list">
-               <li class="message-item no-leido"onclick="abrirMensaje(this,'Elena Firne','Consulta de presupuesto','Estimados, quisiera información sobre costos de remodelación.')">
-                    <div class="message-left">
-                        <div class="message-name"> Elena Firne</div>
-                        <div class="message-subject">Consulta de presupuesto</div>
-                    </div>
-                    <div>
-                        <span class="text-sm text-gray-500"><span class="notificacion"></span> 05/03/2026</span>
-                        <button class="btn-delete" onclick="abrirEliminar(event,'Elena Firne')">🗑</button>
-                    </div>
-                </li>
+        <ul class="message-list">
 
-                <li class="message-item no-leido" onclick="abrirMensaje(this,'Maria Ana','Colaboración Editorial','Nos gustaría colaborar con su estudio en una publicación.')">
-                    <div class="message-left">
-                        <div class="message-name">Maria Ana</div>
-                        <div class="message-subject">Colaboración Editorial</div>
-                    </div>
-                    <div>
-                       <span class="text-sm text-gray-500"><span class="notificacion"></span> 04/04/2026</span>
-                        <button class="btn-delete" onclick="abrirEliminar(event,'Maria Ana')">🗑</button>
-                    </div>
-                </li>
-            </ul>
+        @forelse($mensajes as $mensaje)
+
+        <li class="message-item no-leido"
+        onclick="abrirMensaje(this,
+        '{{ $mensaje->nombre_cliente }}',
+        'Mensaje recibido',
+        '{{ $mensaje->mensaje }}')">
+
+            <div class="message-left">
+                <div class="message-name">
+                    {{ $mensaje->nombre_cliente }}
+                </div>
+
+                <div class="message-subject">
+                    {{ \Illuminate\Support\Str::limit($mensaje->mensaje,40) }}
+                </div>
+            </div>
+
+            <div>
+                <span class="text-sm text-gray-500">
+                    <span class="notificacion"></span>
+                    {{ \Carbon\Carbon::parse($mensaje->fecha_envio)->format('d/m/Y') }}
+                </span>
+
+                <button class="btn-delete"
+                onclick="abrirEliminar(event,'{{ $mensaje->nombre_cliente }}')">
+                🗑
+                </button>
+            </div>
+
+        </li>
+
+        @empty
+
+        <li style="padding:40px;text-align:center;color:#777;font-size:1.1rem;">
+            Por el momento, no hay ningún mensaje.
+        </li>
+
+        @endforelse
+
+        </ul>
         </div>
     </div>
 
@@ -239,39 +251,43 @@
         </div>
     </div>
 
-    <script>
-           function abrirMensaje(elemento,nombre,asunto,contenido) {
-            document.getElementById("tituloMensaje").innerText = nombre + " - " + asunto;
-            document.getElementById("contenidoMensaje").innerText = contenido;
-            document.getElementById("modalMensaje").style.display = "flex";
+<script>
 
-            // quitar estado no leído
-            elemento.classList.remove("no-leido");
-        }
+function abrirMensaje(elemento,nombre,asunto,contenido){
 
-        function abrirResponder() {
-            cerrarTodo();
-            document.getElementById("modalResponder").style.display = "flex";
-        }
+    document.getElementById("tituloMensaje").innerText = nombre + " - " + asunto;
+    document.getElementById("contenidoMensaje").innerText = contenido;
+    document.getElementById("modalMensaje").style.display = "flex";
 
-        function abrirEliminar(event, nombre) {
-            event.stopPropagation();
-            document.getElementById("nombreEliminar").innerText = "El mensaje de " + nombre + " se perderá.";
-            document.getElementById("modalEliminar").style.display = "flex";
-        }
+    elemento.classList.remove("no-leido");
+}
 
-        function cerrarTodo() {
-            document.getElementById("modalMensaje").style.display = "none";
-            document.getElementById("modalResponder").style.display = "none";
-            document.getElementById("modalEliminar").style.display = "none";
-        }
-        function marcarTodos(){
-            let mensajes = document.querySelectorAll(".message-item");
+function abrirResponder(){
+    cerrarTodo();
+    document.getElementById("modalResponder").style.display = "flex";
+}
 
-            mensajes.forEach(function(msg){
-                msg.classList.remove("no-leido");
-            });
-        }
-    </script>
+function abrirEliminar(event,nombre){
+    event.stopPropagation();
+    document.getElementById("nombreEliminar").innerText = "El mensaje de " + nombre + " se perderá.";
+    document.getElementById("modalEliminar").style.display = "flex";
+}
+
+function cerrarTodo(){
+    document.getElementById("modalMensaje").style.display = "none";
+    document.getElementById("modalResponder").style.display = "none";
+    document.getElementById("modalEliminar").style.display = "none";
+}
+
+function marcarTodos(){
+    let mensajes=document.querySelectorAll(".message-item");
+
+    mensajes.forEach(function(msg){
+        msg.classList.remove("no-leido");
+    });
+}
+
+</script>
+
 </div>
 @endsection

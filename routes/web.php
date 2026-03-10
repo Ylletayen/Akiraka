@@ -7,8 +7,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OpcionesController;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\UsuarioController;
-use App\Http\Controllers\MensajesController;
 use App\Models\Proyecto;
+use App\Http\Controllers\MensajesController;
 
 
 Route::get('/', function () {
@@ -130,9 +130,10 @@ Route::delete('/dashboard/equipo/{id}', [EquipoController::class, 'destroy'])
     
 
 ///dash mensajes 
-Route::get('/mensajes', function () {
-    return view('dashboard.mensajes.mensajes');
-})->name('mensajes');
+
+
+Route::get('/mensajes', [MensajesController::class, 'index'])
+    ->name('mensajes');
 
 // USUARIOS
 Route::prefix('dashboard')->middleware('auth')->group(function () {
