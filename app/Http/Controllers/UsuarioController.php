@@ -47,4 +47,25 @@ class UsuarioController extends Controller
 
         return redirect()->back()->with('success', 'El rol de ' . $usuario->nombre . ' ha sido actualizado.');
     }
+    
+    public function destroy($id)
+    {
+        // 1. Buscamos al usuario por su ID
+        $usuario = \App\Models\User::findOrFail($id);
+
+        // 2. FILTRO DE SEGURIDAD: Usamos id_usuario para comparar
+        if ($usuario->id_usuario == auth()->user()->id_usuario) {
+            return redirect()->back()->withErrors(['error' => 'No puedes eliminar tu propia cuenta de Superadmin.']);
+        }
+
+        // 3. (Opcional) Si el usuario tiene foto de perfil física, la borramos del servidor
+        if ($usuario->foto) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($usuario->foto);
+        }
+
+        // 4. Eliminamos el registro de la base de datos
+        $usuario->delete();
+
+        return redirect()->back()->with('success', 'Usuario eliminado correctamente.');
+    }
 }

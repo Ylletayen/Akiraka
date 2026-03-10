@@ -135,10 +135,9 @@
                                 <button class="btn-action-minimal" onclick="editarUsuario({{ json_encode($usuario) }})">Editar</button>
                                 
                                 @if($usuario->id_usuario !== Auth::user()->id_usuario)
-                                <form action="{{ route('usuarios.destroy', $usuario->id_usuario) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn-action-minimal" style="color: #d9534f;">Eliminar</button>
-                                </form>
+                                    <button type="button" class="btn-action-minimal" style="color: #d9534f;" onclick="confirmarEliminacion('{{ route('usuarios.destroy', $usuario->id_usuario) }}')">
+                                        Eliminar
+                                    </button>
                                 @endif
                             </td>
                         </tr>
@@ -196,6 +195,10 @@
         </div>
     </div>
 </div>
+<form id="formEliminarMaestro" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
 
 <script>
     function prepararNuevo() {
@@ -242,6 +245,13 @@
         
         var myModal = new bootstrap.Modal(document.getElementById('modalUsuario'));
         myModal.show();
+    }
+    function confirmarEliminacion(url) {
+        if(confirm('¿Estás 100% seguro de que quieres eliminar a este usuario?')) {
+            let form = document.getElementById('formEliminarMaestro');
+            form.action = url;
+            form.submit();
+        }
     }
 </script>
 @endsection
