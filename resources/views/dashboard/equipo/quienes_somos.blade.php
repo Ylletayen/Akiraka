@@ -113,6 +113,10 @@
         @include('partials.sidebar')
 
         <main class="main-content">
+
+        <!-- EL TOPBAR LIMPIO VA AQUÍ ARRIBA -->
+            @include('partials.topbar')
+            
             <div class="header-section">
                 <div>
                     <h1>Nuestro Equipo</h1>

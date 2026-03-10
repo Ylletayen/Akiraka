@@ -124,6 +124,10 @@
 
         <!-- ================= MAIN CONTENT ================= -->
         <main class="main-content">
+
+        <!-- EL TOPBAR LIMPIO VA AQUÍ ARRIBA -->
+            @include('partials.topbar')
+            
             <div class="header-welcome text-center">
                 <h1>Bienvenido(a)</h1>
                 <p>“No diseñamos casas, construimos el escenario de tus mejores recuerdos.”</p>

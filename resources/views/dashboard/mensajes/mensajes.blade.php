@@ -171,6 +171,10 @@
         @include('partials.sidebar')
 
         <div class="main-content">
+
+        <!-- EL TOPBAR LIMPIO VA AQUÍ ARRIBA -->
+            @include('partials.topbar')
+            
             <div class="header-section">
                 <h1>Mensajes</h1>
                 <span onclick="marcarTodos()" style="cursor:pointer;">Marcar todos como leídos</span>
