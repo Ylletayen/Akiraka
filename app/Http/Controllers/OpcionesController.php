@@ -5,44 +5,45 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage; // Añadido para manejar borrado de fotos viejas
+use Illuminate\Support\Facades\Storage; 
+use App\Models\Configuracion; // <--- No olvides importar el nuevo modelo
 
 class OpcionesController extends Controller
 {
     public function index()
     {
-        return view('dashboard.opciones.opciones');
+        // Traemos la configuración de la BD (asumimos que siempre es el ID 1)
+        $configuracion = Configuracion::first();
+        
+        // Si por alguna razón la BD está vacía, creamos un objeto vacío para que no truene la vista
+        if (!$configuracion) {
+            $configuracion = new Configuracion();
+        }
+
+        // Pasamos la variable a la vista
+        return view('dashboard.opciones.opciones', compact('configuracion'));
     }
 
     public function updatePerfil(Request $request)
     {
         $user = Auth::user();
 
-        // 1. Validamos que la imagen sea realmente una imagen (seguridad)
         $request->validate([
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Máximo 2MB
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
-        // 2. ¿Subieron una foto nueva?
         if ($request->hasFile('foto')) {
-            // Si el usuario ya tenía una foto vieja, la borramos del disco para no ocupar espacio basura
             if ($user->foto && Storage::disk('public')->exists($user->foto)) {
                 Storage::disk('public')->delete($user->foto);
             }
-
-            // Guardamos la nueva foto en la carpeta public/perfiles (igual que en tu AuthController)
             $rutaFoto = $request->file('foto')->store('perfiles', 'public');
-            
-            // Actualizamos el registro de la BD
             $user->foto = $rutaFoto;
         }
 
-        // 3. Si escribió algo en la contraseña nueva, la encriptamos y la guardamos
         if($request->filled('password_nueva')){
             $user->password = Hash::make($request->password_nueva);
         }
 
-        // 4. Guardamos su nombre y correo editados
         $user->nombre = $request->nombre;
         $user->correo = $request->correo;
         $user->save(); 
@@ -52,7 +53,20 @@ class OpcionesController extends Controller
 
     public function updatePublicos(Request $request)
     {
-        // Lógica de datos públicos
-        return back()->with('success', 'Datos públicos actualizados correctamente.');
+        // Buscamos el registro 1, si no hay, creamos uno nuevo
+        $configuracion = Configuracion::first();
+        if (!$configuracion) {
+            $configuracion = new Configuracion();
+        }
+
+        // Actualizamos TODOS los campos, incluyendo el nuevo de Facebook
+        $configuracion->telefono = $request->telefono;
+        $configuracion->correo_contacto = $request->correo_contacto;
+        $configuracion->direccion = $request->direccion;
+        $configuracion->instagram = $request->instagram;
+        $configuracion->facebook = $request->facebook;
+        $configuracion->save();
+
+        return back()->with('success', 'Datos públicos actualizados correctamente en la base de datos.');
     }
 }

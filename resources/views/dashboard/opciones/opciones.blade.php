@@ -25,11 +25,10 @@
         /* ================= MAIN CONTENT (LIMPIO Y BLANCO) ================= */
         .main-content {
             flex-grow: 1;
-            background: #ffffff; /* Blanco puro, sin degradados grises */
-            padding: 40px 50px; /* Un poco más de aire a los lados */
+            background: #ffffff;
+            padding: 40px 50px; 
             border-radius: 12px;
             position: relative;
-            /* Le quitamos las sombras pesadas y los círculos de fondo */
         }
 
         .header-section {
@@ -40,7 +39,7 @@
 
         .header-section h1 {
             font-size: 2.2rem;
-            font-weight: normal; /* Normal para mantener elegancia */
+            font-weight: normal; 
             margin-bottom: 5px;
             color: #111;
         }
@@ -65,13 +64,13 @@
         }
 
         .options-card {
-            background: #ffffff; /* Blanco sólido, adiós al cristal translúcido */
-            border: 1px solid #eaeaea; /* Borde sutil y limpio */
+            background: #ffffff; 
+            border: 1px solid #eaeaea; 
             border-radius: 8px;
             padding: 40px 30px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03); /* Sombra extremadamente suave */
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03); 
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -135,7 +134,6 @@
             object-fit: cover;
         }
 
-        /* Botón estilo texto para cambiar foto */
         .btn-change-photo {
             font-family: "Helvetica Neue", Arial, sans-serif;
             font-size: 0.7rem;
@@ -176,7 +174,7 @@
         .form-control {
             width: 100%;
             padding: 12px 15px;
-            background-color: #fafafa; /* Fondo ligeramente gris para contrastar con la tarjeta blanca */
+            background-color: #fafafa; 
             border: 1px solid #eaeaea;
             border-radius: 4px;
             font-size: 0.95rem;
@@ -204,8 +202,6 @@
         .toggle-password:hover { color: #111; }
 
         textarea.form-control { resize: vertical; min-height: 90px; }
-
-        .divider { height: 1px; background-color: #f0f0f0; margin: 30px 0; }
 
         .btn-save {
             display: block; width: 100%; padding: 16px; background-color: #111; color: #fff;
@@ -254,10 +250,8 @@
         <!-- ================= INCLUIR SIDEBAR ================= -->
         @include('partials.sidebar')
 
-        <!-- ================= MAIN CONTENT ================= -->
         <main class="main-content">
             
-            <!-- EL TOPBAR LIMPIO VA AQUÍ ARRIBA -->
             @include('partials.topbar')
 
             <div class="header-section" style="margin-top: 30px;">
@@ -282,7 +276,6 @@
                         @csrf
                         @method('PUT')
                         
-                        <!-- SECCIÓN DE FOTO DE PERFIL -->
                         <div class="profile-pic-container">
                             <div class="profile-pic-wrapper">
                                 <img src="{{ Auth::user()->foto ? asset('storage/' . Auth::user()->foto) : asset('images/default-avatar.png') }}" 
@@ -306,7 +299,7 @@
                             <input type="email" name="correo" class="form-control" value="{{ Auth::user()->correo ?? '' }}" required>
                         </div>
 
-                        <div class="divider"></div>
+                        <div style="height: 1px; background-color: #f0f0f0; margin: 30px 0;"></div>
                         <p class="subtitle" style="color: #111;">Cambio de Contraseña</p>
 
                         <div class="form-group">
@@ -331,26 +324,35 @@
                         <div style="display: flex; gap: 15px;">
                             <div class="form-group" style="flex: 1;">
                                 <label>Teléfono Público</label>
-                                <input type="text" name="telefono" class="form-control" value="722 165 5901">
+                                <!-- Ya es 100% dinámico jalando de la BD -->
+                                <input type="text" name="telefono" class="form-control" value="{{ $configuracion->telefono ?? '' }}">
                             </div>
 
                             <div class="form-group" style="flex: 1;">
                                 <label>Correo de Contacto</label>
-                                <input type="email" name="correo_contacto" class="form-control" value="akiraka.estudio@gmail.com">
+                                <input type="email" name="correo_contacto" class="form-control" value="{{ $configuracion->correo_contacto ?? '' }}">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label>Dirección del Estudio</label>
-                            <textarea name="direccion" class="form-control" rows="2">Parque Santa María 10, Santa María Ahuacatlán, 51200 Valle de Bravo, Estado de México</textarea>
+                            <textarea name="direccion" class="form-control" rows="2">{{ $configuracion->direccion ?? '' }}</textarea>
                         </div>
 
-                        <div class="form-group">
-                            <label>Enlace de Instagram</label>
-                            <input type="url" name="instagram" class="form-control" value="https://www.instagram.com/">
+                        <!-- AQUÍ AGREGAMOS INSTAGRAM Y FACEBOOK JUNTOS -->
+                        <div style="display: flex; gap: 15px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label>Enlace Instagram</label>
+                                <input type="url" name="instagram" class="form-control" value="{{ $configuracion->instagram ?? '' }}">
+                            </div>
+
+                            <div class="form-group" style="flex: 1;">
+                                <label>Enlace Facebook</label>
+                                <input type="url" name="facebook" class="form-control" value="{{ $configuracion->facebook ?? '' }}">
+                            </div>
                         </div>
 
-                        <button type="submit" class="btn-save btn-outline mt-4" style="margin-top: 55px;">Actualizar Datos</button>
+                        <button type="submit" class="btn-save btn-outline mt-4" style="margin-top: 30px;">Actualizar Datos</button>
                     </form>
                 </div>
 
@@ -359,7 +361,6 @@
     </div>
 </div>
 
-<!-- ================= ESTRUCTURA HTML DEL MODAL ================= -->
 <div id="custom-confirm-modal" class="custom-modal-overlay">
     <div class="custom-modal-box">
         <div class="custom-modal-icon"><i class="fas fa-exclamation-circle"></i></div>

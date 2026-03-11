@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Extraemos la configuración de la BD -->
+@php
+    $config = \App\Models\Configuracion::first();
+@endphp
+
 <style>
     .akira-container {
         max-width: 1000px;
@@ -46,27 +51,27 @@
 
 <div class="akira-container">
     <div class="akira-header">
-    <a href="{{ route('project.detail') }}" style="text-decoration: none; color: inherit; font-weight: normal;">
-        Estudio Akiraka
-    </a>
+        <a href="{{ route('project.detail') }}" style="text-decoration: none; color: inherit; font-weight: normal;">
+            Estudio Akiraka
+        </a>
 
-    <span class="text-muted-akira">
-        <a href="{{ route('info') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Info</a>, 
-        <a href="{{ route('contacto') }}" style="text-decoration: none; color: inherit;">Contacto</a>.
-    </span>
-</div>
+        <span class="text-muted-akira">
+            <a href="{{ route('info') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Info</a>, 
+            <a href="{{ route('contacto') }}" style="text-decoration: none; color: inherit;">Contacto</a>.
+        </span>
+    </div>
 
     <div class="akira-description">
-          <br>¿QUÌENES SOMOS?</br>
+        <strong>¿QUIÉNES SOMOS?</strong><br>
         Somos AKIRAKA, un estudio de arquitectura que encuentra su nombre y filosofía en el concepto japonés de 明か (akiraka), que significa claro, evidente y brillante. Creado por el arq. Akira Kameta, mexicano - japonés, que lleva su percepción de ambos mundos a una interpretación de solución de los proyectos.
     </div>
 
-       <div class="akira-description">
-        <br>VALORES DE LA EMPRESA</br>
-        -Colaboración y Empatía: Se establece una relación con el cliente y la comunidad, diseñando desde un entendimiento profundo de sus necesidades para lograr un éxito compartido.
-       <br> -Impacto Regenerativo: El enfoque supera la sostenibilidad convencional buscando la regeneración activa de los ecosistemas y el fortalecimiento del tejido social.
-       <br> -Materialidad Sostenible: La madera de origen responsable es la protagonista ("materia viva"), valorada por su estética, capacidad de secuestro de carbono y beneficios biológicos.
-        <br>-Simplicidad y Honestidad: Se apuesta por la claridad conceptual para transformar ideas complejas en soluciones ejecutables (ideales para la autoconstrucción) y una transparencia radical en cuanto a costos, plazos y origen de los materiales.
+    <div class="akira-description">
+        <strong>VALORES DE LA EMPRESA</strong><br>
+        - Colaboración y Empatía: Se establece una relación con el cliente y la comunidad, diseñando desde un entendimiento profundo de sus necesidades para lograr un éxito compartido.<br> 
+        - Impacto Regenerativo: El enfoque supera la sostenibilidad convencional buscando la regeneración activa de los ecosistemas y el fortalecimiento del tejido social.<br> 
+        - Materialidad Sostenible: La madera de origen responsable es la protagonista ("materia viva"), valorada por su estética, capacidad de secuestro de carbono y beneficios biológicos.<br>
+        - Simplicidad y Honestidad: Se apuesta por la claridad conceptual para transformar ideas complejas en soluciones ejecutables (ideales para la autoconstrucción) y una transparencia radical en cuanto a costos, plazos y origen de los materiales.
     </div>
 
 
@@ -74,14 +79,12 @@
         <div>
             <div class="team-title">Equipo actual</div>
             <ul class="team-list">
-                <li>Arq. Alberto Akira Kameta Miyamoto  <span class="text-muted-akira"> <br> Arquitecto mexicano japonés, egresado de la universidad Iberoamericana, estudios de postgrado en diseño y construcción sostenible.
-</span></li>
-                <li>  Arq. Ana Regnia Torres Tapia <span class="text-muted-akira"> <br>Arquitecta egresada de la Universidad Anáhuac Norte, Ciudad de México, Proyectos</span></li>
-                <li> Alejandra <span class="text-muted-akira"> Licenciada en derecho </span></li>
+                <li>Arq. Alberto Akira Kameta Miyamoto  <span class="text-muted-akira"> <br> Arquitecto mexicano japonés, egresado de la universidad Iberoamericana, estudios de postgrado en diseño y construcción sostenible.</span></li>
+                <li>Arq. Ana Regnia Torres Tapia <span class="text-muted-akira"> <br>Arquitecta egresada de la Universidad Anáhuac Norte, Ciudad de México, Proyectos</span></li>
+                <li>Alejandra <span class="text-muted-akira"> <br>Licenciada en derecho </span></li>
             </ul>
         </div>
         <div>
-
             <div class="team-title">Roles dentro de la empresa</div>
             <ul class="team-list">
                 <li>Dirección general: Arq. Akira </li>
@@ -90,19 +93,17 @@
             </ul>
         </div>
 
-
-                <div>
-           <div style="text-align:text- right;">
-            <p>ESTUDIO DE ARQUITECTURA AKIRAKA                                                                          
-            <br>Parque Santa María 10, Santa María Ahuacatlán,
-            <br>51200 Valle de Bravo, Estado de México
-            <br>Cel. 722 165 5901                                                                                           
-            <br>C.E: administracion@akirakastudio.com y akiraka.estudio@gmail.com</p>
+        <div>
+            <!-- AQUÍ SE ENCUENTRA LA INFORMACIÓN DINÁMICA DE CONTACTO -->
+            <div style="text-align: left; margin-top: 20px;">
+                <p>
+                    ESTUDIO DE ARQUITECTURA AKIRAKA<br>
+                    {!! nl2br(e($config->direccion ?? 'Parque Santa María 10, Santa María Ahuacatlán, 51200 Valle de Bravo, Estado de México')) !!}<br>
+                    Cel. {{ $config->telefono ?? '722 165 5901' }}<br>
+                    C.E: administracion@akirakastudio.com y {{ $config->correo_contacto ?? 'akiraka.estudio@gmail.com' }}
+                </p>
             </div>
-
         </div>
-
-
     </div>
 </div>
 @endsection

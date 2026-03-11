@@ -2,6 +2,11 @@
 
 @section('content')
 
+<!-- Extraemos la configuración de la BD -->
+@php
+    $config = \App\Models\Configuracion::first();
+@endphp
+
 @include('dashboard.login.login')
 
 @include('dashboard.login.registro')
@@ -39,6 +44,16 @@
         width: auto;
         object-fit: contain;
     }
+
+    /* Estilos para los iconos de redes */
+    .social-links-akira a {
+        color: #111;
+        font-size: 1.2rem;
+        transition: opacity 0.3s ease;
+    }
+    .social-links-akira a:hover {
+        opacity: 0.6;
+    }
 </style>
 
 <div id="landing-view" class="vh-100 d-flex flex-column">
@@ -61,11 +76,21 @@
             <a href="{{ route('info') }}" class="nav-link-akira">INFORMACIÓN</a>
             <a href="{{ route('contacto') }}" class="nav-link-akira">CONTACTO</a>
             
-            <div class="social-links-akira d-flex gap-2 ms-3">
-                <a href="https://www.instagram.com/akiraka.estudio/" target="_blank">
+            <div class="social-links-akira d-flex gap-3 ms-3">
+                <!-- Instagram Dinámico -->
+                <a href="{{ $config->instagram ?? 'https://www.instagram.com/' }}" target="_blank" title="Instagram">
                     <i class="fa-brands fa-instagram"></i>
                 </a>
-                <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+
+                <!-- Facebook Dinámico (Agregado de la BD) -->
+                <a href="{{ $config->facebook ?? 'https://www.facebook.com/' }}" target="_blank" title="Facebook">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+
+                <!-- WhatsApp Dinámico (Toma el teléfono, le quita espacios/signos y genera el link wa.me) -->
+                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $config->telefono ?? '527221655901') }}" target="_blank" title="WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
             </div>
         </nav>
     </header>

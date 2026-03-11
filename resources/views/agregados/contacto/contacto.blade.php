@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Extraemos la configuración directamente desde la BD para no tocar las rutas -->
+@php
+    $config = \App\Models\Configuracion::first();
+@endphp
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <style>
@@ -47,6 +52,7 @@
         color: #666; 
         font-size: 0.95rem;
         transition: color 0.3s;
+        line-height: 1.5;
     }
 
     .contact-value-reset:hover {
@@ -148,7 +154,10 @@
         <div class="col-md-4 mb-4">
             <span class="contact-label">Proyectos y Eventos</span>
             <div class="contact-value-reset">
-                akiraka.estudio@gmail.com<br>
+                <!-- Mostramos el correo dinámico aquí -->
+                <a href="mailto:{{ $config->correo_contacto ?? 'akiraka.estudio@gmail.com' }}" style="color: inherit; text-decoration: none;">
+                    {{ $config->correo_contacto ?? 'akiraka.estudio@gmail.com' }}
+                </a><br>
                 administracion@akirakastudio.com
             </div>
         </div>
@@ -171,11 +180,13 @@
         <div class="row">
             <div class="col-md-6 mb-3">
                 <span class="location-year-label">Teléfono</span>
-                <span class="contact-value-reset"><br>+52 722 165 5901</span>
+                <!-- Teléfono dinámico -->
+                <span class="contact-value-reset"><br>{{ $config->telefono ?? '+52 722 165 5901' }}</span>
             </div>
             <div class="col-md-6 mb-3">
                 <span class="location-year-label">Dirección</span>
-                <span class="contact-value-reset"><br>Espacio Odisea. Parque Santa María 10, <br>Barrio, Sta Maria Ahuacatlan, 51200 Valle de Bravo, Méx.</span>
+                <!-- Dirección dinámica con saltos de línea respetados -->
+                <span class="contact-value-reset"><br>{!! nl2br(e($config->direccion ?? 'Parque Santa María 10, Valle de Bravo, Méx.')) !!}</span>
             </div>
         </div>
     </div>
@@ -199,18 +210,21 @@
         
         <div class="map-caption">
             <i class="bi bi-geo-alt-fill"></i> 
-            Parque Santa María 10, Barrio, Sta Maria Ahuacatlan, 51200 Valle de Bravo, Méx.
+            <!-- Dirección dinámica pequeña abajo del mapa -->
+            {{ $config->direccion ?? 'Parque Santa María 10, Valle de Bravo, Méx.' }}
         </div>
     </div>
 
     <div class="social-group-section">
         <span class="social-label-heading">Síguenos</span>
         
-        <a href="https://www.instagram.com/akiraka.estudio/" target="_blank" class="social-btn-circle" title="Instagram">
+        <!-- Instagram Dinámico -->
+        <a href="{{ $config->instagram ?? 'https://www.instagram.com/' }}" target="_blank" class="social-btn-circle" title="Instagram">
             <i class="bi bi-instagram"></i>
         </a>
         
-        <a href="https://www.facebook.com/profile.php?id=61568259411265&locale=es_LA" target="_blank" class="social-btn-circle" title="Facebook">
+        <!-- Facebook Dinámico -->
+        <a href="{{ $config->facebook ?? 'https://www.facebook.com/' }}" target="_blank" class="social-btn-circle" title="Facebook">
             <i class="bi bi-facebook"></i>
         </a>
     </div>
