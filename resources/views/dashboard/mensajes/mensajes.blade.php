@@ -26,44 +26,6 @@ use Illuminate\Support\Str;
             align-items: stretch;
         }
 
-        .sidebar {
-            width: 260px;
-            background: #1c1c1c;
-            color: #fff;
-            padding: 25px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .logo-sidebar {
-            width: 80px;
-            border-radius: 50%;
-            margin-bottom: 10px;
-            background: #fff;
-            padding: 5px;
-        }
-
-        .nav-link {
-            color: #fff;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            background: #2c2c2c;
-            border-radius: 8px;
-            padding: 10px 15px;
-            transition: all .3s ease;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            font-size: .9rem;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background: #4b4b4b;
-        }
-
         .main-content {
             flex-grow: 1;
             background: #fff;
@@ -172,56 +134,62 @@ use Illuminate\Support\Str;
                 <span onclick="marcarTodos()" style="cursor:pointer;">Marcar todos como leídos</span>
             </div>
 
-        <ul class="message-list">
-
-        @forelse($mensajes as $mensaje)
-
-        <li class="message-item no-leido"
-        onclick="abrirMensaje(this,
-        '{{ $mensaje->nombre_cliente }}',
-        'Mensaje recibido',
-        '{{ $mensaje->mensaje }}')">
-
-            <div class="message-left">
-                <div class="message-name">
-                    {{ $mensaje->nombre_cliente }}
+            @if(session('success'))
+                <div style="background: #111; color: #fff; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-family: Arial, sans-serif;">
+                    {{ session('success') }}
                 </div>
+            @endif
 
-                <div class="message-subject">
-                    {{ \Illuminate\Support\Str::limit($mensaje->mensaje,40) }}
-                </div>
-            </div>
+            <ul class="message-list">
 
-            <div>
-                <span class="text-sm text-gray-500">
-                    <span class="notificacion"></span>
-                    {{ \Carbon\Carbon::parse($mensaje->fecha_envio)->format('d/m/Y') }}
-                </span>
+                @forelse($mensajes as $mensaje)
 
-                <button class="btn-delete"
-                onclick="abrirEliminar(event,'{{ $mensaje->nombre_cliente }}')">
-                🗑
-                </button>
-            </div>
+                <li class="message-item {{ $mensaje->estado_respuesta == 'Pendiente' ? 'no-leido' : '' }}"
+                    data-nombre="{{ $mensaje->nombre_cliente }}"
+                    data-asunto="Mensaje Web"
+                    data-contenido="{{ $mensaje->mensaje }}"
+                    onclick="abrirMensaje(this)">
 
-        </li>
+                    <div class="message-left">
+                        <div class="message-name">
+                            {{ $mensaje->nombre_cliente }}
+                        </div>
 
-        @empty
+                        <div class="message-subject">
+                            {{ \Illuminate\Support\Str::limit($mensaje->mensaje, 40) }}
+                        </div>
+                    </div>
 
-        <li style="padding:40px;text-align:center;color:#777;font-size:1.1rem;">
-            Por el momento, no hay ningún mensaje.
-        </li>
+                    <div>
+                        <span class="text-sm text-gray-500">
+                            <span class="notificacion"></span>
+                            {{ \Carbon\Carbon::parse($mensaje->fecha_envio)->format('d/m/Y') }}
+                        </span>
 
-        @endforelse
+                        <button class="btn-delete"
+                                onclick="abrirEliminar(event, '{{ $mensaje->nombre_cliente }}', {{ $mensaje->id_mensaje }})">
+                        🗑
+                        </button>
+                    </div>
 
-        </ul>
+                </li>
+
+                @empty
+
+                <li style="padding:40px;text-align:center;color:#777;font-size:1.1rem;">
+                    Por el momento, no hay ningún mensaje.
+                </li>
+
+                @endforelse
+
+            </ul>
         </div>
     </div>
 
     <div id="modalMensaje" class="modal-overlay">
         <div class="modal-box">
             <h3 id="tituloMensaje"></h3>
-            <p id="contenidoMensaje"></p>
+            <p id="contenidoMensaje" style="white-space: pre-wrap; line-height: 1.5;"></p>
             <div class="modal-actions">
                 <button class="btn-dark" onclick="abrirResponder()">Responder</button>
                 <button class="btn-light" onclick="cerrarTodo()">Cerrar</button>
@@ -244,49 +212,59 @@ use Illuminate\Support\Str;
         <div class="modal-box">
             <h3>¿Eliminar mensaje?</h3>
             <p id="nombreEliminar"></p>
-            <div class="modal-actions">
-                <button class="btn-dark">Eliminar definitivamente</button>
-                <button class="btn-light" onclick="cerrarTodo()">Cancelar</button>
-            </div>
+            <form id="formEliminarMensaje" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-actions">
+                    <button type="submit" class="btn-dark">Eliminar definitivamente</button>
+                    <button type="button" class="btn-light" onclick="cerrarTodo()">Cancelar</button>
+                </div>
+            </form>
         </div>
     </div>
 
 <script>
+    function abrirMensaje(elemento) {
+        let nombre = elemento.getAttribute('data-nombre');
+        let asunto = elemento.getAttribute('data-asunto');
+        let contenido = elemento.getAttribute('data-contenido');
 
-function abrirMensaje(elemento,nombre,asunto,contenido){
+        document.getElementById("tituloMensaje").innerText = nombre + " - " + asunto;
+        document.getElementById("contenidoMensaje").innerText = contenido;
+        document.getElementById("modalMensaje").style.display = "flex";
 
-    document.getElementById("tituloMensaje").innerText = nombre + " - " + asunto;
-    document.getElementById("contenidoMensaje").innerText = contenido;
-    document.getElementById("modalMensaje").style.display = "flex";
+        elemento.classList.remove("no-leido");
+    }
 
-    elemento.classList.remove("no-leido");
-}
+    function abrirResponder(){
+        cerrarTodo();
+        document.getElementById("modalResponder").style.display = "flex";
+    }
 
-function abrirResponder(){
-    cerrarTodo();
-    document.getElementById("modalResponder").style.display = "flex";
-}
+    function abrirEliminar(event, nombre, id_mensaje){
+        event.stopPropagation();
+        document.getElementById("nombreEliminar").innerText = "El mensaje de " + nombre + " se perderá.";
+        
+        // Asignar ruta dinámica al formulario de eliminar
+        let url = "{{ route('mensajes.destroy', ':id') }}".replace(':id', id_mensaje);
+        document.getElementById("formEliminarMensaje").action = url;
 
-function abrirEliminar(event,nombre){
-    event.stopPropagation();
-    document.getElementById("nombreEliminar").innerText = "El mensaje de " + nombre + " se perderá.";
-    document.getElementById("modalEliminar").style.display = "flex";
-}
+        document.getElementById("modalEliminar").style.display = "flex";
+    }
 
-function cerrarTodo(){
-    document.getElementById("modalMensaje").style.display = "none";
-    document.getElementById("modalResponder").style.display = "none";
-    document.getElementById("modalEliminar").style.display = "none";
-}
+    function cerrarTodo(){
+        document.getElementById("modalMensaje").style.display = "none";
+        document.getElementById("modalResponder").style.display = "none";
+        document.getElementById("modalEliminar").style.display = "none";
+    }
 
-function marcarTodos(){
-    let mensajes=document.querySelectorAll(".message-item");
+    function marcarTodos(){
+        let mensajes = document.querySelectorAll(".message-item");
 
-    mensajes.forEach(function(msg){
-        msg.classList.remove("no-leido");
-    });
-}
-
+        mensajes.forEach(function(msg){
+            msg.classList.remove("no-leido");
+        });
+    }
 </script>
 
 </div>
