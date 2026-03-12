@@ -71,7 +71,16 @@
             
             <div class="image-grid">
                 @forelse($imagenes as $img)
-                    <div class="image-card">
+                    {{-- Le ponemos un borde más grueso y sombra si es la portada --}}
+                    <div class="image-card" @if($img->descripcion == 'Portada principal') style="border: 2px solid #111; box-shadow: 0 4px 15px rgba(0,0,0,0.15);" @endif>
+                        
+                        {{-- ETIQUETA VISUAL DE PORTADA --}}
+                        @if($img->descripcion == 'Portada principal')
+                            <div style="position: absolute; top: 10px; left: 10px; background: #111; color: #fff; padding: 4px 10px; font-size: 0.7rem; font-weight: bold; border-radius: 4px; z-index: 10; letter-spacing: 1px;">
+                                ★ PORTADA
+                            </div>
+                        @endif
+
                         <img src="{{ asset('storage/' . $img->url_imagen) }}" alt="Foto">
                         
                         <form action="{{ route('objetos.historias.destroy', $img->id_imagen) }}" method="POST" onsubmit="return confirm('¿Borrar esta foto de la ficha?');">
@@ -84,7 +93,13 @@
                                 @if($img->anio) <span class="badge-year">{{ $img->anio }}</span> @else <span></span> @endif
                                 <span style="font-size: 0.75rem; color: #888;">Orden: {{ $img->orden }}</span>
                             </div>
-                            <p style="font-size: 0.9rem; color: #444; margin: 0; line-height: 1.4;">{{ $img->descripcion }}</p>
+                            <p style="font-size: 0.9rem; color: #444; margin: 0; line-height: 1.4;">
+                                @if($img->descripcion == 'Portada principal')
+                                    <strong>Imagen principal del catálogo.</strong>
+                                @else
+                                    {{ $img->descripcion }}
+                                @endif
+                            </p>
                         </div>
                     </div>
                 @empty

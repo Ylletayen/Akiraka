@@ -151,6 +151,18 @@
             .indent-2 { padding-left: 2rem; }
             .site-footer-main { flex-direction: column; align-items: flex-start; gap: 15px; }
         }
+
+        /* --- ANIMACIONES AL SCROLLEAR (FADE UP) --- */
+        .akira-fade-up {
+            opacity: 0;
+            transform: translateY(25px); /* Empieza un poco más abajo */
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+
+        .akira-fade-up.is-visible {
+            opacity: 1;
+            transform: translateY(0); /* Sube a su posición original */
+        }
     </style>
 
     <div id="project-view" class="akira-project-view">
@@ -252,7 +264,7 @@
     const modalContent = document.getElementById('historia-content');
 
     projectLinks.forEach(link => {
-        // 1. Lógica del Hover Preview (Ya la tenías)
+        // 1. Lógica del Hover Preview
         link.addEventListener('mouseenter', () => {
             const imageSrc = link.getAttribute('data-img');
             if(imageSrc) {
@@ -270,11 +282,11 @@
             previewContainer.classList.remove('active');
         });
 
-        // 2. NUEVO: Lógica del Click para el Modal AJAX
+        // 2. Lógica del Click para el Modal AJAX
         link.addEventListener('click', function(e) {
             const url = this.getAttribute('href');
             
-            // Si el enlace es estático (#), dejamos que actúe normal (no abre modal)
+            // Si el enlace es estático (#), dejamos que actúe normal
             if(url === '#' || url === '') return;
 
             // Si es una ruta válida, detenemos la redirección y abrimos el modal
@@ -283,7 +295,7 @@
             modalHistoria.classList.add('active');
             modalContent.innerHTML = '<div style="text-align:center; padding-top: 20vh; font-family: Garamond, serif; font-size: 1.5rem; color: #888;">Cargando historia...</div>';
 
-            /// Petición al servidor
+            // Petición al servidor
             fetch(url)
                 .then(response => response.text())
                 .then(html => {
@@ -305,7 +317,12 @@
                         slides.forEach(slide => observerAnim.observe(slide));
                     }
                 })
-    });
+                .catch(error => {
+                    modalContent.innerHTML = '<div style="text-align:center; padding-top: 20vh; color: #d9534f;">Hubo un error al cargar la historia.</div>';
+                    console.error('Error:', error);
+                });
+        }); // <--- ¡AQUÍ ESTABA EL ERROR! Faltaba cerrar el evento click
+    });     // <--- Este cierra el forEach de los links
 
     // Función para cerrar el modal AJAX
     function cerrarModalHistoria() {
@@ -317,4 +334,38 @@
     function regresarAlLanding() {
         window.location.href = "{{ url('/') }}"; 
     }
+
+    // =========================================================
+    // ANIMACIÓN DE SCROLL PARA EL MENÚ (FADE UP)
+    // =========================================================
+    // Seleccionamos todos los elementos que queremos animar
+    const scrollElements = document.querySelectorAll('.column-title, .project-list li');
+    
+    // A todos les ponemos la clase inicial de la animación
+    scrollElements.forEach(el => {
+        el.classList.add('akira-fade-up');
+    });
+
+    // Creamos el observador
+    const menuObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Le damos un ligerísimo retraso basado en su posición para que no aparezcan de golpe
+                setTimeout(() => {
+                    entry.target.classList.add('is-visible');
+                }, 50); 
+                
+                // Opcional: dejamos de observarlo para que la animación solo ocurra la primera vez que bajas
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1, // Se activa cuando al menos el 10% del texto ya entró a la pantalla
+        rootMargin: "0px 0px -20px 0px" // Un pequeño margen inferior para que el efecto se note mejor
+    });
+
+    // Ponemos al observador a vigilar cada elemento
+    scrollElements.forEach(el => {
+        menuObserver.observe(el);
+    });
 </script>
