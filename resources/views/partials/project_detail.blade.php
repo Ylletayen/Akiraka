@@ -225,7 +225,7 @@
 
     <footer class="site-footer-main">
         <div class="footer-left">
-            <a href="javascript:void(0)" onclick="regresarAlLanding()">regresar</a>
+            <a href="{{ route('landing') }}" style="font-weight: bold; text-decoration: underline !important;">regresar</a>
             <span>2026</span>
         </div>
         <a href="#">Read in English</a>
