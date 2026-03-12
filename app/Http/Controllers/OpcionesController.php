@@ -6,21 +6,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage; 
-use App\Models\Configuracion; // <--- No olvides importar el nuevo modelo
+use App\Models\Configuracion; 
 
 class OpcionesController extends Controller
 {
     public function index()
     {
-        // Traemos la configuración de la BD (asumimos que siempre es el ID 1)
         $configuracion = Configuracion::first();
         
-        // Si por alguna razón la BD está vacía, creamos un objeto vacío para que no truene la vista
         if (!$configuracion) {
             $configuracion = new Configuracion();
         }
 
-        // Pasamos la variable a la vista
         return view('dashboard.opciones.opciones', compact('configuracion'));
     }
 
@@ -53,18 +50,21 @@ class OpcionesController extends Controller
 
     public function updatePublicos(Request $request)
     {
-        // Buscamos el registro 1, si no hay, creamos uno nuevo
         $configuracion = Configuracion::first();
         if (!$configuracion) {
             $configuracion = new Configuracion();
         }
 
-        // Actualizamos TODOS los campos, incluyendo el nuevo de Facebook
+        // Guardamos todos los campos, incluyendo los nuevos correos
         $configuracion->telefono = $request->telefono;
         $configuracion->correo_contacto = $request->correo_contacto;
+        $configuracion->correo_prensa = $request->correo_prensa;
+        $configuracion->correo_laboral_1 = $request->correo_laboral_1;
+        $configuracion->correo_laboral_2 = $request->correo_laboral_2;
         $configuracion->direccion = $request->direccion;
         $configuracion->instagram = $request->instagram;
         $configuracion->facebook = $request->facebook;
+        
         $configuracion->save();
 
         return back()->with('success', 'Datos públicos actualizados correctamente en la base de datos.');

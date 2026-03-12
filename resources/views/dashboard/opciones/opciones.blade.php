@@ -321,25 +321,46 @@
                         @csrf
                         @method('PUT')
                         
+                        <div class="form-group">
+                            <label>Teléfono Público</label>
+                            <input type="text" name="telefono" class="form-control" value="{{ $configuracion->telefono ?? '' }}">
+                        </div>
+
+                        <!-- Sección de Correos Agrupados -->
+                        <div style="height: 1px; background-color: #f0f0f0; margin: 25px 0 15px 0;"></div>
+                        <label style="display: block; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; color: #111; margin-bottom: 15px;">Gestión de Correos</label>
+
                         <div style="display: flex; gap: 15px;">
                             <div class="form-group" style="flex: 1;">
-                                <label>Teléfono Público</label>
-                                <!-- Ya es 100% dinámico jalando de la BD -->
-                                <input type="text" name="telefono" class="form-control" value="{{ $configuracion->telefono ?? '' }}">
+                                <label>Proyectos y Eventos</label>
+                                <input type="email" name="correo_contacto" class="form-control" value="{{ $configuracion->correo_contacto ?? '' }}">
                             </div>
 
                             <div class="form-group" style="flex: 1;">
-                                <label>Correo de Contacto</label>
-                                <input type="email" name="correo_contacto" class="form-control" value="{{ $configuracion->correo_contacto ?? '' }}">
+                                <label>Prensa</label>
+                                <input type="email" name="correo_prensa" class="form-control" value="{{ $configuracion->correo_prensa ?? '' }}">
                             </div>
                         </div>
+
+                        <div style="display: flex; gap: 15px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label>Oportunidades Laborales 1</label>
+                                <input type="email" name="correo_laboral_1" class="form-control" value="{{ $configuracion->correo_laboral_1 ?? '' }}">
+                            </div>
+
+                            <div class="form-group" style="flex: 1;">
+                                <label>Oportunidades Laborales 2</label>
+                                <input type="email" name="correo_laboral_2" class="form-control" value="{{ $configuracion->correo_laboral_2 ?? '' }}">
+                            </div>
+                        </div>
+
+                        <div style="height: 1px; background-color: #f0f0f0; margin: 15px 0 25px 0;"></div>
 
                         <div class="form-group">
                             <label>Dirección del Estudio</label>
                             <textarea name="direccion" class="form-control" rows="2">{{ $configuracion->direccion ?? '' }}</textarea>
                         </div>
 
-                        <!-- AQUÍ AGREGAMOS INSTAGRAM Y FACEBOOK JUNTOS -->
                         <div style="display: flex; gap: 15px;">
                             <div class="form-group" style="flex: 1;">
                                 <label>Enlace Instagram</label>
