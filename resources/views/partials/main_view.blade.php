@@ -45,17 +45,29 @@
     @endphp
 
     <section class="fase-slide" style="position: relative; overflow: hidden;">
-        {{-- FONDO TRANSPARENTE DE LA PORTADA --}}
+        {{-- FONDO TRANSPARENTE DE LA PORTADA CON BORDES DIFUMINADOS --}}
         @if($portada)
-            <img src="{{ asset('storage/' . $portada->url_imagen) }}" alt="Fondo Portada" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.10; z-index: 0; pointer-events: none;">
+            <img src="{{ asset('storage/' . $portada->url_imagen) }}" alt="Fondo Portada" 
+                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; 
+                        opacity: 0.35; z-index: 0; pointer-events: none;
+                        -webkit-mask-image: radial-gradient(ellipse, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 80%);
+                        mask-image: radial-gradient(ellipse, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 80%);">
         @endif
 
         <div class="historia-header-title" style="position: relative; z-index: 1;">
             <h2>{{ $proyecto->titulo }}</h2>
+            
+            @if($proyecto->anio)
+                <p style="color: #666; font-style: italic; font-size: 1.1rem; margin-bottom: 15px;">
+                    Año de creación: {{ $proyecto->anio }}
+                </p>
+            @endif
+
             @if($proyecto->descripcion)
                 <p>{{ $proyecto->descripcion }}</p>
             @endif
-            <div style="margin-top: 40px; font-family: Arial; font-size: 0.75rem; letter-spacing: 2px; color: #aaa; text-transform: uppercase;">
+            
+            <div style="margin-top: 40px; font-family: Arial, sans-serif; font-size: 0.75rem; letter-spacing: 2px; color: #aaa; text-transform: uppercase;">
                 Haz scroll hacia abajo ↓
             </div>
         </div>

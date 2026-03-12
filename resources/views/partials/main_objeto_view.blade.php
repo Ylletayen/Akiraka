@@ -47,7 +47,11 @@
     <section class="fase-slide" style="position: relative; overflow: hidden;">
         {{-- FONDO TRANSPARENTE DE LA PORTADA --}}
         @if($portada)
-            <img src="{{ asset('storage/' . $portada->url_imagen) }}" alt="Fondo Portada" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.10; z-index: 0; pointer-events: none;">
+            <img src="{{ asset('storage/' . $portada->url_imagen) }}" alt="Fondo Portada" 
+                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; 
+                        opacity: 0.35; z-index: 0; pointer-events: none;
+                        -webkit-mask-image: radial-gradient(ellipse, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 80%);
+                        mask-image: radial-gradient(ellipse, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 80%);">
         @endif
 
         <div class="historia-header-title" style="position: relative; z-index: 1;">
