@@ -10,80 +10,18 @@
 
 <style>
     /* ================= ESTILOS BASE DEL ESTUDIO ================= */
-    .akira-container {
-        max-width: 1100px; 
-        margin: 0 auto;
-        padding: 50px 20px;
-        font-family: "Georgia", "Times New Roman", serif;
-        color: #1a1a1a;
-    }
-
-    .akira-link-reset {
-        text-decoration: none;
-        color: inherit;
-        font-size: 1rem;
-        transition: opacity 0.3s ease;
-    }
-
-    .akira-link-reset:hover {
-        opacity: 0.6;
-        color: #000;
-    }
-
-    .brand-name-header {
-        font-size: 1.1rem;
-        font-weight: normal;
-    }
-
-    .nav-link-bold {
-        font-weight: bold;
-    }
-
-    .contact-label {
-        font-weight: bold;
-        display: block;
-        margin-bottom: 2px;
-        font-size: 1rem;
-        color: #1a1a1a;
-    }
-
-    .contact-value-reset {
-        text-decoration: none;
-        color: #666; 
-        font-size: 0.95rem;
-        transition: color 0.3s;
-        line-height: 1.5;
-    }
-
-    .contact-value-reset:hover {
-        color: #000;
-    }
-
-    /* Estilo para los enlaces de correo dentro del texto gris */
-    .contact-value-reset a {
-        color: inherit;
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-
-    .contact-value-reset a:hover {
-        color: #000;
-    }
-
-    .contact-instruction {
-        font-style: italic;
-        font-size: 0.95rem;
-        margin-bottom: 40px;
-        color: #666;
-    }
-
-    .location-year-label {
-        color: #ccc;
-        font-size: 0.85rem;
-        margin-right: 15px;
-        display: inline-block;
-        width: 40px;
-    }
+    .akira-container { max-width: 1100px; margin: 0 auto; padding: 50px 20px; font-family: "Georgia", "Times New Roman", serif; color: #1a1a1a; }
+    .akira-link-reset { text-decoration: none; color: inherit; font-size: 1rem; transition: opacity 0.3s ease; }
+    .akira-link-reset:hover { opacity: 0.6; color: #000; }
+    .brand-name-header { font-size: 1.1rem; font-weight: normal; }
+    .nav-link-bold { font-weight: bold; }
+    .contact-label { font-weight: bold; display: block; margin-bottom: 2px; font-size: 1rem; color: #1a1a1a; }
+    
+    .contact-value-reset { text-decoration: none; color: #666; font-size: 0.95rem; transition: color 0.3s; line-height: 1.5; cursor: pointer; }
+    .contact-value-reset:hover { color: #000; text-decoration: underline; }
+    
+    .contact-instruction { font-style: italic; font-size: 0.95rem; margin-bottom: 40px; color: #666; }
+    .location-year-label { color: #ccc; font-size: 0.85rem; margin-right: 15px; display: inline-block; width: 40px; }
 
     /* ================= SECCIÓN DEL MAPA (DISEÑO ARQUITECTÓNICO) ================= */
     .map-section {
@@ -160,40 +98,32 @@
         <a href="{{ route('contacto') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Contacto</a>.
     </header>
 
+    @if(session('success'))
+        <div class="alert alert-dark" style="font-family: Arial; text-align: center; margin-bottom: 30px;">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <p class="contact-instruction">Si deseas contactarnos, por favor selecciona una de las opciones a continuación.</p>
 
     <!-- COLUMNAS DE CORREOS -->
     <div class="row contact-group-section mb-5">
         <div class="col-md-4 mb-4">
             <span class="contact-label">Proyectos y Eventos</span>
-            <div class="contact-value-reset">
-                <!-- Mostramos el correo principal -->
-                <a href="mailto:{{ $config->correo_contacto ?? 'akiraka.estudio@gmail.com' }}">
-                    {{ $config->correo_contacto ?? 'akiraka.estudio@gmail.com' }}
-                </a>
+            <div class="contact-value-reset" onclick="abrirModalContacto('{{ $config->correo_contacto ?? 'akiraka.estudio@gmail.com' }}')">
+                {{ $config->correo_contacto ?? 'akiraka.estudio@gmail.com' }}<br>
             </div>
         </div>
 
         <div class="col-md-4 mb-4">
             <span class="contact-label">Prensa</span>
-            <div class="contact-value-reset">
-                <!-- Mostramos el correo de prensa -->
-                <a href="mailto:{{ $config->correo_prensa ?? 'proyectos@akirakastudio.com' }}">
-                    {{ $config->correo_prensa ?? 'proyectos@akirakastudio.com' }}
-                </a>
-            </div>
+            <div class="contact-value-reset" onclick="abrirModalContacto('proyectos@akirakastudio.com')">proyectos@akirakastudio.com</div>
         </div>
 
         <div class="col-md-4 mb-4">
             <span class="contact-label">Oportunidades laborales</span>
-            <div class="contact-value-reset">
-                <!-- Mostramos los dos correos laborales -->
-                <a href="mailto:{{ $config->correo_laboral_1 ?? 'dirección@akirakastudio.com' }}">
-                    {{ $config->correo_laboral_1 ?? 'dirección@akirakastudio.com' }}
-                </a><br>
-                <a href="mailto:{{ $config->correo_laboral_2 ?? 'studio@akirakastudio.com' }}">
-                    {{ $config->correo_laboral_2 ?? 'studio@akirakastudio.com' }}
-                </a>
+            <div class="contact-value-reset" onclick="abrirModalContacto('dirección@akirakastudio.com')">
+                dirección@akirakastudio.com<br>studio@akirakastudio.com
             </div>
         </div>
     </div>
@@ -208,8 +138,7 @@
             </div>
             <div class="col-md-6 mb-3">
                 <span class="location-year-label">Dirección</span>
-                <!-- Dirección dinámica con saltos de línea respetados -->
-                <span class="contact-value-reset"><br>{!! nl2br(e($config->direccion ?? "Espacio Odisea. Parque Santa María 10,\nBarrio, Sta Maria Ahuacatlan, 51200 Valle de Bravo, Méx.")) !!}</span>
+                <span class="contact-value-reset"><br>{!! nl2br(e($config->direccion ?? 'Parque Santa María 10, Valle de Bravo, Méx.')) !!}</span>
             </div>
         </div>
     </div>
@@ -217,39 +146,81 @@
     <div class="map-section">
         <span class="contact-label mb-3" style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 2px;">Ubicación / Espacio Odisea</span>
         <div class="map-wrapper">
-            <iframe 
-                width="100%" 
-                height="100%" 
-                frameborder="0" 
-                scrolling="no" 
-                marginheight="0" 
-                marginwidth="0" 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d467.4589255627712!2d-100.1363651761623!3d19.189445173707252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cd647e9a15bc7b%3A0x59426b73189edf87!2sEspacio%20Odisea!5e0!3m2!1ses-419!2smx!4v1709673000000!5m2!1ses-419!2smx"
-                style="border:0;" 
-                allowfullscreen="" 
-                loading="lazy">
-            </iframe>
-        </div>
-        
-        <div class="map-caption">
-            <i class="bi bi-geo-alt-fill"></i> 
-            <!-- Dirección dinámica pequeña abajo del mapa -->
-            {{ $config->direccion ?? 'Espacio Odisea. Parque Santa María 10, Barrio, Sta Maria Ahuacatlan, 51200 Valle de Bravo, Méx.' }}
+            <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d467.4589255627712!2d-100.1363651761623!3d19.189445173707252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cd647e9a15bc7b%3A0x59426b73189edf87!2sEspacio%20Odisea!5e0!3m2!1ses-419!2smx!4v1709673000000!5m2!1ses-419!2smx" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
         </div>
     </div>
 
     <div class="social-group-section">
         <span class="social-label-heading">Síguenos</span>
-        
-        <!-- Instagram Dinámico -->
-        <a href="{{ $config->instagram ?? 'https://www.instagram.com/akiraka.estudio/' }}" target="_blank" class="social-btn-circle" title="Instagram">
-            <i class="bi bi-instagram"></i>
-        </a>
-        
-        <!-- Facebook Dinámico -->
-        <a href="{{ $config->facebook ?? 'https://www.facebook.com/profile.php?id=61568259411265&locale=es_LA' }}" target="_blank" class="social-btn-circle" title="Facebook">
-            <i class="bi bi-facebook"></i>
-        </a>
+        <a href="{{ $config->instagram ?? 'https://www.instagram.com/' }}" target="_blank" class="social-btn-circle" title="Instagram"><i class="bi bi-instagram"></i></a>
+        <a href="{{ $config->facebook ?? 'https://www.facebook.com/' }}" target="_blank" class="social-btn-circle" title="Facebook"><i class="bi bi-facebook"></i></a>
     </div>
 </div>
+
+<div id="modalContactoElegir" class="modal-overlay-contact">
+    <div class="modal-contact-box">
+        <button class="btn-close-modal" onclick="cerrarModalContacto()">✕</button>
+        
+        <h3 class="modal-contact-title">Mensaje</h3>
+        <p class="modal-contact-subtitle">¿Deseas contactarnos? Selecciona una opción.</p>
+
+        <div class="contact-options-grid" id="opcionesContactoGrid">
+            <a href="#" id="btnMailto" class="option-circle-btn">
+                <i class="bi bi-envelope-at"></i>
+                <span>Enviar Email</span>
+            </a>
+            <div class="option-circle-btn" onclick="mostrarFormularioDirecto()">
+                <i class="bi bi-chat-left-text"></i>
+                <span>Mensaje Directo</span>
+            </div>
+        </div>
+
+        <form id="formMensajeDirecto" action="{{ route('contacto.mensaje.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="departamento" id="inputDepartamento" value="">
+            
+            <input type="text" name="nombre" class="form-input-contact" placeholder="Tu Nombre" required>
+            <input type="email" name="correo" class="form-input-contact" placeholder="Tu Correo" required>
+            <input type="text" name="asunto" class="form-input-contact" placeholder="Asunto" required>
+            <textarea name="mensaje" class="form-input-contact" rows="4" placeholder="Escribe tu mensaje aquí..." required></textarea>
+            
+            <button type="submit" class="btn-submit-contact">Enviar al Estudio</button>
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="javascript:void(0)" onclick="volverOpcionesContacto()" style="color: #888; text-decoration: underline; font-size: 0.8rem;">← Volver a opciones</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('modalContactoElegir');
+    const btnMailto = document.getElementById('btnMailto');
+    const gridOpciones = document.getElementById('opcionesContactoGrid');
+    const formDirecto = document.getElementById('formMensajeDirecto');
+    const inputDept = document.getElementById('inputDepartamento');
+
+    function abrirModalContacto(correoDestino) {
+        modal.classList.add('active');
+        // Prepara el enlace nativo de correo por si escogen esa opción
+        btnMailto.href = "mailto:" + correoDestino;
+        // Guarda la info oculta para el form por si escogen el mensaje directo
+        inputDept.value = correoDestino; 
+    }
+
+    function cerrarModalContacto() {
+        modal.classList.remove('active');
+        setTimeout(() => { volverOpcionesContacto(); }, 300); 
+    }
+
+    function mostrarFormularioDirecto() {
+        gridOpciones.style.display = 'none';
+        formDirecto.style.display = 'block';
+    }
+
+    function volverOpcionesContacto() {
+        formDirecto.style.display = 'none';
+        gridOpciones.style.display = 'grid';
+        formDirecto.reset(); 
+    }
+</script>
 @endsection
