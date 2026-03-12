@@ -11,12 +11,10 @@ class UsuarioController extends Controller
 {
     public function index()
     {
-        // 1. Validar que SOLO el Superadmin (id_rol = 1) pueda ver esto
         if (Auth::user()->id_rol != 1) {
             abort(403, 'Acceso denegado. Solo el Superadmin puede gestionar roles.');
         }
 
-        // 2. Traer a los usuarios y los roles disponibles
         $usuarios = User::all();
         $roles = DB::table('roles')->get(); 
 
@@ -25,7 +23,6 @@ class UsuarioController extends Controller
 
     public function updateRol(Request $request, $id)
     {
-        // 1. Validar seguridad nuevamente por si intentan forzar la petición
         if (Auth::user()->id_rol != 1) {
             abort(403, 'Acceso denegado.');
         }
@@ -36,12 +33,10 @@ class UsuarioController extends Controller
 
         $usuario = User::findOrFail($id);
 
-        // 2. Medida de seguridad: Evitar que el Superadmin se quite su propio rol por accidente
         if ($usuario->id_usuario === Auth::user()->id_usuario && $request->id_rol != 1) {
             return redirect()->back()->with('error', 'No puedes quitarte el rol de Superadmin a ti mismo.');
         }
 
-        // 3. Actualizar
         $usuario->id_rol = $request->id_rol;
         $usuario->save();
 
@@ -50,22 +45,38 @@ class UsuarioController extends Controller
     
     public function destroy($id)
     {
-        // 1. Buscamos al usuario por su ID
         $usuario = \App\Models\User::findOrFail($id);
 
-        // 2. FILTRO DE SEGURIDAD: Usamos id_usuario para comparar
         if ($usuario->id_usuario == auth()->user()->id_usuario) {
             return redirect()->back()->withErrors(['error' => 'No puedes eliminar tu propia cuenta de Superadmin.']);
         }
 
-        // 3. (Opcional) Si el usuario tiene foto de perfil física, la borramos del servidor
+        // =================================================================
+        // NUEVA LÓGICA: Buscar al Superadmin y transferirle la autoría
+        // =================================================================
+        $adminPrincipal = \App\Models\User::where('id_rol', 1)
+                                          ->where('id_usuario', '!=', $id)
+                                          ->first();
+
+        if ($adminPrincipal) {
+            // Transferir publicaciones
+            \Illuminate\Support\Facades\DB::table('publicaciones')
+                ->where('id_usuario', $id)
+                ->update(['id_usuario' => $adminPrincipal->id_usuario]);
+                
+            // Transferir mensajes respondidos
+            \Illuminate\Support\Facades\DB::table('mensajes')
+                ->where('id_usuario', $id)
+                ->update(['id_usuario' => $adminPrincipal->id_usuario]);
+        }
+        // =================================================================
+
         if ($usuario->foto) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($usuario->foto);
         }
 
-        // 4. Eliminamos el registro de la base de datos
         $usuario->delete();
 
-        return redirect()->back()->with('success', 'Usuario eliminado correctamente.');
+        return redirect()->back()->with('success', 'Usuario eliminado. Sus publicaciones fueron reasignadas al Administrador.');
     }
 }

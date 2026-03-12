@@ -153,6 +153,7 @@
         }
     </style>
 
+    <div id="project-view" class="akira-project-view">
     <header class="site-header-main">
         <a href="{{ route('project.detail') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">
         Estudio Akiraka ,</a>
@@ -168,12 +169,9 @@
                 <ul class="project-list">
                     <li>Proyectos</li>
                     <li class="indent-1">En proceso</li>
-                    
                     @forelse($proyectosEnProceso as $proyecto)
                         <li class="indent-2">
-                            <a href="{{ route('project.main', $proyecto->id_proyecto) }}" 
-                               class="project-link" 
-                               data-img="{{ $proyecto->portada ? asset('storage/' . $proyecto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
+                            <a href="{{ route('project.main', $proyecto->id_proyecto) }}" class="project-link" data-img="{{ $proyecto->portada ? asset('storage/' . $proyecto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
                                 {{ $proyecto->titulo }}
                             </a>
                         </li>
@@ -186,13 +184,10 @@
             <div class="list-group">
                 <ul class="project-list">
                     <li>Construidos</li>
-                    
                     @forelse($proyectosConstruidos as $proyecto)
                         <li>
-                            <span class="year-label">{{ date('Y') }}</span> 
-                            <a href="{{ route('project.main', $proyecto->id_proyecto) }}" 
-                               class="project-link" 
-                               data-img="{{ $proyecto->portada ? asset('storage/' . $proyecto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
+                            <span class="year-label">{{ $proyecto->anio ?? 'S/A' }}</span> 
+                            <a href="{{ route('project.main', $proyecto->id_proyecto) }}" class="project-link" data-img="{{ $proyecto->portada ? asset('storage/' . $proyecto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
                                 {{ $proyecto->titulo }}
                             </a>
                         </li>
@@ -206,9 +201,16 @@
         <section>
             <h2 class="column-title">Objetos</h2>
             <ul class="project-list">
-                <li><span class="year-label">2025</span> <a href="#" class="project-link" data-img="{{ asset('img/silla.jpg') }}">Silla Akira 01</a></li>
-                <li><span class="year-label">2024</span> <a href="#" class="project-link" data-img="{{ asset('img/mesa.jpg') }}">Mesa de Concreto Pulido</a></li>
-                <li><span class="year-label">2022</span> <a href="#" class="project-link" data-img="{{ asset('img/escultura.jpg') }}">Escultura de Luz</a></li>
+                @forelse($objetos as $objeto)
+                    <li>
+                        <span class="year-label">{{ $objeto->anio ?? 'S/A' }}</span> 
+                        <a href="{{ route('objeto.main', $objeto->id_objeto) }}" class="project-link" data-img="{{ $objeto->portada ? asset('storage/' . $objeto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
+                            {{ $objeto->titulo }}
+                        </a>
+                    </li>
+                @empty
+                    <li style="color: #ccc; font-style: italic; font-size: 0.85rem;">Ningún objeto en exhibición.</li>
+                @endforelse
             </ul>
         </section>
 
@@ -216,10 +218,9 @@
             <h2 class="column-title">Publicaciones</h2>
             <ul class="project-list">
                 <li><span class="year-label">2026</span> <a href="#" class="project-link" data-img="{{ asset('img/revista.jpg') }}">Arquitectura Viva: El minimalismo de Akiraka</a></li>
-                <li><span class="year-label">2025</span> <a href="#" class="project-link" data-img="{{ asset('img/premios.jpg') }}">Instagram Design Awards</a></li>
-                <li><span class="year-label">2023</span> <a href="#" class="project-link" data-img="{{ asset('img/libro.jpg') }}">Libro: Espacios Silenciosos</a></li>
             </ul>
         </section>
+
     </main>
 
     <footer class="site-footer-main">
@@ -282,17 +283,28 @@
             modalHistoria.classList.add('active');
             modalContent.innerHTML = '<div style="text-align:center; padding-top: 20vh; font-family: Garamond, serif; font-size: 1.5rem; color: #888;">Cargando historia...</div>';
 
-            // Petición al servidor
+            /// Petición al servidor
             fetch(url)
                 .then(response => response.text())
                 .then(html => {
                     modalContent.innerHTML = html;
+
+                    // MAGIA: Ejecutar la animación de las fotos desde aquí
+                    const slides = modalContent.querySelectorAll('.akira-slide');
+                    if(slides.length > 0) {
+                        const observerAnim = new IntersectionObserver((entries) => {
+                            entries.forEach(entry => {
+                                if (entry.isIntersecting) {
+                                    entry.target.classList.add('is-visible');
+                                } else {
+                                    entry.target.classList.remove('is-visible');
+                                }
+                            });
+                        }, { threshold: 0.5 });
+                        
+                        slides.forEach(slide => observerAnim.observe(slide));
+                    }
                 })
-                .catch(error => {
-                    modalContent.innerHTML = '<div style="text-align:center; padding-top: 20vh; color: #d9534f;">Hubo un error al cargar la historia.</div>';
-                    console.error('Error:', error);
-                });
-        });
     });
 
     // Función para cerrar el modal AJAX

@@ -104,57 +104,53 @@
 <aside class="sidebar">
     <div>
         <div class="text-center">
-            <!-- Imagen real del logo conservada -->
             <img src="{{ asset('images/logo_akiraka.png') }}" alt="Logo Akiraka" class="logo-sidebar">
             <p class="small mb-4 text-uppercase" style="letter-spacing: 2px;">Akiraka Estudio</p>
         </div>
         
         <ul class="nav flex-column" style="list-style: none; padding: 0;">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('dashboard.main') ? 'active' : '' }}" 
-                   href="{{ route('dashboard.main') }}">
+                <a class="nav-link {{ request()->routeIs('dashboard.main') ? 'active' : '' }}" href="{{ route('dashboard.main') }}">
                     <div><i class="fas fa-home me-3"></i> Inicio</div>
                 </a>
             </li>
             <li class="nav-item">
-               <a class="nav-link {{ request()->routeIs('dashboard.usuarios') ? 'active' : '' }}" 
-                 href="{{ route('dashboard.usuarios') }}">
+               <a class="nav-link {{ request()->routeIs('dashboard.usuarios') ? 'active' : '' }}" href="{{ route('dashboard.usuarios') }}">
                  <div><i class="fas fa-user-shield me-3"></i> Usuarios</div>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('dashboard.proyectos') ? 'active' : '' }}" 
-                   href="{{ route('dashboard.proyectos') }}">
-                    <div><i class="fas fa-pencil-alt me-3"></i> Proyectos</div>
+                <a class="nav-link {{ request()->routeIs('dashboard.proyectos') ? 'active' : '' }}" href="{{ route('dashboard.proyectos') }}">
+                    <div><i class="fas fa-building me-3"></i> Obras</div>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('dashboard.equipo.quienes_somos') ? 'active' : '' }}" 
-                   href="{{ route('dashboard.equipo.quienes_somos') ?? '#' }}">
+                <a class="nav-link {{ request()->routeIs('dashboard.objetos') ? 'active' : '' }}" href="{{ route('dashboard.objetos') }}">
+                    <div><i class="fas fa-chair me-3"></i> Objetos</div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('dashboard.equipo.quienes_somos') ? 'active' : '' }}" href="{{ route('dashboard.equipo.quienes_somos') ?? '#' }}">
                     <div><i class="fas fa-users me-3"></i> Quienes somos</div>
                 </a>
             </li>
             <li class="nav-item">
-               <a class="nav-link {{ request()->routeIs('mensajes') ? 'active' : '' }}" 
-                 href="{{ route('mensajes') }}">
+               <a class="nav-link {{ request()->routeIs('mensajes') ? 'active' : '' }}" href="{{ route('mensajes') }}">
                  <div><i class="fas fa-envelope me-3"></i> Mensajes</div>
                 </a>
             </li>
             <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('dashboard.opciones') ? 'active' : '' }}" 
-                href="{{ route('dashboard.opciones') }}">
-                <div><i class="fas fa-cog me-3"></i> Opciones</div>
-            </a>
+                <a class="nav-link {{ request()->routeIs('dashboard.opciones') ? 'active' : '' }}" href="{{ route('dashboard.opciones') }}">
+                    <div><i class="fas fa-cog me-3"></i> Opciones</div>
+                </a>
             </li>
         </ul>
     </div>
     
     <div>
-        <!-- Se removió el onsubmit con la alerta de confirmación -->
         <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
             @csrf
-            <button type="submit" class="nav-link w-100 text-start" 
-                    style="background:none; border:none; cursor:pointer; padding-left: 15px;">
+            <button type="submit" class="nav-link w-100 text-start" style="background:none; border:none; cursor:pointer; padding-left: 15px;">
                 <div><i class="fas fa-sign-out-alt me-3"></i> Salir</div>
             </button>
         </form>

@@ -7,6 +7,7 @@ use App\Http\Controllers\OpcionesController;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\MensajesController;
+use App\Http\Controllers\ObjetoController;
 use App\Models\Proyecto;
 
 // --- VISTAS PÚBLICAS ---
@@ -15,21 +16,29 @@ Route::get('/', function () {
 })->name('landing');
 
 Route::get('/proyecto', function () {
-    $proyectosEnProceso = Proyecto::where('id_estado', 1)->get()->map(function ($proyecto) {
+    $proyectosEnProceso = Proyecto::where('id_estado', 1)->orderBy('orden', 'asc')->get()->map(function ($proyecto) {
         $proyecto->portada = \Illuminate\Support\Facades\DB::table('imagenes_proyecto')
                                 ->where('id_proyecto', $proyecto->id_proyecto)
                                 ->value('url_imagen');
         return $proyecto;
     });
 
-    $proyectosConstruidos = Proyecto::where('id_estado', 2)->get()->map(function ($proyecto) {
+    $proyectosConstruidos = Proyecto::where('id_estado', 2)->orderBy('orden', 'asc')->get()->map(function ($proyecto) {
         $proyecto->portada = \Illuminate\Support\Facades\DB::table('imagenes_proyecto')
                                 ->where('id_proyecto', $proyecto->id_proyecto)
                                 ->value('url_imagen');
         return $proyecto;
     });
+
+    // CORRECCIÓN: Los objetos ya están libres y ordenados por año
+    $objetos = \App\Models\Objeto::orderBy('anio', 'desc')->get()->map(function ($objeto) {
+        $objeto->portada = \Illuminate\Support\Facades\DB::table('imagenes_objeto')
+                                ->where('id_objeto', $objeto->id_objeto)
+                                ->value('url_imagen');
+        return $objeto;
+    });
     
-    return view('partials.project_detail', compact('proyectosEnProceso', 'proyectosConstruidos')); 
+    return view('partials.project_detail', compact('proyectosEnProceso', 'proyectosConstruidos', 'objetos')); 
 })->name('project.detail');
 
 Route::get('/info', function () {
@@ -56,6 +65,7 @@ Route::get('/registro', function () {
     return view('dashboard.login.registro');
 })->name('registro.index');
 Route::post('/registro', [AuthController::class, 'store'])->name('registro.store');
+
 
 // --- DASHBOARD (PROTEGIDO) ---
 Route::middleware('auth')->prefix('dashboard')->group(function () {
@@ -111,7 +121,18 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
     Route::get('/mensajes', [MensajesController::class, 'index'])->name('mensajes');
     Route::post('/responder-mensaje/{id}', [MensajesController::class, 'responder'])->name('responder.mensaje');
     Route::delete('/eliminar-mensaje/{id}', [MensajesController::class, 'eliminar'])->name('eliminar.mensaje');
+
+    // OBJETOS (Catálogo)
+    Route::get('/objetos', [ObjetoController::class, 'index'])->name('dashboard.objetos');
+    Route::post('/objetos', [ObjetoController::class, 'store'])->name('objetos.store');
+    Route::delete('/objetos/{id}', [ObjetoController::class, 'destroy'])->name('objetos.destroy');
+    
+    //(HISTORIA) DE LOS OBJETOS
+    Route::get('/objetos/{id}/historia', [ObjetoController::class, 'historias'])->name('objetos.historias');
+    Route::post('/objetos/{id}/historia', [ObjetoController::class, 'storeHistoria'])->name('objetos.historias.store');
+    Route::delete('/objetos/historia/{id_imagen}', [ObjetoController::class, 'destroyHistoria'])->name('objetos.historias.destroy');
 });
 
 // DETALLE EXTERNO
 Route::get('/proyecto/{id}', [ProjectController::class, 'show'])->name('project.main');
+Route::get('/objeto/{id}', [ObjetoController::class, 'show'])->name('objeto.main');

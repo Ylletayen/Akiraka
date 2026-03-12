@@ -21,6 +21,8 @@ class Proyecto extends Model
         'descripcion',
         'costo_inicial',
         'costo_final',
-        'id_estado'
+        'id_estado',
+        'anio',
+        'orden'
     ];
 }
