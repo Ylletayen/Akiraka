@@ -3,48 +3,57 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Mensaje;   // IMPORTANTE
+use App\Models\Mensaje;  
+use Illuminate\Support\Facades\Mail;
 
 class MensajesController extends Controller
 {
-    // 1. Muestra la vista del dashboard
     public function index()
     {
-        // obtener mensajes de la base de datos (del más nuevo al más viejo)
+        // obtener mensajes de la base de datos
         $mensajes = Mensaje::orderBy('fecha_envio','desc')->get();
 
+        // enviar a la vista
         return view('dashboard.mensajes.mensajes', compact('mensajes'));
     }
-
-    // 2. Guarda el mensaje que manda el cliente desde la vista de Contacto
-    public function store(Request $request)
+    public function guardarMensaje(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:100',
-            'correo' => 'required|email|max:150',
-            'asunto' => 'required|string',
-            'mensaje' => 'required|string'
+            'nombre_cliente' => 'required',
+            'correo_cliente' => 'required|email:rfc,dns',
+            'mensaje' => 'required'
         ]);
-
-        // Unimos el departamento y asunto al cuerpo del mensaje para no perder contexto
-        $cuerpoCompleto = "DEPARTAMENTO: " . ($request->departamento ?? 'General') . "\n";
-        $cuerpoCompleto .= "ASUNTO: " . $request->asunto . "\n";
-        $cuerpoCompleto .= "-----------------------------------\n\n";
-        $cuerpoCompleto .= $request->mensaje;
 
         Mensaje::create([
-            'nombre_cliente' => $request->nombre,
-            'correo_cliente' => $request->correo,
-            'mensaje' => $cuerpoCompleto
+            'nombre_cliente' => $request->nombre_cliente,
+            'correo_cliente' => $request->correo_cliente,
+            'mensaje' => $request->mensaje
         ]);
 
-        return redirect()->back()->with('success', '¡Gracias! Tu mensaje ha sido enviado correctamente al Estudio.');
+        return back()->with('success','Mensaje enviado correctamente');
     }
-
-    // 3. Elimina un mensaje desde el Dashboard
-    public function destroy($id)
+    public function responder(Request $request,$id)
     {
-        Mensaje::findOrFail($id)->delete();
-        return redirect()->back()->with('success', 'Mensaje eliminado de la bandeja.');
+
+        $mensaje = Mensaje::findOrFail($id);
+
+        $request->validate([
+            'respuesta' => 'required'
+        ]);
+
+        Mail::raw($request->respuesta,function($mail) use ($mensaje){
+
+            $mail->to($mensaje->correo_cliente)
+            ->subject('Respuesta a tu mensaje');
+
+        });
+
+        $mensaje->fecha_respuesta = now();
+        $mensaje->estado_respuesta = 'Respondido';
+        $mensaje->id_usuario = auth()->user()->id_usuario;
+
+        $mensaje->save();
+
+        return back()->with('success','Respuesta enviada');
     }
 }

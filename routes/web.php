@@ -130,15 +130,20 @@ Route::delete('/dashboard/equipo/{id}', [EquipoController::class, 'destroy'])
     
 
 ///dash mensajes 
-// 1. Esta se queda pública (cualquiera puede enviar un mensaje)
-Route::post('/contacto/enviar', [MensajesController::class, 'store'])->name('contacto.mensaje.store');
-
-// 2. Estas van protegidas (solo tú y tu equipo pueden ver y borrar)
-Route::get('/dashboard/mensajes', [MensajesController::class, 'index'])->middleware('auth')->name('dashboard.mensajes');
-Route::delete('/dashboard/mensajes/{id}', [MensajesController::class, 'destroy'])->middleware('auth')->name('mensajes.destroy');
-
 Route::get('/mensajes', [MensajesController::class, 'index'])
     ->name('mensajes');
+
+Route::post('/enviar-mensaje',[MensajesController::class,'guardarMensaje'])
+->name('enviar.mensaje');
+
+
+Route::post('/responder-mensaje/{id}',
+[MensajesController::class,'responder'])
+->name('responder.mensaje');
+
+Route::delete('/eliminar-mensaje/{id}',
+[MensajesController::class,'eliminar'])
+->name('eliminar.mensaje');
 
 // USUARIOS
 Route::prefix('dashboard')->middleware('auth')->group(function () {

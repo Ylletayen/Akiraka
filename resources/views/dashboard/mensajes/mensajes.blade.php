@@ -7,265 +7,469 @@ use Illuminate\Support\Str;
 @endphp
 
 <div class="dash-admin-view">
-    <style>
-        /* ================= TODA TU BASE ORIGINAL INTACTA ================= */
-        .dash-admin-view {
-            min-height: 100vh;
-            background: #f8f8f8;
-            font-family: "Garamond", "Baskerville", serif;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
 
-        .dashboard-container {
-            display: flex;
-            width: 100%;
-            max-width: 1400px;
-            gap: 20px;
-            align-items: stretch;
-        }
+<style>
 
-        .main-content {
-            flex-grow: 1;
-            background: #fff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
-        }
+/* ================= TU ESTILO ORIGINAL ================= */
 
-        .header-section {
-            border-bottom: 1px solid #eaeaea;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.dash-admin-view{
+min-height:100vh;
+background:#f8f8f8;
+font-family:"Garamond","Baskerville",serif;
+padding:20px;
+display:flex;
+justify-content:center;
+}
 
-        .header-section h1 { font-size: 2rem; margin: 0; }
+.dashboard-container{
+display:flex;
+width:100%;
+max-width:1400px;
+gap:20px;
+align-items:stretch;
+}
 
-        .message-list { list-style: none; padding: 0; margin: 0; }
+.sidebar{
+width:260px;
+background:#1c1c1c;
+color:#fff;
+padding:25px;
+border-radius:12px;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+}
 
-        .message-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 25px 10px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-        }
+.logo-sidebar{
+width:80px;
+border-radius:50%;
+margin-bottom:10px;
+background:#fff;
+padding:5px;
+}
 
-        .message-item:hover { background: #fafafa; }
+.nav-link{
+color:#fff;
+margin-bottom:10px;
+display:flex;
+align-items:center;
+background:#2c2c2c;
+border-radius:8px;
+padding:10px 15px;
+transition:all .3s ease;
+text-decoration:none;
+font-family:Arial,sans-serif;
+font-size:.9rem;
+}
 
-        .message-left { display: flex; align-items: center; gap: 20px; }
+.nav-link:hover,
+.nav-link.active{
+background:#4b4b4b;
+}
 
-        .message-name { font-size: 1.3rem; }
+.main-content{
+flex-grow:1;
+background:#fff;
+padding:40px;
+border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,.05);
+}
 
-        .message-subject { color: #888; font-size: .9rem; }
+.header-section{
+border-bottom:1px solid #eaeaea;
+padding-bottom:20px;
+margin-bottom:30px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
 
-        .message-date { font-size: .8rem; font-weight: bold; }
+.header-section h1{
+font-size:2rem;
+margin:0;
+}
 
-        .btn-delete { border: none; background: none; cursor: pointer; font-size: 1rem; }
+.message-list{
+list-style:none;
+padding:0;
+margin:0;
+}
 
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, .5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-        }
+.message-item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:25px 10px;
+border-bottom:1px solid #eee;
+cursor:pointer;
+}
 
-        .modal-box {
-            background: #fff;
-            padding: 40px;
-            width: 500px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
-        }
+.message-item:hover{
+background:#fafafa;
+}
 
-        .modal-actions { margin-top: 20px; display: flex; gap: 10px; }
+.message-left{
+display:flex;
+align-items:center;
+gap:20px;
+}
 
-        .modal-actions button { padding: 10px 20px; border: none; cursor: pointer; }
+.message-name{
+font-size:1.3rem;
+}
 
-        .btn-dark { background: #000; color: #fff; }
+.message-subject{
+color:#888;
+font-size:.9rem;
+}
 
-        .btn-light { background: #eee; }
+.message-date{
+font-size:.8rem;
+font-weight:bold;
+}
 
-        textarea { width: 100%; height: 120px; padding: 10px; margin-top: 10px; border: 1px solid #ccc; }
+.btn-delete{
+border:none;
+background:none;
+cursor:pointer;
+font-size:1rem;
+}
 
-        .no-leido .message-name{ font-weight: bold; }
-        .no-leido .message-subject{ font-weight: bold; }
+.modal-overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.5);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:999;
+}
 
-        .notificacion{ display:none; }
+.modal-box{
+background:#fff;
+padding:40px;
+width:500px;
+border-radius:10px;
+box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
 
-        .no-leido .notificacion{
-            display:inline-block;
-            width:8px;
-            height:8px;
-            background:red;
-            border-radius:50%;
-            margin-right:6px;
-            animation:parpadear 1s infinite;
-        }
+.modal-actions{
+margin-top:20px;
+display:flex;
+gap:10px;
+}
 
-        @keyframes parpadear{
-            0%{opacity:1;}
-            50%{opacity:.2;}
-            100%{opacity:1;}
-        }
-    </style>
+.modal-actions button{
+padding:10px 20px;
+border:none;
+cursor:pointer;
+}
 
-    <div class="dashboard-container">
-        
-        @include('partials.sidebar')
+.btn-dark{
+background:#000;
+color:#fff;
+}
 
-        <div class="main-content">
+.btn-light{
+background:#eee;
+}
 
-            @include('partials.topbar')
-            
-            <div class="header-section">
-                <h1>Mensajes</h1>
-                <span onclick="marcarTodos()" style="cursor:pointer;">Marcar todos como leídos</span>
-            </div>
+textarea{
+width:100%;
+height:120px;
+padding:10px;
+margin-top:10px;
+border:1px solid #ccc;
+}
 
-            @if(session('success'))
-                <div style="background: #111; color: #fff; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-family: Arial, sans-serif;">
-                    {{ session('success') }}
-                </div>
-            @endif
+.no-leido .message-name{
+font-weight:bold;
+}
 
-            <ul class="message-list">
+.no-leido .message-subject{
+font-weight:bold;
+}
 
-                @forelse($mensajes as $mensaje)
+.notificacion{
+display:none;
+}
 
-                <li class="message-item {{ $mensaje->estado_respuesta == 'Pendiente' ? 'no-leido' : '' }}"
-                    data-nombre="{{ $mensaje->nombre_cliente }}"
-                    data-asunto="Mensaje Web"
-                    data-contenido="{{ $mensaje->mensaje }}"
-                    onclick="abrirMensaje(this)">
+.no-leido .notificacion{
+display:inline-block;
+width:8px;
+height:8px;
+background:red;
+border-radius:50%;
+margin-right:6px;
+animation:parpadear 1s infinite;
+}
 
-                    <div class="message-left">
-                        <div class="message-name">
-                            {{ $mensaje->nombre_cliente }}
-                        </div>
+@keyframes parpadear{
+0%{opacity:1;}
+50%{opacity:.2;}
+100%{opacity:1;}
+}
 
-                        <div class="message-subject">
-                            {{ \Illuminate\Support\Str::limit($mensaje->mensaje, 40) }}
-                        </div>
-                    </div>
+</style>
 
-                    <div>
-                        <span class="text-sm text-gray-500">
-                            <span class="notificacion"></span>
-                            {{ \Carbon\Carbon::parse($mensaje->fecha_envio)->format('d/m/Y') }}
-                        </span>
+<div class="dashboard-container">
 
-                        <button class="btn-delete"
-                                onclick="abrirEliminar(event, '{{ $mensaje->nombre_cliente }}', {{ $mensaje->id_mensaje }})">
-                        🗑
-                        </button>
-                    </div>
+@include('partials.sidebar')
 
-                </li>
+<div class="main-content">
 
-                @empty
+@include('partials.topbar')
 
-                <li style="padding:40px;text-align:center;color:#777;font-size:1.1rem;">
-                    Por el momento, no hay ningún mensaje.
-                </li>
+<div class="header-section">
+<h1>Mensajes</h1>
+<span onclick="marcarTodos()" style="cursor:pointer;">Marcar todos como leídos</span>
+</div>
 
-                @endforelse
+<ul class="message-list">
 
-            </ul>
-        </div>
-    </div>
+@forelse($mensajes as $mensaje)
 
-    <div id="modalMensaje" class="modal-overlay">
-        <div class="modal-box">
-            <h3 id="tituloMensaje"></h3>
-            <p id="contenidoMensaje" style="white-space: pre-wrap; line-height: 1.5;"></p>
-            <div class="modal-actions">
-                <button class="btn-dark" onclick="abrirResponder()">Responder</button>
-                <button class="btn-light" onclick="cerrarTodo()">Cerrar</button>
-            </div>
-        </div>
-    </div>
+<li class="message-item no-leido"
+onclick="abrirMensaje(
+this,
+'{{ $mensaje->id_mensaje }}',
+'{{ $mensaje->nombre_cliente }}',
+'Mensaje recibido',
+`{{ $mensaje->mensaje }}`
+)">
 
-    <div id="modalResponder" class="modal-overlay">
-        <div class="modal-box">
-            <h3>Redactando respuesta</h3>
-            <textarea placeholder="Escriba su respuesta"></textarea>
-            <div class="modal-actions">
-                <button class="btn-dark">Enviar respuesta</button>
-                <button class="btn-light" onclick="cerrarTodo()">Cancelar</button>
-            </div>
-        </div>
-    </div>
+<div class="message-left">
 
-    <div id="modalEliminar" class="modal-overlay">
-        <div class="modal-box">
-            <h3>¿Eliminar mensaje?</h3>
-            <p id="nombreEliminar"></p>
-            <form id="formEliminarMensaje" method="POST">
-                @csrf
-                @method('DELETE')
-                <div class="modal-actions">
-                    <button type="submit" class="btn-dark">Eliminar definitivamente</button>
-                    <button type="button" class="btn-light" onclick="cerrarTodo()">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </div>
+<div class="message-name">
+{{ $mensaje->nombre_cliente }}
+</div>
+
+<div class="message-subject">
+{{ Str::limit($mensaje->mensaje,40) }}
+</div>
+
+</div>
+
+<div>
+
+<span class="text-sm text-gray-500">
+
+<span class="notificacion"></span>
+
+{{ \Carbon\Carbon::parse($mensaje->fecha_envio)->format('d/m/Y') }}
+
+</span>
+
+<button class="btn-delete"
+onclick="abrirEliminar(event,
+'{{ $mensaje->id_mensaje }}',
+'{{ $mensaje->nombre_cliente }}')">
+
+🗑
+
+</button>
+
+</div>
+
+</li>
+
+@empty
+
+<li style="padding:40px;text-align:center;color:#777;font-size:1.1rem;">
+Por el momento, no hay ningún mensaje
+</li>
+
+@endforelse
+
+</ul>
+
+</div>
+</div>
+
+<!-- ================= MODAL VER MENSAJE ================= -->
+
+<div id="modalMensaje" class="modal-overlay">
+
+<div class="modal-box">
+
+<h3 id="tituloMensaje"></h3>
+
+<p id="contenidoMensaje"></p>
+
+<div class="modal-actions">
+
+<button class="btn-dark" onclick="abrirResponder()">
+Responder
+</button>
+
+<button class="btn-light" onclick="cerrarTodo()">
+Cerrar
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= MODAL RESPONDER ================= -->
+
+<div id="modalResponder" class="modal-overlay">
+
+<div class="modal-box">
+
+<h3>Redactando respuesta</h3>
+
+<form id="formResponder" method="POST">
+
+@csrf
+
+<textarea
+name="respuesta"
+placeholder="Escriba su respuesta"
+required></textarea>
+
+<div class="modal-actions">
+
+<button type="submit" class="btn-dark">
+Enviar respuesta
+</button>
+
+<button type="button" class="btn-light" onclick="cerrarTodo()">
+Cancelar
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+
+<!-- ================= MODAL ELIMINAR ================= -->
+
+<div id="modalEliminar" class="modal-overlay">
+
+<div class="modal-box">
+
+<h3>¿Eliminar mensaje?</h3>
+
+<p id="nombreEliminar"></p>
+
+<form id="formEliminar" method="POST">
+
+@csrf
+@method('DELETE')
+
+<div class="modal-actions">
+
+<button type="submit" class="btn-dark">
+Eliminar definitivamente
+</button>
+
+<button type="button" class="btn-light" onclick="cerrarTodo()">
+Cancelar
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
 
 <script>
-    function abrirMensaje(elemento) {
-        let nombre = elemento.getAttribute('data-nombre');
-        let asunto = elemento.getAttribute('data-asunto');
-        let contenido = elemento.getAttribute('data-contenido');
 
-        document.getElementById("tituloMensaje").innerText = nombre + " - " + asunto;
-        document.getElementById("contenidoMensaje").innerText = contenido;
-        document.getElementById("modalMensaje").style.display = "flex";
+let mensajeActual = null;
 
-        elemento.classList.remove("no-leido");
-    }
 
-    function abrirResponder(){
-        cerrarTodo();
-        document.getElementById("modalResponder").style.display = "flex";
-    }
+/* ================= ABRIR MENSAJE ================= */
 
-    function abrirEliminar(event, nombre, id_mensaje){
-        event.stopPropagation();
-        document.getElementById("nombreEliminar").innerText = "El mensaje de " + nombre + " se perderá.";
-        
-        // Asignar ruta dinámica al formulario de eliminar
-        let url = "{{ route('mensajes.destroy', ':id') }}".replace(':id', id_mensaje);
-        document.getElementById("formEliminarMensaje").action = url;
+function abrirMensaje(elemento,id,nombre,asunto,contenido){
 
-        document.getElementById("modalEliminar").style.display = "flex";
-    }
+mensajeActual = id;
 
-    function cerrarTodo(){
-        document.getElementById("modalMensaje").style.display = "none";
-        document.getElementById("modalResponder").style.display = "none";
-        document.getElementById("modalEliminar").style.display = "none";
-    }
+document.getElementById("tituloMensaje").innerText = nombre + " - " + asunto;
 
-    function marcarTodos(){
-        let mensajes = document.querySelectorAll(".message-item");
+document.getElementById("contenidoMensaje").innerText = contenido;
 
-        mensajes.forEach(function(msg){
-            msg.classList.remove("no-leido");
-        });
-    }
+document.getElementById("modalMensaje").style.display = "flex";
+
+elemento.classList.remove("no-leido");
+
+}
+
+
+/* ================= ABRIR RESPONDER ================= */
+
+function abrirResponder(){
+
+cerrarTodo();
+
+let form = document.getElementById("formResponder");
+
+form.action = "/responder-mensaje/" + mensajeActual;
+
+document.getElementById("modalResponder").style.display = "flex";
+
+}
+
+
+/* ================= ABRIR ELIMINAR ================= */
+
+function abrirEliminar(event,id,nombre){
+
+event.stopPropagation();
+
+document.getElementById("nombreEliminar").innerText =
+"El mensaje de " + nombre + " se eliminará permanentemente.";
+
+let form = document.getElementById("formEliminar");
+
+form.action = "/eliminar-mensaje/" + id;
+
+document.getElementById("modalEliminar").style.display = "flex";
+
+}
+
+
+/* ================= CERRAR MODALES ================= */
+
+function cerrarTodo(){
+
+document.getElementById("modalMensaje").style.display = "none";
+
+document.getElementById("modalResponder").style.display = "none";
+
+document.getElementById("modalEliminar").style.display = "none";
+
+}
+
+
+/* ================= MARCAR LEIDOS ================= */
+
+function marcarTodos(){
+
+let mensajes=document.querySelectorAll(".message-item");
+
+mensajes.forEach(function(msg){
+
+msg.classList.remove("no-leido");
+
+});
+
+}
+
 </script>
 
 </div>
-@endsection
+
+@endsectiona
