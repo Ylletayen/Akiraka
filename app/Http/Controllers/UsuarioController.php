@@ -11,12 +11,12 @@ class UsuarioController extends Controller
 {
     public function index()
     {
-        if (Auth::user()->id_rol != 1) {
-            abort(403, 'Acceso denegado. Solo el Superadmin puede gestionar roles.');
-        }
 
-        $usuarios = User::all();
-        $roles = DB::table('roles')->get(); 
+        $usuarios = \App\Models\User::all();
+        
+        $roles = DB::table('roles')
+                    ->whereNotIn('id_rol', [1, 4]) 
+                    ->get(); 
 
         return view('dashboard.usuarios.usuario', compact('usuarios', 'roles'));
     }

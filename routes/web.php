@@ -114,7 +114,7 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
     // USUARIOS
     Route::get('/usuarios', [UsuarioController::class, 'index'])->name('dashboard.usuarios');
     Route::post('/usuarios', [UsuarioController::class, 'store'])->name('usuarios.store');
-    Route::put('/usuarios/{id}', [UsuarioController::class, 'update'])->name('usuarios.update');
+    Route::put('/usuarios/{id}', [App\Http\Controllers\UsuarioController::class, 'updateRol'])->name('usuarios.update');
     Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
 
     // MENSAJES (GESTIÓN)
