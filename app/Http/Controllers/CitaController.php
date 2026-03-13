@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Cliente;
 use App\Models\Cita;
+use App\Models\Configuracion;
+use Illuminate\Support\Facades\DB;
 
 class CitaController extends Controller
 {
+    // ==========================================================
+    // 1. FUNCIÓN PÚBLICA: Recibe el formulario de la página web
+    // ==========================================================
     public function store(Request $request)
     {
-        // 1. Validamos los datos que llegan del formulario
+        // Validamos los datos
         $request->validate([
             'nombre'      => 'required|string|max:150',
             'correo'      => 'required|email|max:150',
@@ -20,17 +25,13 @@ class CitaController extends Controller
             'descripcion' => 'required|string'
         ]);
 
-        // 2. LA MAGIA: Buscamos al cliente por correo. 
-        // Si no existe, lo crea usando los datos del array secundario.
+        // Buscamos o creamos al cliente
         $cliente = Cliente::firstOrCreate(
-            ['correo' => $request->correo], // Condición de búsqueda
-            [
-                'nombre' => $request->nombre,
-                'telefono' => $request->telefono
-            ] // Datos a insertar si no lo encuentra
+            ['correo' => $request->correo],
+            ['nombre' => $request->nombre, 'telefono' => $request->telefono]
         );
 
-        // 3. Creamos la cita vinculada a ese cliente
+        // Creamos la cita en la BD
         Cita::create([
             'id_cliente'    => $cliente->id_cliente,
             'id_servicio'   => $request->id_servicio,
@@ -39,7 +40,73 @@ class CitaController extends Controller
             'estado'        => 'Pendiente'
         ]);
 
-        // 4. Redirigimos de vuelta con un mensaje de éxito
+        // (Aquí iría la lógica del correo a Akira si decides activarla después)
+
         return back()->with('success', '¡Tu solicitud ha sido enviada! Nos pondremos en contacto contigo pronto para confirmar la cita.');
+    }
+
+    // ==========================================================
+    // 2. FUNCIÓN PRIVADA (DASHBOARD): Muestra la tabla de prospectos
+    // ==========================================================
+    public function solicitudesCitas()
+    {
+        // Unimos Citas + Clientes + Servicios en una sola consulta
+        $solicitudes = DB::table('citas')
+            ->join('clientes', 'citas.id_cliente', '=', 'clientes.id_cliente')
+            ->join('servicios', 'citas.id_servicio', '=', 'servicios.id_servicio')
+            ->select(
+                'citas.id_cita',
+                'citas.fecha_hora',
+                'citas.estado',
+                'citas.notas_cliente as descripcion_proyecto',
+                'clientes.nombre as cliente_nombre',
+                'clientes.correo as cliente_correo',
+                'clientes.telefono as cliente_telefono',
+                'servicios.nombre as asunto_servicio'
+            )
+            ->orderBy('citas.created_at', 'desc')
+            ->get();
+
+        return view('dashboard.citas.index', compact('solicitudes'));
+    }
+
+    public function actualizarEstado(Request $request, $id)
+    {
+        $request->validate(['estado' => 'required|in:Pendiente,Confirmada,Completada,Cancelada']);
+
+        $cita = Cita::findOrFail($id);
+        $cita->update(['estado' => $request->estado]);
+
+        $cliente = Cliente::findOrFail($cita->id_cliente);
+        $servicio = \DB::table('servicios')->where('id_servicio', $cita->id_servicio)->value('nombre');
+
+        // Lógica de notificación por correo (solo si se Confirma o Cancela)
+        if (in_array($request->estado, ['Confirmada', 'Cancelada'])) {
+            try {
+                $mensaje = $request->estado == 'Confirmada' 
+                    ? "Hola {$cliente->nombre},\n\nNos alegra informarte que tu solicitud de cita para el servicio de '{$servicio}' ha sido CONFIRMADA. Nos pondremos en contacto contigo a la brevedad para afinar los detalles.\n\nSaludos,\nEl equipo de Akiraka Estudio."
+                    : "Hola {$cliente->nombre},\n\nTe informamos que por motivos de agenda, tu solicitud de cita para '{$servicio}' ha sido CANCELADA. Te invitamos a solicitar una nueva fecha en nuestra página web.\n\nSaludos,\nEl equipo de Akiraka Estudio.";
+
+                \Illuminate\Support\Facades\Mail::raw($mensaje, function($mail) use ($cliente) {
+                    $mail->to($cliente->correo)
+                         ->subject('Actualización de tu solicitud en Akiraka Estudio');
+                });
+            } catch (\Exception $e) {
+                // Si falla el correo (ej. falta configurar el .env), de todas formas guardamos el estado
+                return back()->with('success', 'Estado actualizado a ' . $request->estado . ', pero el correo no pudo enviarse (revisa la configuración SMTP).');
+            }
+        }
+
+        return back()->with('success', 'El estado de la solicitud ha sido actualizado a: ' . $request->estado);
+    }
+
+    // ==========================================================
+    // 4. ELIMINAR CITA (Por si es spam)
+    // ==========================================================
+    public function destroy($id)
+    {
+        $cita = Cita::findOrFail($id);
+        $cita->delete();
+        return back()->with('success', 'Solicitud eliminada correctamente del registro.');
     }
 }

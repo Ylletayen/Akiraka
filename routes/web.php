@@ -9,7 +9,8 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\MensajesController;
 use App\Http\Controllers\ObjetoController;
 use App\Http\Controllers\PublicacionController;
-use App\Http\Controllers\ServicioController; // <-- NUESTRO NUEVO CONTROLADOR
+use App\Http\Controllers\ServicioController;
+use App\Http\Controllers\CitaController;
 use App\Models\Proyecto;
 use App\Models\Publicacion;
 
@@ -153,3 +154,8 @@ Route::post('/solicitar-cita', [App\Http\Controllers\CitaController::class, 'sto
 // PUBLICACIONES
 Route::get('/publicaciones', [PublicacionController::class,'index'])->name('publicaciones');
 Route::get('/publicaciones/{id}', [PublicacionController::class,'show'])->name('publicaciones.show');
+
+//CITAS
+Route::get('/citas', [CitaController::class, 'solicitudesCitas'])->name('dashboard.citas');
+Route::put('/citas/{id}/estado', [CitaController::class, 'actualizarEstado'])->name('dashboard.citas.estado');
+Route::delete('/citas/{id}', [CitaController::class, 'destroy'])->name('dashboard.citas.destroy');
