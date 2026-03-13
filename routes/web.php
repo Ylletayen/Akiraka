@@ -9,6 +9,8 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\MensajesController;
 use App\Http\Controllers\ObjetoController;
 use App\Models\Proyecto;
+use App\Http\Controllers\PublicacionController;
+use App\Models\Publicacion;
 
 // --- VISTAS PÚBLICAS ---
 Route::get('/', function () {
@@ -37,8 +39,10 @@ Route::get('/proyecto', function () {
                                 ->value('url_imagen');
         return $objeto;
     });
+     // obtener publicaciones
+    $publicaciones = Publicacion::orderBy('fecha','desc')->get();
     
-    return view('partials.project_detail', compact('proyectosEnProceso', 'proyectosConstruidos', 'objetos')); 
+    return view('partials.project_detail', compact('proyectosEnProceso', 'proyectosConstruidos', 'objetos', 'publicaciones')); 
 })->name('project.detail');
 
 Route::get('/info', function () {
@@ -136,3 +140,11 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 // DETALLE EXTERNO
 Route::get('/proyecto/{id}', [ProjectController::class, 'show'])->name('project.main');
 Route::get('/objeto/{id}', [ObjetoController::class, 'show'])->name('objeto.main');
+
+
+////publicaciones
+Route::get('/publicaciones', [PublicacionController::class,'index'])
+->name('publicaciones');
+
+Route::get('/publicaciones/{id}', [PublicacionController::class,'show'])
+->name('publicaciones.show');

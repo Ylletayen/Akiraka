@@ -227,10 +227,29 @@
         </section>
 
         <section>
-            <h2 class="column-title">Publicaciones</h2>
-            <ul class="project-list">
-                <li><span class="year-label">2026</span> <a href="#" class="project-link" data-img="{{ asset('img/revista.jpg') }}">Arquitectura Viva: El minimalismo de Akiraka</a></li>
-            </ul>
+            <h2>Publicaciones</h2>
+
+                @if($publicaciones->isEmpty())
+
+                <p>Ninguna publicación disponible</p>
+
+                @else
+
+                @foreach($publicaciones as $publicacion)
+
+                <div class="publicacion-item">
+
+                <a href="{{ route('publicaciones.show', $publicacion->id_publicacion) }}">
+                    <h4>{{ $publicacion->titulo }}</h4>
+                </a>
+
+                <p>{{ $publicacion->fecha }}</p>
+
+                </div>
+
+                @endforeach
+
+                @endif
         </section>
 
     </main>
