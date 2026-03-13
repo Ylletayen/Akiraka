@@ -11,7 +11,6 @@ class Configuracion extends Model
 
     protected $table = 'configuraciones';
 
-    // Agregamos los 3 nuevos campos de correos a la lista de "permitidos"
     protected $fillable = [
         'telefono', 
         'correo_contacto', 
@@ -20,6 +19,9 @@ class Configuracion extends Model
         'correo_laboral_2',
         'direccion', 
         'instagram',
-        'facebook'
+        'facebook',
+        'quienes_somos_texto',
+        'valores_texto',
+        'landing_hero_image'
     ];
 }
