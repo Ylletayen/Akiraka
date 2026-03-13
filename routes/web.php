@@ -8,8 +8,9 @@ use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\MensajesController;
 use App\Http\Controllers\ObjetoController;
-use App\Models\Proyecto;
 use App\Http\Controllers\PublicacionController;
+use App\Http\Controllers\ServicioController; // <-- NUESTRO NUEVO CONTROLADOR
+use App\Models\Proyecto;
 use App\Models\Publicacion;
 
 // --- VISTAS PÚBLICAS ---
@@ -32,14 +33,13 @@ Route::get('/proyecto', function () {
         return $proyecto;
     });
 
-    // CORRECCIÓN: Los objetos ya están libres y ordenados por año
     $objetos = \App\Models\Objeto::orderBy('anio', 'desc')->get()->map(function ($objeto) {
         $objeto->portada = \Illuminate\Support\Facades\DB::table('imagenes_objeto')
                                 ->where('id_objeto', $objeto->id_objeto)
                                 ->value('url_imagen');
         return $objeto;
     });
-     // obtener publicaciones
+    
     $publicaciones = Publicacion::orderBy('fecha','desc')->get();
     
     return view('partials.project_detail', compact('proyectosEnProceso', 'proyectosConstruidos', 'objetos', 'publicaciones')); 
@@ -54,7 +54,6 @@ Route::get('/contacto', function () {
 })->name('contacto');
 
 // --- SISTEMA DE MENSAJES (PÚBLICO) ---
-// Cambiamos el nombre a 'contacto.mensaje.store' para que coincida con la vista
 Route::post('/enviar-mensaje', [MensajesController::class, 'guardarMensaje'])->name('contacto.mensaje.store');
 
 // --- AUTENTICACIÓN ---
@@ -118,8 +117,16 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
     // USUARIOS
     Route::get('/usuarios', [UsuarioController::class, 'index'])->name('dashboard.usuarios');
     Route::post('/usuarios', [UsuarioController::class, 'store'])->name('usuarios.store');
-    Route::put('/usuarios/{id}', [App\Http\Controllers\UsuarioController::class, 'updateRol'])->name('usuarios.update');
+    Route::put('/usuarios/{id}', [UsuarioController::class, 'updateRol'])->name('usuarios.update');
     Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
+
+    // ==========================================
+    // NUEVO MÓDULO: SERVICIOS (BASE PARA LA API)
+    // ==========================================
+    Route::get('/servicios', [ServicioController::class, 'index'])->name('dashboard.servicios');
+    Route::post('/servicios', [ServicioController::class, 'store'])->name('servicios.store');
+    Route::put('/servicios/{id}', [ServicioController::class, 'update'])->name('servicios.update');
+    Route::delete('/servicios/{id}', [ServicioController::class, 'destroy'])->name('servicios.destroy');
 
     // MENSAJES (GESTIÓN)
     Route::get('/mensajes', [MensajesController::class, 'index'])->name('mensajes');
@@ -130,8 +137,6 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
     Route::get('/objetos', [ObjetoController::class, 'index'])->name('dashboard.objetos');
     Route::post('/objetos', [ObjetoController::class, 'store'])->name('objetos.store');
     Route::delete('/objetos/{id}', [ObjetoController::class, 'destroy'])->name('objetos.destroy');
-    
-    //(HISTORIA) DE LOS OBJETOS
     Route::get('/objetos/{id}/historia', [ObjetoController::class, 'historias'])->name('objetos.historias');
     Route::post('/objetos/{id}/historia', [ObjetoController::class, 'storeHistoria'])->name('objetos.historias.store');
     Route::delete('/objetos/historia/{id_imagen}', [ObjetoController::class, 'destroyHistoria'])->name('objetos.historias.destroy');
@@ -142,12 +147,9 @@ Route::get('/proyecto/{id}', [ProjectController::class, 'show'])->name('project.
 Route::get('/objeto/{id}', [ObjetoController::class, 'show'])->name('objeto.main');
 
 
-////publicaciones
-Route::get('/publicaciones', [PublicacionController::class,'index'])
-->name('publicaciones');
-
-Route::get('/publicaciones/{id}', [PublicacionController::class,'show'])
-->name('publicaciones.show');
-
 // Ruta para recibir el formulario de citas desde la página pública
 Route::post('/solicitar-cita', [App\Http\Controllers\CitaController::class, 'store'])->name('api.citas.store');
+
+// PUBLICACIONES
+Route::get('/publicaciones', [PublicacionController::class,'index'])->name('publicaciones');
+Route::get('/publicaciones/{id}', [PublicacionController::class,'show'])->name('publicaciones.show');
