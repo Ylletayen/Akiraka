@@ -119,6 +119,13 @@
                  <div><i class="fas fa-user-shield me-3"></i> Usuarios</div>
                 </a>
             </li>
+             <!-- ================= NUEVO BOTÓN DE SERVICIOS ================= -->
+            <li class="nav-item">
+               <a class="nav-link {{ request()->routeIs('dashboard.servicios') ? 'active' : '' }}" href="{{ route('dashboard.servicios') }}">
+                 <div><i class="fas fa-drafting-compass me-3"></i> Servicios</div>
+                </a>
+            </li>
+            <!-- ============================================================ -->
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('dashboard.proyectos') ? 'active' : '' }}" href="{{ route('dashboard.proyectos') }}">
                     <div><i class="fas fa-building me-3"></i> Obras</div>
