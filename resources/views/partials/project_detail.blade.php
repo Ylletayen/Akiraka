@@ -82,6 +82,28 @@
             gap: 40px;
         }
 
+        /* --- NUEVO: ESTILOS PARA EL BOTÓN DE REGRESAR FLOTANTE --- */
+        .btn-flotante-regresar {
+            position: fixed;
+            bottom: clamp(20px, 4vh, 40px); /* Fijo en la parte inferior */
+            left: clamp(30px, 5vw, 60px);   /* Alineado con tu margen izquierdo general */
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #111111 !important;
+            text-decoration: underline !important;
+            z-index: 9999; /* Asegura que esté por encima de todo */
+            background-color: rgba(253, 253, 253, 0.85); /* Fondo difuminado para legibilidad */
+            backdrop-filter: blur(5px);
+            padding: 8px 15px 8px 0;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-flotante-regresar:hover {
+            color: #8c8c8c !important;
+            transform: translateX(-5px); /* Efecto sutil al pasar el mouse */
+        }
+
         /* --- ESTILOS PARA EL HOVER PREVIEW --- */
         .hover-preview {
             position: fixed;
@@ -155,17 +177,19 @@
         /* --- ANIMACIONES AL SCROLLEAR (FADE UP) --- */
         .akira-fade-up {
             opacity: 0;
-            transform: translateY(25px); /* Empieza un poco más abajo */
+            transform: translateY(25px);
             transition: opacity 0.7s ease-out, transform 0.7s ease-out;
         }
 
         .akira-fade-up.is-visible {
             opacity: 1;
-            transform: translateY(0); /* Sube a su posición original */
+            transform: translateY(0); 
         }
     </style>
 
-    <div id="project-view" class="akira-project-view">
+    <!-- ¡NUEVO BOTÓN FLOTANTE QUE SIGUE AL USUARIO! -->
+    <a href="{{ route('landing') }}" class="btn-flotante-regresar">&larr; regresar</a>
+
     <header class="site-header-main">
         <a href="{{ route('project.detail') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">
         Estudio Akiraka ,</a>
@@ -256,8 +280,8 @@
 
     <footer class="site-footer-main">
         <div class="footer-left">
-            <a href="{{ route('landing') }}" style="font-weight: bold; text-decoration: underline !important;">regresar</a>
-            <span>2026</span>
+            <!-- Desplazamos el año ligeramente para que no choque con el botón flotante al llegar al fondo -->
+            <span style="padding-left: 100px;">2026</span>
         </div>
         <a href="#">Read in English</a>
     </footer>
@@ -340,8 +364,8 @@
                     modalContent.innerHTML = '<div style="text-align:center; padding-top: 20vh; color: #d9534f;">Hubo un error al cargar la historia.</div>';
                     console.error('Error:', error);
                 });
-        }); // <--- ¡AQUÍ ESTABA EL ERROR! Faltaba cerrar el evento click
-    });     // <--- Este cierra el forEach de los links
+        }); 
+    }); 
 
     // Función para cerrar el modal AJAX
     function cerrarModalHistoria() {
