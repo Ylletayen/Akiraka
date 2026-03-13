@@ -148,3 +148,6 @@ Route::get('/publicaciones', [PublicacionController::class,'index'])
 
 Route::get('/publicaciones/{id}', [PublicacionController::class,'show'])
 ->name('publicaciones.show');
+
+// Ruta para recibir el formulario de citas desde la página pública
+Route::post('/solicitar-cita', [App\Http\Controllers\CitaController::class, 'store'])->name('api.citas.store');
