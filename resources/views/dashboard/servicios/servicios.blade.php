@@ -21,10 +21,6 @@
         .table-akiraka tbody tr:hover { background: #fcfcfc; }
         .table-akiraka tbody tr:last-child td { border-bottom: none; }
 
-        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-        .status-active { background: #e6f4ea; color: #1e7e34; border: 1px solid #c3e6cb; }
-        .status-inactive { background: #fdf3f2; color: #c92a2a; border: 1px solid #f5c6cb; }
-
         .btn-action { background: none; border: none; font-size: 1rem; color: #888; cursor: pointer; margin-right: 12px; transition: color 0.2s; }
         .btn-action.edit:hover { color: #111; }
         .btn-action.delete:hover { color: #d9534f; }
@@ -43,15 +39,6 @@
         .btn-cancel { background: #fff; border: 1px solid #ddd; color: #555; padding: 12px 20px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
         .btn-cancel:hover { background: #fafafa; color: #111; }
         .btn-close-abs { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.2rem; color: #888; cursor: pointer; }
-        
-        .switch-container { display: flex; align-items: center; gap: 12px; cursor: pointer; margin-top: 10px; }
-        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #111; }
-        input:checked + .slider:before { transform: translateX(20px); }
-        .switch-label { font-size: 0.8rem; font-weight: bold; color: #111; text-transform: uppercase; letter-spacing: 1px; }
 
         .empty-state { padding: 50px; text-align: center; color: #888; font-style: italic; font-family: 'Garamond', serif; font-size: 1.1rem; }
     </style>
@@ -65,7 +52,7 @@
             <div class="header-section">
                 <div>
                     <h1>Catálogo de Servicios</h1>
-                    <p>Gestiona las especialidades que se mostrarán en la aplicación de citas.</p>
+                    <p>Gestiona los servicios y especialidades que ofrece el estudio.</p>
                 </div>
                 <div>
                     <button class="btn-dark-akiraka" onclick="openModal('modal-crear')">
@@ -86,8 +73,7 @@
                         <tr>
                             <th style="width: 80px;">ID</th>
                             <th>Servicio</th>
-                            <th>Descripción Pública</th>
-                            <th style="width: 120px;">Estado</th>
+                            <th>Descripción</th>
                             <th style="text-align: right; width: 120px;">Acciones</th>
                         </tr>
                     </thead>
@@ -96,19 +82,12 @@
                         <tr>
                             <td><span style="color: #888; font-size: 0.8rem;">#{{ str_pad($servicio->id_servicio, 3, '0', STR_PAD_LEFT) }}</span></td>
                             <td style="font-weight: bold; color: #111;">{{ $servicio->nombre }}</td>
-                            <td style="color: #666; max-width: 350px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <td style="color: #666; max-width: 450px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                 {{ $servicio->descripcion ?? 'Sin descripción...' }}
-                            </td>
-                            <td>
-                                @if($servicio->activo)
-                                    <span class="status-badge status-active">Activo</span>
-                                @else
-                                    <span class="status-badge status-inactive">Inactivo</span>
-                                @endif
                             </td>
                             <td style="text-align: right;">
                                 <button class="btn-action edit" title="Editar" 
-                                    onclick="openEditModal({{ $servicio->id_servicio }}, '{{ addslashes($servicio->nombre) }}', '{{ addslashes($servicio->descripcion) }}', {{ $servicio->activo ? 'true' : 'false' }})">
+                                    onclick="openEditModal({{ $servicio->id_servicio }}, '{{ addslashes($servicio->nombre) }}', '{{ addslashes($servicio->descripcion) }}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn-action delete" title="Eliminar" 
@@ -119,7 +98,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5">
+                            <td colspan="4">
                                 <div class="empty-state">
                                     Aún no has registrado ningún servicio arquitectónico. <br>Haz clic en "+ Nuevo Servicio" para comenzar a armar tu catálogo.
                                 </div>
@@ -141,22 +120,16 @@
         <h2 class="modal-title">Registrar Nuevo Servicio</h2>
         <form action="{{ route('servicios.store') }}" method="POST">
             @csrf
+            <!-- Input oculto para no romper el controlador -->
+            <input type="hidden" name="activo" value="1">
+            
             <div class="form-group">
                 <label>Nombre del Servicio</label>
                 <input type="text" name="nombre" class="form-control" required placeholder="Ej: Diseño Arquitectónico">
             </div>
             <div class="form-group">
-                <label>Descripción para el Cliente</label>
+                <label>Descripción</label>
                 <textarea name="descripcion" class="form-control" rows="4" placeholder="Explica brevemente en qué consiste este servicio..."></textarea>
-            </div>
-            <div class="form-group" style="margin-top: 30px;">
-                <label class="switch-container">
-                    <span class="switch-label">Visible en API de Citas</span>
-                    <label class="switch">
-                        <input type="checkbox" name="activo" value="1" checked>
-                        <span class="slider"></span>
-                    </label>
-                </label>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" onclick="closeModal('modal-crear')">Cancelar</button>
@@ -173,22 +146,16 @@
         <h2 class="modal-title">Editar Servicio</h2>
         <form id="form-editar" method="POST">
             @csrf @method('PUT')
+            <!-- Input oculto para no romper el controlador -->
+            <input type="hidden" name="activo" value="1">
+            
             <div class="form-group">
                 <label>Nombre del Servicio</label>
                 <input type="text" id="edit-nombre" name="nombre" class="form-control" required>
             </div>
             <div class="form-group">
-                <label>Descripción para el Cliente</label>
+                <label>Descripción</label>
                 <textarea id="edit-descripcion" name="descripcion" class="form-control" rows="4"></textarea>
-            </div>
-            <div class="form-group" style="margin-top: 30px;">
-                <label class="switch-container">
-                    <span class="switch-label">Visible en API de Citas</span>
-                    <label class="switch">
-                        <input type="checkbox" id="edit-activo" name="activo" value="1">
-                        <span class="slider"></span>
-                    </label>
-                </label>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" onclick="closeModal('modal-editar')">Cancelar</button>
@@ -204,7 +171,7 @@
         <i class="fas fa-exclamation-triangle" style="font-size: 3.5rem; color: #d9534f; margin-bottom: 20px;"></i>
         <h2 class="modal-title" style="border: none; margin-bottom: 10px;">¿Eliminar Servicio?</h2>
         <p style="color: #555; margin-bottom: 30px; font-size: 0.95rem;">
-            Estás a punto de borrar <strong id="delete-nombre" style="color:#111;"></strong>. Ya no estará disponible para agendar citas.
+            Estás a punto de borrar <strong id="delete-nombre" style="color:#111;"></strong> de forma permanente.
         </p>
         <form id="form-eliminar" method="POST">
             @csrf @method('DELETE')
@@ -220,11 +187,10 @@
     function openModal(id) { document.getElementById(id).classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-    function openEditModal(id, nombre, descripcion, activo) {
+    function openEditModal(id, nombre, descripcion) {
         document.getElementById('form-editar').action = `/dashboard/servicios/${id}`;
         document.getElementById('edit-nombre').value = nombre;
         document.getElementById('edit-descripcion').value = descripcion;
-        document.getElementById('edit-activo').checked = activo;
         openModal('modal-editar');
     }
 

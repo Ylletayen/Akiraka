@@ -71,7 +71,33 @@
 
     .btn-submit-contact { width: 100%; padding: 15px; background: #111; color: #fff; border: none; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75rem; cursor: pointer; transition: background 0.3s; }
     .btn-submit-contact:hover { background: #333; }
+
+    /* --- ESTILOS PARA EL BOTÓN DE REGRESAR FLOTANTE --- */
+    .btn-flotante-regresar {
+        position: fixed;
+        bottom: clamp(20px, 4vh, 40px); /* Fijo en la parte inferior */
+        left: clamp(30px, 5vw, 60px);   /* Alineado a la izquierda */
+        font-weight: bold;
+        font-size: 0.95rem;
+        color: #111111 !important;
+        text-decoration: underline !important;
+        z-index: 9999; /* Asegura que esté por encima de todo */
+        background-color: rgba(253, 253, 253, 0.85); /* Fondo difuminado para legibilidad */
+        backdrop-filter: blur(5px);
+        padding: 8px 15px 8px 0;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        font-family: "Garamond", "Baskerville", "Times New Roman", serif;
+    }
+
+    .btn-flotante-regresar:hover {
+        color: #8c8c8c !important;
+        transform: translateX(-5px); /* Efecto sutil al pasar el mouse */
+    }
 </style>
+
+<!-- ¡BOTÓN FLOTANTE QUE SIGUE AL USUARIO! -->
+<a href="{{ route('landing') }}" class="btn-flotante-regresar">&larr; regresar</a>
 
 <div class="akira-container">
     <header class="site-header-main">
