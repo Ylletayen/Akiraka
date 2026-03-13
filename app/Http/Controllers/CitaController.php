@@ -70,43 +70,39 @@ class CitaController extends Controller
         return view('dashboard.citas.index', compact('solicitudes'));
     }
 
+   // ==========================================================
+    // 3. ACTUALIZAR ESTADO, NOTIFICAR Y LIMPIAR (AUTO-DELETE)
+    // ==========================================================
     public function actualizarEstado(Request $request, $id)
     {
-        $request->validate(['estado' => 'required|in:Pendiente,Confirmada,Completada,Cancelada']);
+        $request->validate(['estado' => 'required|in:Confirmada,Cancelada']);
 
         $cita = Cita::findOrFail($id);
-        $cita->update(['estado' => $request->estado]);
-
         $cliente = Cliente::findOrFail($cita->id_cliente);
         $servicio = \DB::table('servicios')->where('id_servicio', $cita->id_servicio)->value('nombre');
 
-        // Lógica de notificación por correo (solo si se Confirma o Cancela)
-        if (in_array($request->estado, ['Confirmada', 'Cancelada'])) {
-            try {
-                $mensaje = $request->estado == 'Confirmada' 
-                    ? "Hola {$cliente->nombre},\n\nNos alegra informarte que tu solicitud de cita para el servicio de '{$servicio}' ha sido CONFIRMADA. Nos pondremos en contacto contigo a la brevedad para afinar los detalles.\n\nSaludos,\nEl equipo de Akiraka Estudio."
-                    : "Hola {$cliente->nombre},\n\nTe informamos que por motivos de agenda, tu solicitud de cita para '{$servicio}' ha sido CANCELADA. Te invitamos a solicitar una nueva fecha en nuestra página web.\n\nSaludos,\nEl equipo de Akiraka Estudio.";
+        // Intentamos enviar el correo de notificación
+        try {
+            $mensaje = $request->estado == 'Confirmada' 
+                ? "Hola {$cliente->nombre},\n\nNos alegra informarte que tu solicitud de cita para el servicio de '{$servicio}' ha sido CONFIRMADA. Nos pondremos en contacto contigo a la brevedad para afinar los detalles.\n\nSaludos,\nEl equipo de Akiraka Estudio."
+                : "Hola {$cliente->nombre},\n\nTe informamos que por motivos de agenda, tu solicitud de cita para '{$servicio}' ha sido CANCELADA. Te invitamos a solicitar una nueva fecha en nuestra página web.\n\nSaludos,\nEl equipo de Akiraka Estudio.";
 
-                \Illuminate\Support\Facades\Mail::raw($mensaje, function($mail) use ($cliente) {
-                    $mail->to($cliente->correo)
-                         ->subject('Actualización de tu solicitud en Akiraka Estudio');
-                });
-            } catch (\Exception $e) {
-                // Si falla el correo (ej. falta configurar el .env), de todas formas guardamos el estado
-                return back()->with('success', 'Estado actualizado a ' . $request->estado . ', pero el correo no pudo enviarse (revisa la configuración SMTP).');
-            }
+            \Illuminate\Support\Facades\Mail::raw($mensaje, function($mail) use ($cliente) {
+                $mail->to($cliente->correo)
+                     ->subject('Actualización de tu solicitud en Akiraka Estudio');
+            });
+        } catch (\Exception $e) {
+            // Si falla el correo (por falta de configuración), el sistema sigue funcionando
         }
 
-        return back()->with('success', 'El estado de la solicitud ha sido actualizado a: ' . $request->estado);
-    }
+        // MAGIA: Si el arquitecto rechaza la cita, la borramos automáticamente de la base de datos
+        if ($request->estado == 'Cancelada') {
+            $cita->delete();
+            return back()->with('success', 'La solicitud fue rechazada, se notificó al cliente y se eliminó el registro para mantener limpia tu bandeja.');
+        }
 
-    // ==========================================================
-    // 4. ELIMINAR CITA (Por si es spam)
-    // ==========================================================
-    public function destroy($id)
-    {
-        $cita = Cita::findOrFail($id);
-        $cita->delete();
-        return back()->with('success', 'Solicitud eliminada correctamente del registro.');
+        // Si solo la acepta, actualizamos el estado
+        $cita->update(['estado' => $request->estado]);
+        return back()->with('success', 'El estado de la solicitud ha sido actualizado a: Confirmada');
     }
 }

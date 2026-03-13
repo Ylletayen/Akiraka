@@ -13,7 +13,7 @@ class UsuarioController extends Controller
     {
 
         $usuarios = \App\Models\User::all();
-        
+            
         $roles = DB::table('roles')
                     ->whereNotIn('id_rol', [1, 4]) 
                     ->get(); 
