@@ -26,12 +26,12 @@
             background: none; border: none; font-size: 1.2rem; cursor: pointer;
             transition: transform 0.2s ease, color 0.3s ease; padding: 5px; margin-left: 10px;
             display: inline-flex; align-items: center; justify-content: center;
-            color: #888; /* Gris tenue por defecto para que no sature la vista */
+            color: #888; /* Gris tenue por defecto */
             text-decoration: none;
         }
         .btn-icon-action:hover { 
             transform: scale(1.15); 
-            color: #111; /* Negro puro al pasar el ratón (Hover) */
+            color: #111; /* Negro puro al pasar el ratón */
         }
 
         .badge-role { font-family: Arial, sans-serif; font-size: 0.75rem; font-weight: bold; padding: 4px 10px; border-radius: 12px; background: #eee; color: #333; }
@@ -75,7 +75,7 @@
                 <tbody>
                     @forelse($usuarios as $usuario)
                         
-                        {{-- MAGIA DE SEGURIDAD: Si soy Administrador (2) y el usuario de esta fila es Superadmin (1), oculto la fila --}}
+                        {{-- MAGIA DE SEGURIDAD 1: Si soy Administrador (2) y la fila es Superadmin (1), la oculto --}}
                         @if(Auth::user()->id_rol == 2 && $usuario->id_rol == 1)
                             @continue
                         @endif
@@ -150,7 +150,7 @@
                     <select name="id_rol" id="crear_id_rol" class="form-select border-0 bg-light" required>
                         <option value="" disabled selected>Selecciona un rol...</option>
                         @foreach($roles as $rol)
-                            {{-- MAGIA DE SEGURIDAD: Un Administrador no puede crear Superadmins --}}
+                            {{-- MAGIA DE SEGURIDAD 2: Un Administrador (2) NO puede crear un Superadmin (1) --}}
                             @if(Auth::user()->id_rol == 2 && $rol->id_rol == 1)
                                 @continue
                             @endif
@@ -187,7 +187,7 @@
                     <select name="id_rol" id="editar_id_rol" class="form-select border-0 bg-light" required>
                         <option value="" disabled>Selecciona el nivel de acceso...</option>
                         @foreach($roles as $rol)
-                            {{-- MAGIA DE SEGURIDAD: Un Administrador no puede ascender a alguien a Superadmin --}}
+                            {{-- MAGIA DE SEGURIDAD 3: Un Administrador (2) NO puede ascender a alguien a Superadmin (1) --}}
                             @if(Auth::user()->id_rol == 2 && $rol->id_rol == 1)
                                 @continue
                             @endif

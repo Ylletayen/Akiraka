@@ -68,9 +68,9 @@
                 @endif
             </div>
 
-            <!-- SECCIÓN 1: PERFIL ADMINISTRADOR -->
             <div class="options-card">
-                <h3 class="section-title-card">Mi Perfil (Administrador)</h3>
+                {{-- Título dinámico para que no le diga "Administrador" a un colaborador --}}
+                <h3 class="section-title-card">Mi Perfil ({{ Auth::user()->id_rol == 1 ? 'Superadmin' : (Auth::user()->id_rol == 2 ? 'Administrador' : 'Colaborador') }})</h3>
                 <form id="form-perfil" action="{{ route('opciones.perfil.update') }}" method="POST" enctype="multipart/form-data" onsubmit="triggerCustomModal(event, this, '¿Guardar cambios en tu perfil?');">
                     @csrf @method('PUT')
                     <div style="display: flex; flex-wrap: wrap; gap: 40px; align-items: center;">
@@ -89,11 +89,10 @@
                 </form>
             </div>
 
-            <!-- FORMULARIO GLOBAL DE CONTENIDO Y ROLES -->
+            @if(in_array(Auth::user()->id_rol, [1, 2]))
             <form action="{{ route('opciones.publicos.update') }}" method="POST" enctype="multipart/form-data" onsubmit="triggerCustomModal(event, this, '¿Actualizar contenido y roles del equipo?');">
                 @csrf @method('PUT')
 
-                <!-- SECCIÓN 2: ROLES DEL EQUIPO -->
                 <div class="options-card">
                     <h3 class="section-title-card">Roles dentro de la Empresa</h3>
                     <p style="font-size: 0.8rem; color: #888; margin-bottom: 20px;">Asigna el cargo público que aparecerá en la página de Información para cada integrante.</p>
@@ -154,10 +153,10 @@
 
                 <button type="submit" class="btn-save">Guardar Todos los Cambios de la Web</button>
             </form>
+            @endif
         </main>
     </div>
 
-    <!-- MODAL CONFIRMACIÓN (DENTRO DEL WRAPPER PRINCIPAL PARA HEREDAR ESTILOS) -->
     <div id="custom-confirm-modal" class="custom-modal-overlay">
         <div class="custom-modal-box">
             <div class="custom-modal-icon"><i class="fas fa-exclamation-circle"></i></div>
