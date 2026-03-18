@@ -114,11 +114,16 @@
                     <div><i class="fas fa-home me-3"></i> Inicio</div>
                 </a>
             </li>
+            
+            {{-- SOLO VISIBLE PARA SUPERADMIN (1) Y ADMIN (2) --}}
+            @if(in_array(Auth::user()->id_rol, [1, 2]))
             <li class="nav-item">
                <a class="nav-link {{ request()->routeIs('dashboard.usuarios') ? 'active' : '' }}" href="{{ route('dashboard.usuarios') }}">
                  <div><i class="fas fa-user-shield me-3"></i> Usuarios</div>
                 </a>
             </li>
+            @endif
+
             <li class="nav-item">
                <a class="nav-link {{ request()->routeIs('dashboard.servicios') ? 'active' : '' }}" href="{{ route('dashboard.servicios') }}">
                  <div><i class="fas fa-drafting-compass me-3"></i> Servicios</div>
@@ -134,11 +139,16 @@
                     <div><i class="fas fa-chair me-3"></i> Objetos</div>
                 </a>
             </li>
+
+            {{-- SOLO VISIBLE PARA SUPERADMIN (1) Y ADMIN (2) --}}
+            @if(in_array(Auth::user()->id_rol, [1, 2]))
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('dashboard.equipo.quienes_somos') ? 'active' : '' }}" href="{{ route('dashboard.equipo.quienes_somos') ?? '#' }}">
                     <div><i class="fas fa-users me-3"></i> Quienes somos</div>
                 </a>
             </li>
+            @endif
+
             <li class="nav-item">
                <a class="nav-link {{ request()->routeIs('mensajes') ? 'active' : '' }}" href="{{ route('mensajes') }}">
                  <div><i class="fas fa-envelope me-3"></i> Mensajes</div>

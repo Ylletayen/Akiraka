@@ -120,11 +120,12 @@
             <!-- ==========================================
                  SECCIÓN 2: CONTENIDO PÚBLICO (TODO UNIDO)
                  ========================================== -->
+            {{-- SOLO VISIBLE PARA SUPERADMIN (1) Y ADMIN (2) --}}
+            @if(in_array(Auth::user()->id_rol, [1, 2]))
             <form action="{{ route('opciones.publicos.update') }}" method="POST" enctype="multipart/form-data" onsubmit="triggerCustomModal(event, this, '¿Estás seguro de actualizar el contenido de la web? Los cambios serán visibles inmediatamente para los clientes.');">
                 @csrf @method('PUT')
                 
                 <div class="options-grid">
-                    <!-- TARJETA A: Textos -->
                     <div class="options-card">
                         <h3 class="subsection-title">Textos de "Quiénes Somos"</h3>
                         <div class="form-group">
@@ -137,7 +138,6 @@
                         </div>
                     </div>
 
-                    <!-- TARJETA B: Multimedia y Redes -->
                     <div class="options-card">
                         <h3 class="subsection-title">Landing & Redes Sociales</h3>
                         
@@ -170,7 +170,6 @@
                     </div>
                 </div>
 
-                <!-- TARJETA C: Toda la información de Contacto -->
                 <div class="options-card mt-4 mb-4">
                     <h3 class="subsection-title">Información de Contacto y Ubicación</h3>
                     
@@ -209,6 +208,23 @@
 
                 <button type="submit" class="btn-save" style="background-color: #000;">Guardar Cambios de la Web</button>
             </form>
+            @endif
+
+        </main>
+    </div>
+</div>
+
+<div id="custom-confirm-modal" class="custom-modal-overlay">
+    <div class="custom-modal-box">
+        <div class="custom-modal-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <h3 class="custom-modal-title">Confirmar</h3>
+        <p id="custom-modal-message" class="custom-modal-text">¿Estás seguro de que deseas guardar los cambios?</p>
+        <div class="custom-modal-actions">
+            <button type="button" class="btn-modal btn-modal-cancel" onclick="closeCustomModal()">Cancelar</button>
+            <button type="button" class="btn-modal btn-modal-confirm" id="btn-modal-accept">Aceptar</button>
+        </div>
+    </div>
+</div>
 
         </main>
     </div>
