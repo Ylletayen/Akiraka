@@ -145,9 +145,35 @@
                 <div class="options-card">
                     <h3 class="subsection-title">Contacto & Ubicación</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div class="form-group"><label>Teléfono (WhatsApp)</label><input type="text" name="telefono" class="form-control" value="{{ $configuracion->telefono }}"></div>
-                        <div class="form-group" style="grid-row: span 2;"><label>Dirección</label><textarea name="direccion" class="form-control" rows="5">{{ $configuracion->direccion }}</textarea></div>
-                        <div class="form-group"><label>Correo Principal</label><input type="email" name="correo_contacto" class="form-control" value="{{ $configuracion->correo_contacto }}"></div>
+                        <div class="form-group">
+                            <label>Teléfono (WhatsApp)</label>
+                            <input type="text" name="telefono" class="form-control" value="{{ $configuracion->telefono }}">
+                        </div>
+                        
+                        <div class="form-group" style="grid-row: span 2;">
+                            <label>Dirección</label>
+                            <textarea name="direccion" class="form-control" rows="5">{{ $configuracion->direccion }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Correo Principal</label>
+                            <input type="email" name="correo_contacto" class="form-control" value="{{ $configuracion->correo_contacto }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Correo Prensa</label>
+                            <input type="email" name="correo_prensa" class="form-control" value="{{ $configuracion->correo_prensa }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Correo Laboral 1</label>
+                            <input type="email" name="correo_laboral_1" class="form-control" value="{{ $configuracion->correo_laboral_1 }}">
+                        </div>
+
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Correo Laboral 2</label>
+                            <input type="email" name="correo_laboral_2" class="form-control" value="{{ $configuracion->correo_laboral_2 }}">
+                        </div>
                     </div>
                 </div>
 
