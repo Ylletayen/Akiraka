@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
 <div class="dash-admin-view">
     <style>
         /* ================= ESTILOS PRINCIPALES ================= */
@@ -15,7 +17,26 @@
         .project-row { background: #fff; outline: 1px solid #eee; transition: all 0.3s ease; }
         .project-row:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .project-row td { padding: 15px 20px; vertical-align: middle; }
-        .btn-action-minimal { background: none; border: none; color: #111; text-transform: uppercase; font-size: 0.7rem; font-weight: bold; letter-spacing: 1px; text-decoration: underline; margin-right: 15px; cursor: pointer; }
+        
+        /* ================= ESTILOS DE LOS BOTONES ICONO (MONOCROMÁTICO) ================= */
+        .btn-action-minimal {
+        background: none; border: none; font-size: 1.2rem; cursor: pointer;
+        transition: transform 0.2s ease, color 0.3s ease; padding: 5px; margin-left: 10px;
+        display: inline-flex; align-items: center; justify-content: center;
+        color: #888; /* Gris por defecto */
+        text-decoration: none;
+    }
+    
+    .btn-action-minimal:hover { 
+        transform: scale(1.15); 
+        color: #111; /* Negro puro al pasar el ratón */
+    }
+
+    /* Opcional: Si quieres que el de eliminar se ponga rojo sutil al final */
+    .btn-action-minimal.delete:hover {
+        color: #d9534f; 
+    }
+
         .badge-estado { font-family: Arial, sans-serif; font-size: 0.75rem; font-weight: bold; padding: 4px 10px; border-radius: 12px; background: #eee; color: #333; }
         .badge-anio { font-family: Arial, sans-serif; font-size: 0.7rem; font-weight: bold; padding: 2px 6px; border-radius: 6px; background: #111; color: #fff; margin-left: 8px; }
         .desc-text { color: #666; font-size: 0.85rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 5px; }
@@ -41,10 +62,10 @@
             </div>
 
             @if(session('success'))
-                <div class="alert alert-dark mb-4">{{ session('success') }}</div>
+                <div class="alert alert-dark mb-4" style="font-family: Arial; font-size: 0.85rem;">{{ session('success') }}</div>
             @endif
             @if($errors->any())
-                <div class="alert alert-danger mb-4">
+                <div class="alert alert-danger mb-4" style="font-family: Arial; font-size: 0.85rem;">
                     <ul class="mb-0">
                         @foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach
                     </ul>
@@ -87,19 +108,32 @@
                                     {{ $nombreEstado }}
                                 </span>
                             </td>
-                            <td style="text-align: right;">
-                                <a href="{{ route('proyectos.historias', $proyecto->id_proyecto) }}" class="btn-action-minimal" style="color: #10b981; text-decoration: none;">+ Historia / Fotos</a>
-                                <button class="btn-action-minimal" onclick="editarProyecto({{ json_encode($proyecto) }})">Editar</button>
+                            
+                            {{-- COLUMNA DE ACCIONES MINIMALISTAS --}}
+                            <td style="text-align: right; white-space: nowrap;">
                                 
+                                {{-- Botón Historia / Fotos --}}
+                                <a href="{{ route('proyectos.historias', $proyecto->id_proyecto) }}" class="btn-icon-action" title="Gestionar Ficha Técnica / Fotos">
+                                    <i class="bi bi-images"></i>
+                                </a>
+
+                                {{-- Botón Editar --}}
+                                <button type="button" class="btn-icon-action" title="Editar Obra" onclick='editarProyecto(@json($proyecto))'>
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                
+                                {{-- Botón Eliminar Permanente --}}
                                 <form action="{{ route('proyectos.destroy', $proyecto->id_proyecto) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar esta obra definitivamente?');">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn-action-minimal" style="color: #d9534f;">Eliminar</button>
+                                    <button type="submit" class="btn-icon-action" title="Eliminar Obra">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
                                 </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center py-5 text-muted">No hay obras registradas en el portafolio.</td>
+                            <td colspan="4" class="text-center py-5 text-muted" style="font-style: italic;">No hay obras registradas en el portafolio.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -122,43 +156,43 @@
                 
                 <div class="row">
                     <div class="col-md-8 mb-3">
-                        <label class="form-label small fw-bold text-uppercase opacity-75">Título de la Obra</label>
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Título de la Obra</label>
                         <input type="text" name="titulo" id="titulo" class="form-control border-0 bg-light" required maxlength="150">
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label class="form-label small fw-bold text-uppercase opacity-75">Año</label>
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Año</label>
                         <input type="text" name="anio" id="anio" class="form-control border-0 bg-light" placeholder="Ej. 2026" maxlength="4">
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label small fw-bold text-uppercase opacity-75">Descripción</label>
+                    <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Descripción</label>
                     <textarea name="descripcion" id="descripcion" class="form-control border-0 bg-light" rows="3"></textarea>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label small fw-bold text-uppercase opacity-75">Imagen (Portada)</label>
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Imagen (Portada)</label>
                         <input type="file" name="portada" id="portada" class="form-control border-0 bg-light" accept="image/*">
                         <small class="text-muted" style="font-size: 0.7rem;">Solo al crear una obra nueva</small>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label small fw-bold text-uppercase opacity-75">Orden de aparición</label>
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Orden de aparición</label>
                         <input type="number" name="orden" id="orden" class="form-control border-0 bg-light" placeholder="1, 2, 3..." value="0">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-4 mb-3">
-                        <label class="form-label small fw-bold text-uppercase opacity-75">Costo Inicial ($)</label>
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Costo Inicial ($)</label>
                         <input type="number" step="0.01" name="costo_inicial" id="costo_inicial" class="form-control border-0 bg-light">
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label class="form-label small fw-bold text-uppercase opacity-75">Costo Final ($)</label>
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Costo Final ($)</label>
                         <input type="number" step="0.01" name="costo_final" id="costo_final" class="form-control border-0 bg-light">
                     </div>
                     <div class="col-md-4 mb-4">
-                        <label class="form-label small fw-bold text-uppercase opacity-75">Estado</label>
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Estado</label>
                         <select name="id_estado" id="id_estado" class="form-select border-0 bg-light" required>
                             <option value="" disabled selected>Selecciona...</option>
                             @foreach($estados as $estado)
@@ -168,7 +202,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn-add-new w-100 py-3 shadow-sm" id="btnSubmit">Guardar Obra</button>
+                <button type="submit" class="btn-add-new w-100 py-3 shadow-sm" id="btnSubmit" style="font-family: Arial;">Guardar Obra</button>
             </form>
         </div>
     </div>

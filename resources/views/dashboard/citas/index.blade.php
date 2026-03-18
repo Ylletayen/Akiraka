@@ -6,18 +6,17 @@
 <div class="dash-admin-view" style="min-height: 100vh; background-color: #f8f8f8; font-family: 'Garamond', serif; padding: 20px; color: #111;">
     
     <style>
-        /* ================= ESTILOS DE LOS BOTONES ICONO ================= */
+        /* ================= ESTILOS DE LOS BOTONES ICONO (MONOCROMÁTICO) ================= */
         .btn-icon-action {
             background: none; border: none; font-size: 1.2rem; cursor: pointer;
             transition: transform 0.2s ease, color 0.3s ease; padding: 5px; margin-left: 10px;
             display: inline-flex; align-items: center; justify-content: center;
+            color: #888; /* Gris tenue por defecto para que no sature la vista */
         }
-        .btn-icon-action:hover { transform: scale(1.15); }
-        
-        .icon-accept { color: #10b981; } /* Verde elegante */
-        .icon-reject { color: #ef4444; } /* Rojo advertencia */
-        .icon-email  { color: #64748b; } /* Gris azulado */
-        .icon-delete { color: #111; }    /* Negro total */
+        .btn-icon-action:hover { 
+            transform: scale(1.15); 
+            color: #111; /* Negro puro al pasar el ratón (Hover) */
+        }
 
         /* ================= BOTÓN VER MÁS ================= */
         .btn-ver-mas {
