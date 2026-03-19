@@ -251,11 +251,11 @@
         </section>
 
         <section>
-            <h2>Publicaciones</h2>
+            <h2 class="column-title">Publicaciones</h2>
 
                 @if($publicaciones->isEmpty())
 
-                <p>Ninguna publicación disponible</p>
+                <p style="color: #ccc; font-style: italic; font-size: 0.85rem;">Ninguna publicación disponible</p>
 
                 @else
 
