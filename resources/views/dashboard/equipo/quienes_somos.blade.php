@@ -114,8 +114,7 @@
 
         <main class="main-content">
 
-        <!-- EL TOPBAR LIMPIO VA AQUÍ ARRIBA -->
-            @include('partials.topbar')
+        @include('partials.topbar')
             
             <div class="header-section">
                 <div>
@@ -141,6 +140,12 @@
                 </thead>
                 <tbody>
                     @forelse($miembros as $miembro)
+
+                        {{-- MAGIA DE INVISIBILIDAD 1: Ocultamos a los Superadmins de la tabla principal --}}
+                        @if($miembro->usuario && $miembro->usuario->id_rol == 1)
+                            @continue
+                        @endif
+
                         <tr class="equipo-row">
                             <td style="width: 250px;">
                                 <div class="d-flex align-items-center gap-3">
@@ -157,7 +162,7 @@
                                 <p class="biografia-text">{{ $miembro->biografia }}</p>
                             </td>
                             <td style="text-align: right;">
-                                <button class="btn-action-minimal" onclick="editarMiembro({{ $miembro }})">Editar</button>
+                                <button class="btn-action-minimal" onclick='editarMiembro(@json($miembro))'>Editar</button>
                                 <form action="{{ route('equipo.destroy', $miembro->id_miembro) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar a este miembro del equipo?');">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn-action-minimal" style="color: #d9534f;">Eliminar</button>
@@ -192,6 +197,12 @@
                     <select name="id_usuario" id="id_usuario" class="form-select border-0 bg-light" required>
                         <option value="" disabled selected>Elegir de la lista...</option>
                         @foreach($usuariosDisponibles as $u)
+
+                            {{-- MAGIA DE INVISIBILIDAD 2: Ocultamos a los Superadmins del menú desplegable --}}
+                            @if($u->id_rol == 1)
+                                @continue
+                            @endif
+
                             <option value="{{ $u->id_usuario }}">{{ $u->nombre }}</option>
                         @endforeach
                     </select>

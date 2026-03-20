@@ -135,9 +135,10 @@
                 </a>
             </li>
            <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('dashboard.publicaciones') ? 'active' : '' }}" href="{{ route('dashboard.publicaciones') }}">
-                <div><i class="bi bi-journal-text me-3"></i> Publicaciones</div>
-            </a></li>
+                <a class="nav-link {{ request()->routeIs('dashboard.publicaciones') ? 'active' : '' }}" href="{{ route('dashboard.publicaciones') }}">
+                    <div><i class="fas fa-newspaper me-3"></i> Publicaciones</div>
+                </a>
+            </li>
 
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('dashboard.objetos') ? 'active' : '' }}" href="{{ route('dashboard.objetos') }}">
@@ -146,7 +147,7 @@
             </li>
 
             {{-- SOLO VISIBLE PARA SUPERADMIN (1) Y ADMIN (2) --}}
-            @if(in_array(Auth::user()->id_rol, [1, 2]))
+            @if(in_array(Auth::user()->id_rol, [1]))
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('dashboard.equipo.quienes_somos') ? 'active' : '' }}" href="{{ route('dashboard.equipo.quienes_somos') ?? '#' }}">
                     <div><i class="fas fa-users me-3"></i> Quienes somos</div>
