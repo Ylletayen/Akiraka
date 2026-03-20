@@ -20,9 +20,12 @@
     .btn-enter { display: inline-block; padding: 10px 30px; border: 1px solid #fff; background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px); transition: all 0.3s ease; letter-spacing: 2px; font-size: 0.85rem; }
     .btn-enter:hover { transform: scale(1.05); background-color: rgba(255, 255, 255, 0.9); color: #111 !important; }
     
-    .logo-wrapper { transition: opacity 0.3s; cursor: pointer; color: #fff; }
+    /* Quitamos el forzado a blanco y le damos un tono gris por defecto al contenedor */
+    .logo-wrapper { transition: opacity 0.3s; cursor: pointer; color: #555555; }
     .logo-wrapper:hover { opacity: 0.7; }
-    .logo-img-landing { height: 45px; width: auto; object-fit: contain; filter: brightness(0) invert(1); /* Convierte el logo a blanco si es negro */ }
+    
+    /* Quitamos el filter: invert() para que tu imagen PNG conserve su gris original */
+    .logo-img-landing { height: 45px; width: auto; object-fit: contain; }
     
     /* ENLACES DEL MENÚ FLOTANTE */
     .nav-link-akira { color: #fff !important; text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; transition: opacity 0.3s; }
@@ -89,7 +92,8 @@
     
     <header class="header-floating py-4 px-5 d-flex justify-content-between align-items-center">
         <div class="logo-wrapper d-flex flex-column align-items-center" onclick="abrirLogin()" title="Acceso Administración">
-            <img src="{{ asset('images/logo_akiraka.png') }}" alt="Logo Akiraka" class="logo-img-landing">
+            <img src="{{ asset('images/logosinbgakira.png') }}" alt="Logo Akiraka" class="logo-img-landing">
+            <!-- Texto conservando su color original (sin forzar blanco) -->
             <span class="logo-brand-text mt-1 fw-bold" style="font-size: 0.75rem; letter-spacing: 2px;">ESTUDIO AKIRAKA</span>
         </div>
 

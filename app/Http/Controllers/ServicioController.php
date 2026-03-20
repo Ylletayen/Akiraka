@@ -61,6 +61,6 @@ class ServicioController extends Controller
         // =========================================================
         DB::statement('ALTER TABLE servicios AUTO_INCREMENT = 1;');
 
-        return back()->with('success', 'Servicio eliminado. Ya no aparecerá en la API de citas.');
+        return back()->with('success', 'Servicio eliminado.');
     }
 }

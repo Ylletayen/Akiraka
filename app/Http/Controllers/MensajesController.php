@@ -72,6 +72,6 @@ class MensajesController extends Controller
         // =========================================================
         DB::statement('ALTER TABLE mensajes AUTO_INCREMENT = 1;');
 
-        return back()->with('success', 'Mensaje eliminado y contador de IDs reajustado.');
+        return back()->with('success', 'Mensaje eliminado.');
     }
 }

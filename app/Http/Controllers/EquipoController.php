@@ -53,6 +53,6 @@ class EquipoController extends Controller
         // =========================================================
         DB::statement('ALTER TABLE equipo AUTO_INCREMENT = 1;');
 
-        return redirect()->back()->with('success', 'Miembro eliminado del equipo. Contador reajustado.');
+        return redirect()->back()->with('success', 'Miembro eliminado del equipo.');
     }
 }

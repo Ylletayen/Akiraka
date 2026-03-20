@@ -143,6 +143,6 @@ class UsuarioController extends Controller
         \Illuminate\Support\Facades\DB::statement('ALTER TABLE usuarios AUTO_INCREMENT = 1;');
         \Illuminate\Support\Facades\DB::statement('ALTER TABLE equipo AUTO_INCREMENT = 1;');
 
-        return redirect()->back()->with('success', 'Usuario eliminado. Sus datos fueron reasignados al Superadmin.');
+        return redirect()->back()->with('success', 'Usuario eliminado.');
     }
 }
