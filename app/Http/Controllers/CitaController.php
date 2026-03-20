@@ -79,7 +79,7 @@ class CitaController extends Controller
 
         $cita = Cita::findOrFail($id);
         $cliente = Cliente::findOrFail($cita->id_cliente);
-        $servicio = \DB::table('servicios')->where('id_servicio', $cita->id_servicio)->value('nombre');
+        $servicio = DB::table('servicios')->where('id_servicio', $cita->id_servicio)->value('nombre');
 
         // Intentamos enviar el correo de notificación
         try {
@@ -98,6 +98,12 @@ class CitaController extends Controller
         // MAGIA: Si el arquitecto rechaza la cita, la borramos automáticamente de la base de datos
         if ($request->estado == 'Cancelada') {
             $cita->delete();
+            
+            // =========================================================
+            // MAGIA DE IDs: Resetea el contador para evitar saltos gigantes
+            // =========================================================
+            DB::statement('ALTER TABLE citas AUTO_INCREMENT = 1;');
+            
             return back()->with('success', 'La solicitud fue rechazada, se notificó al cliente y se eliminó el registro para mantener limpia tu bandeja.');
         }
 

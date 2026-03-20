@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Mensaje;  
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB; // <-- IMPORTANTE: Agregado para usar DB::statement
 
 class MensajesController extends Controller
 {
@@ -16,6 +17,7 @@ class MensajesController extends Controller
         // enviar a la vista
         return view('dashboard.mensajes.mensajes', compact('mensajes'));
     }
+    
     public function guardarMensaje(Request $request)
     {
         $request->validate([
@@ -32,9 +34,9 @@ class MensajesController extends Controller
 
         return back()->with('success','Mensaje enviado correctamente');
     }
-    public function responder(Request $request,$id)
+    
+    public function responder(Request $request, $id)
     {
-
         $mensaje = Mensaje::findOrFail($id);
 
         $request->validate([
@@ -55,5 +57,21 @@ class MensajesController extends Controller
         $mensaje->save();
 
         return back()->with('success','Respuesta enviada');
+    }
+
+    // =================================================================
+    // ELIMINAR MENSAJE (Agregado con la protección de IDs)
+    // =================================================================
+    public function eliminar($id)
+    {
+        $mensaje = Mensaje::findOrFail($id);
+        $mensaje->delete();
+
+        // =========================================================
+        // MAGIA: Resetea el contador para evitar saltos en la BD
+        // =========================================================
+        DB::statement('ALTER TABLE mensajes AUTO_INCREMENT = 1;');
+
+        return back()->with('success', 'Mensaje eliminado y contador de IDs reajustado.');
     }
 }
