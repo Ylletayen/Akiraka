@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Cliente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB; // <-- IMPORTANTE: Agregado para resetear el contador
 
 class ClienteController extends Controller
 {
@@ -79,6 +80,11 @@ class ClienteController extends Controller
         }
 
         $cliente->delete();
+
+        // =========================================================
+        // MAGIA DE IDs: Resetea el contador para evitar saltos
+        // =========================================================
+        DB::statement('ALTER TABLE clientes AUTO_INCREMENT = 1;');
 
         return response()->json(['mensaje' => 'Cliente eliminado correctamente'], 200);
     }

@@ -27,7 +27,7 @@ class UsuarioController extends Controller
     }
 
     // =================================================================
-    // FUNCIÓN PARA CREAR NUEVOS USUARIOS (Faltaba en tu código original)
+    // FUNCIÓN PARA CREAR NUEVOS USUARIOS
     // =================================================================
     public function store(Request $request)
     {
@@ -136,6 +136,12 @@ class UsuarioController extends Controller
         }
 
         $usuario->delete();
+
+        // =========================================================
+        // MAGIA: Resetea el contador para evitar saltos gigantes en BD
+        // =========================================================
+        \Illuminate\Support\Facades\DB::statement('ALTER TABLE usuarios AUTO_INCREMENT = 1;');
+        \Illuminate\Support\Facades\DB::statement('ALTER TABLE equipo AUTO_INCREMENT = 1;');
 
         return redirect()->back()->with('success', 'Usuario eliminado. Sus datos fueron reasignados al Superadmin.');
     }

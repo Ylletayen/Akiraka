@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB; // <-- IMPORTADO para manejar la base de datos limpiamente
+
 class DashboardController extends Controller
 {
     public function __construct()
@@ -14,11 +17,13 @@ class DashboardController extends Controller
         return view('dashboard.main'); // Tu vista principal de administrador
     }
 
-    // En tu controlador del Dashboard (ej. DashboardController@citas)
+    // =======================================================
+    // LISTAR SOLICITUDES DE CITAS
+    // =======================================================
     public function solicitudesCitas()
     {
-        // MAGIA: Unimos Citas + Clientes + Servicios en una sola consulta
-        $solicitudes = \DB::table('citas')
+        // Unimos Citas + Clientes + Servicios en una sola consulta
+        $solicitudes = DB::table('citas')
             ->join('clientes', 'citas.id_cliente', '=', 'clientes.id_cliente')
             ->join('servicios', 'citas.id_servicio', '=', 'servicios.id_servicio')
             ->select(
@@ -35,5 +40,24 @@ class DashboardController extends Controller
             ->get();
 
         return view('dashboard.citas.index', compact('solicitudes'));
+    }
+
+    // =================================================================
+    // ELIMINAR SOLICITUD DE CITA (Con protección de IDs)
+    // =================================================================
+    public function destroyCita($id)
+    {
+        // Borramos la cita
+        DB::table('citas')->where('id_cita', $id)->delete();
+
+        // Nota: Dependiendo de tu lógica, podrías querer borrar también al cliente 
+        // si no tiene más citas, pero por seguridad es mejor solo borrar la cita.
+
+        // =========================================================
+        // MAGIA: Resetea el contador para evitar saltos gigantes en BD
+        // =========================================================
+        DB::statement('ALTER TABLE citas AUTO_INCREMENT = 1;');
+
+        return back()->with('success', 'Solicitud de cita eliminada correctamente.');
     }
 }
