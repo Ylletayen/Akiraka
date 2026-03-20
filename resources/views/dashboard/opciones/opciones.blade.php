@@ -99,22 +99,26 @@
                     
                     @isset($equipo)
                         @foreach($equipo as $miembro)
-                        <div class="roles-list-item">
-                            <div class="member-info">
-                                <strong>{{ $miembro->usuario->nombre ?? 'Miembro' }}</strong>
-                                <span style="font-size: 0.7rem; color: #aaa; text-transform: uppercase;">ID #{{ $miembro->id_miembro }}</span>
-                            </div>
-                            <div class="role-input-group">
-                                <div style="flex: 1;">
-                                    <label style="font-size: 0.6rem; font-weight: bold; color: #999;">PUESTO / ROL</label>
-                                    <input type="text" name="puestos[{{ $miembro->id_miembro }}][puesto]" 
-                                           class="form-control" 
-                                           style="padding: 8px 12px; font-size: 0.85rem;"
-                                           value="{{ $miembro->puesto }}" 
-                                           placeholder="Ej: Dirección general">
+                            {{-- MAGIA DE INVISIBILIDAD: Ocultar a los Superadmins de esta lista pública --}}
+                            @if($miembro->usuario && $miembro->usuario->id_rol == 1)
+                                @continue
+                            @endif
+
+                            <div class="roles-list-item">
+                                <div class="member-info">
+                                    <strong>{{ $miembro->usuario->nombre ?? 'Miembro' }}</strong>
+                                </div>
+                                <div class="role-input-group">
+                                    <div style="flex: 1;">
+                                        <label style="font-size: 0.6rem; font-weight: bold; color: #999;">PUESTO / ROL</label>
+                                        <input type="text" name="puestos[{{ $miembro->id_miembro }}][puesto]" 
+                                               class="form-control" 
+                                               style="padding: 8px 12px; font-size: 0.85rem;"
+                                               value="{{ $miembro->puesto }}" 
+                                               placeholder="Ej: Dirección general">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         @endforeach
                     @endisset
                 </div>
