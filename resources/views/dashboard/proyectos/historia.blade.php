@@ -21,6 +21,11 @@
         .img-preview { width: 140px; height: 90px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
         
         .badge-info { font-family: Arial, sans-serif; font-size: 0.75rem; color: #888; font-weight: bold; margin-right: 15px; }
+
+        /* Estilo para los botones de texto de acción */
+        .btn-text-action { background: none; border: none; font-weight: bold; text-decoration: underline; font-size: 0.75rem; cursor: pointer; text-transform: uppercase; }
+        .btn-text-action.edit { color: #111; margin-bottom: 10px; display: block; }
+        .btn-text-action.delete { color: #d9534f; }
     </style>
 
     <div class="dashboard-container">
@@ -39,11 +44,11 @@
             </div>
 
             @if(session('success'))
-                <div class="alert alert-dark mb-4">{{ session('success') }}</div>
+                <div class="alert alert-dark mb-4" style="font-family: Arial; font-size: 0.85rem;">{{ session('success') }}</div>
             @endif
             
             @if($errors->any())
-                <div class="alert alert-danger mb-4">
+                <div class="alert alert-danger mb-4" style="font-family: Arial; font-size: 0.85rem;">
                     <ul class="mb-0">
                         @foreach($errors->all() as $error) <li>{{ $error }}</li> @endforeach
                     </ul>
@@ -112,10 +117,14 @@
                                 </p>
                             </td>
                             
-                            <td style="text-align: right; width: 100px;">
+                            <td style="text-align: right; width: 120px;">
+                                {{-- Botón de Editar --}}
+                                <button type="button" class="btn-text-action edit" onclick='editarFase(@json($img))'>Editar</button>
+
+                                {{-- Botón de Eliminar --}}
                                 <form action="{{ route('proyectos.historias.destroy', $img->id_imagen) }}" method="POST" onsubmit="return confirm('¿Eliminar esta fase de la historia?');">
                                     @csrf @method('DELETE')
-                                    <button type="submit" style="background: none; border: none; color: #d9534f; font-weight: bold; text-decoration: underline; font-size: 0.75rem; cursor: pointer; text-transform: uppercase;">Eliminar</button>
+                                    <button type="submit" class="btn-text-action delete">Eliminar</button>
                                 </form>
                             </td>
                             
@@ -130,4 +139,62 @@
         </main>
     </div>
 </div>
+
+<div class="modal fade" id="modalEditarFase" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4 border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-radius: 12px;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="m-0 fw-bold" style="font-family: 'Garamond', serif;">Editar Fase</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form id="formEditarFase" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Cambiar Imagen (Opcional)</label>
+                    <input type="file" name="imagen" class="form-control border-0 bg-light" accept="image/*">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Año</label>
+                        <input type="text" name="anio" id="edit_anio" class="form-control border-0 bg-light" maxlength="4">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Orden</label>
+                        <input type="number" name="orden" id="edit_orden" class="form-control border-0 bg-light">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Descripción de la Fase</label>
+                    <textarea name="descripcion" id="edit_descripcion" class="form-control border-0 bg-light" rows="3" required></textarea>
+                </div>
+
+                <button type="submit" class="btn-add-new w-100 py-3 shadow-sm" style="font-family: Arial;">Actualizar Fase</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function editarFase(fase) {
+        // Configuramos la URL dinámicamente. Asegúrate de tener la ruta update definida en web.php
+        let urlUpdate = "{{ route('proyectos.historias.update', ':id') }}";
+        urlUpdate = urlUpdate.replace(':id', fase.id_imagen);
+        
+        document.getElementById('formEditarFase').action = urlUpdate; 
+        
+        // Rellenamos los campos
+        document.getElementById('edit_anio').value = fase.anio || '';
+        document.getElementById('edit_orden').value = fase.orden || '0';
+        document.getElementById('edit_descripcion').value = fase.descripcion || '';
+        
+        // Lanzamos el modal
+        var myModal = new bootstrap.Modal(document.getElementById('modalEditarFase'));
+        myModal.show();
+    }
+</script>
 @endsection

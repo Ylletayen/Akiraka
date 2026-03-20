@@ -136,6 +136,47 @@ class ProjectController extends Controller
         return redirect()->back()->with('success', 'Nueva fase agregada a la historia de la obra.');
     }
 
+    // =======================================================
+    // NUEVA FUNCIÓN: ACTUALIZAR FASE (HISTORIA)
+    // =======================================================
+    public function updateHistoria(Request $request, $id_imagen)
+    {
+        $request->validate([
+            'imagen' => 'nullable|image|max:15360', 
+            'descripcion' => 'required|string',
+            'anio' => 'nullable|string|max:4',
+            'orden' => 'nullable|integer'
+        ]);
+
+        $imagenActual = DB::table('imagenes_proyecto')->where('id_imagen', $id_imagen)->first();
+
+        if (!$imagenActual) {
+            return redirect()->back()->withErrors(['error' => 'No se encontró la fase especificada.']);
+        }
+
+        $datosActualizar = [
+            'descripcion' => $request->descripcion,
+            'anio' => $request->anio,
+            'orden' => $request->orden ?? 0
+        ];
+
+        // Si el usuario subió una imagen nueva, borramos la anterior y guardamos la nueva
+        if ($request->hasFile('imagen')) {
+            if ($imagenActual->url_imagen) {
+                Storage::disk('public')->delete($imagenActual->url_imagen);
+            }
+            
+            $rutaImagen = $request->file('imagen')->store('historias', 'public');
+            $datosActualizar['url_imagen'] = $rutaImagen;
+        }
+
+        DB::table('imagenes_proyecto')
+            ->where('id_imagen', $id_imagen)
+            ->update($datosActualizar);
+
+        return redirect()->back()->with('success', 'La fase de la historia ha sido actualizada correctamente.');
+    }
+
     public function destroyHistoria($id_imagen)
     {
         $imagen = DB::table('imagenes_proyecto')->where('id_imagen', $id_imagen)->first();

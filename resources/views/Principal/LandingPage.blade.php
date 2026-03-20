@@ -74,7 +74,7 @@
             
             <div class="social-links-akira d-flex gap-3 ms-3">
                 <a href="{{ $config->instagram ?? '#' }}" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-                <a href="{{ $config->facebook ?? 'https://www.facebook.com/profile.php?id=61568259411265&locale=es_LA' }}" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="{{ $config->facebook ?? '#' }}" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
                 <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $config->telefono ?? '527221655901') }}" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
             </div>
         </nav>

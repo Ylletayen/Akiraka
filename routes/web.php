@@ -107,6 +107,7 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
     Route::delete('/proyectos/{id}', [ProjectController::class, 'destroy'])->name('proyectos.destroy');
     Route::get('/proyectos/{id}/historia', [ProjectController::class, 'historias'])->name('proyectos.historias');
     Route::post('/proyectos/{id}/historia', [ProjectController::class, 'storeHistoria'])->name('proyectos.historias.store');
+    Route::put('/proyectos/historia/{id_imagen}', [ProjectController::class, 'updateHistoria'])->name('proyectos.historias.update');
     Route::delete('/proyectos/historia/{id_imagen}', [ProjectController::class, 'destroyHistoria'])->name('proyectos.historias.destroy');
 
     // QUIENES SOMOS / EQUIPO
