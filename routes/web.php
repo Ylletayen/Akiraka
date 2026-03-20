@@ -141,6 +141,7 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
     Route::delete('/objetos/{id}', [ObjetoController::class, 'destroy'])->name('objetos.destroy');
     Route::get('/objetos/{id}/historia', [ObjetoController::class, 'historias'])->name('objetos.historias');
     Route::post('/objetos/{id}/historia', [ObjetoController::class, 'storeHistoria'])->name('objetos.historias.store');
+    Route::put('/objetos/historia/{id_imagen}', [ObjetoController::class, 'updateHistoria'])->name('objetos.historias.update');
     Route::delete('/objetos/historia/{id_imagen}', [ObjetoController::class, 'destroyHistoria'])->name('objetos.historias.destroy');
 });
 

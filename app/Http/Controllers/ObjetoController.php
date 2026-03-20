@@ -97,7 +97,48 @@ class ObjetoController extends Controller
         return redirect()->back()->with('success', 'Nueva imagen agregada a la ficha técnica.');
     }
 
-    // 7. Eliminar foto de Ficha Técnica
+    // =======================================================
+    // 7. NUEVA FUNCIÓN: ACTUALIZAR FOTO EN FICHA TÉCNICA
+    // =======================================================
+    public function updateHistoria(Request $request, $id_imagen)
+    {
+        $request->validate([
+            'imagen' => 'nullable|image|max:15360', 
+            'descripcion' => 'required|string',
+            'anio' => 'nullable|string|max:4',
+            'orden' => 'nullable|integer'
+        ]);
+
+        $imagenActual = DB::table('imagenes_objeto')->where('id_imagen', $id_imagen)->first();
+
+        if (!$imagenActual) {
+            return redirect()->back()->withErrors(['error' => 'No se encontró la imagen especificada.']);
+        }
+
+        $datosActualizar = [
+            'descripcion' => $request->descripcion,
+            'anio' => $request->anio,
+            'orden' => $request->orden ?? 0
+        ];
+
+        // Si sube una foto nueva, borramos la vieja del storage
+        if ($request->hasFile('imagen')) {
+            if ($imagenActual->url_imagen) {
+                Storage::disk('public')->delete($imagenActual->url_imagen);
+            }
+            
+            $rutaImagen = $request->file('imagen')->store('historias_objetos', 'public');
+            $datosActualizar['url_imagen'] = $rutaImagen;
+        }
+
+        DB::table('imagenes_objeto')
+            ->where('id_imagen', $id_imagen)
+            ->update($datosActualizar);
+
+        return redirect()->back()->with('success', 'Los detalles de la imagen han sido actualizados.');
+    }
+
+    // 8. Eliminar foto de Ficha Técnica
     public function destroyHistoria($id_imagen)
     {
         $imagen = DB::table('imagenes_objeto')->where('id_imagen', $id_imagen)->first();

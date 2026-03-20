@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
 <div class="dash-admin-view">
     <style>
         .dash-admin-view { min-height: 100vh; background-color: #f8f8f8; font-family: "Garamond", serif; padding: 20px; display: flex; justify-content: center; }
@@ -16,7 +18,13 @@
         .image-card img { width: 100%; height: 180px; object-fit: cover; }
         .image-info { padding: 15px; font-family: Arial, sans-serif; }
         .badge-year { background: #111; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-        .btn-delete-img { position: absolute; top: 10px; right: 10px; background: #d9534f; color: #fff; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+        
+        /* Botones flotantes sobre la imagen */
+        .btn-delete-img { position: absolute; top: 10px; right: 10px; background: #d9534f; color: #fff; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: background 0.2s; display: flex; justify-content: center; align-items: center;}
+        .btn-delete-img:hover { background: #c9302c; }
+        
+        .btn-edit-img { position: absolute; top: 10px; right: 48px; background: #fff; color: #111; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 0.9rem; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: background 0.2s; display: flex; justify-content: center; align-items: center; }
+        .btn-edit-img:hover { background: #eee; }
     </style>
 
     <div class="dashboard-container">
@@ -34,10 +42,10 @@
             </div>
 
             @if(session('success'))
-                <div class="alert alert-dark mb-4">{{ session('success') }}</div>
+                <div class="alert alert-dark mb-4" style="font-family: Arial; font-size: 0.85rem;">{{ session('success') }}</div>
             @endif
             @if($errors->any())
-                <div class="alert alert-danger mb-4"><ul>@foreach($errors->all() as $error) <li>{{ $error }}</li> @endforeach</ul></div>
+                <div class="alert alert-danger mb-4" style="font-family: Arial; font-size: 0.85rem;"><ul>@foreach($errors->all() as $error) <li>{{ $error }}</li> @endforeach</ul></div>
             @endif
 
             <div style="background: #fdfdfd; padding: 25px; border-radius: 8px; border: 1px dashed #ccc; margin-bottom: 40px;">
@@ -47,20 +55,20 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label class="form-label small fw-bold text-uppercase opacity-75">Seleccionar Foto</label>
+                            <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial;">Seleccionar Foto</label>
                             <input type="file" name="imagen" class="form-control bg-light border-0" accept="image/*" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label small fw-bold text-uppercase opacity-75">Año (Opcional)</label>
+                            <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial;">Año (Opcional)</label>
                             <input type="text" name="anio" class="form-control bg-light border-0" placeholder="Ej. 2024" maxlength="4">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label small fw-bold text-uppercase opacity-75">Orden de aparición</label>
+                            <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial;">Orden de aparición</label>
                             <input type="number" name="orden" class="form-control bg-light border-0" placeholder="1, 2, 3..." value="0">
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label small fw-bold text-uppercase opacity-75">Descripción (Materiales, detalles, etc)</label>
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial;">Descripción (Materiales, detalles, etc)</label>
                         <textarea name="descripcion" class="form-control bg-light border-0" rows="2" required></textarea>
                     </div>
                     <button type="submit" class="btn-dark-custom">Guardar en Ficha Técnica</button>
@@ -83,6 +91,12 @@
 
                         <img src="{{ asset('storage/' . $img->url_imagen) }}" alt="Foto">
                         
+                        {{-- Botón Editar Flotante --}}
+                        <button type="button" class="btn-edit-img" title="Editar" onclick='editarFotoObjeto(@json($img))'>
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+
+                        {{-- Botón Eliminar Flotante --}}
                         <form action="{{ route('objetos.historias.destroy', $img->id_imagen) }}" method="POST" onsubmit="return confirm('¿Borrar esta foto de la ficha?');">
                             @csrf @method('DELETE')
                             <button type="submit" class="btn-delete-img" title="Eliminar">✕</button>
@@ -110,4 +124,62 @@
         </main>
     </div>
 </div>
+
+<div class="modal fade" id="modalEditarFoto" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4 border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-radius: 12px;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="m-0 fw-bold" style="font-family: 'Garamond', serif;">Editar Ficha Técnica</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form id="formEditarFoto" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Cambiar Imagen (Opcional)</label>
+                    <input type="file" name="imagen" class="form-control border-0 bg-light" accept="image/*">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Año</label>
+                        <input type="text" name="anio" id="edit_anio" class="form-control border-0 bg-light" maxlength="4">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Orden</label>
+                        <input type="number" name="orden" id="edit_orden" class="form-control border-0 bg-light">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Descripción</label>
+                    <textarea name="descripcion" id="edit_descripcion" class="form-control border-0 bg-light" rows="3" required></textarea>
+                </div>
+
+                <button type="submit" class="btn-dark-custom w-100 py-3 shadow-sm" style="font-family: Arial;">Actualizar Imagen</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function editarFotoObjeto(img) {
+        // Configuramos la URL dinámica para Objetos
+        let urlUpdate = "{{ route('objetos.historias.update', ':id') }}";
+        urlUpdate = urlUpdate.replace(':id', img.id_imagen);
+        
+        document.getElementById('formEditarFoto').action = urlUpdate; 
+        
+        // Rellenamos los campos
+        document.getElementById('edit_anio').value = img.anio || '';
+        document.getElementById('edit_orden').value = img.orden || '0';
+        document.getElementById('edit_descripcion').value = img.descripcion || '';
+        
+        // Lanzamos el modal
+        var myModal = new bootstrap.Modal(document.getElementById('modalEditarFoto'));
+        myModal.show();
+    }
+</script>
 @endsection
