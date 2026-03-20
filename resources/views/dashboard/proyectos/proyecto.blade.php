@@ -18,37 +18,35 @@
         .project-row:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .project-row td { padding: 15px 20px; vertical-align: middle; }
         
-        /* ================= ESTILOS DE LOS BOTONES ICONO (MONOCROMÁTICO) ================= */
-        .btn-action-minimal {
-        background: none; border: none; font-size: 1.2rem; cursor: pointer;
-        transition: transform 0.2s ease, color 0.3s ease; padding: 5px; margin-left: 10px;
-        display: inline-flex; align-items: center; justify-content: center;
-        color: #888; /* Gris por defecto */
-        text-decoration: none;
-    }
-    
-    .btn-action-minimal:hover { 
-        transform: scale(1.15); 
-        color: #111; /* Negro puro al pasar el ratón */
-    }
-
-    /* Opcional: Si quieres que el de eliminar se ponga rojo sutil al final */
-    .btn-action-minimal.delete:hover {
-        color: #d9534f; 
-    }
+        /* ================= ESTILOS DE LOS BOTONES ICONO ================= */
+        .btn-icon-action {
+            background: none; border: none; font-size: 1.2rem; cursor: pointer;
+            transition: transform 0.2s ease, color 0.3s ease; padding: 5px; margin-left: 10px;
+            display: inline-flex; align-items: center; justify-content: center;
+            color: #888; text-decoration: none;
+        }
+        .btn-icon-action:hover { transform: scale(1.15); color: #111; }
 
         .badge-estado { font-family: Arial, sans-serif; font-size: 0.75rem; font-weight: bold; padding: 4px 10px; border-radius: 12px; background: #eee; color: #333; }
         .badge-anio { font-family: Arial, sans-serif; font-size: 0.7rem; font-weight: bold; padding: 2px 6px; border-radius: 6px; background: #111; color: #fff; margin-left: 8px; }
         .desc-text { color: #666; font-size: 0.85rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 5px; }
         .modal-glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 12px; }
+        
+        /* Estilos para la previsualización */
+        .media-preview-container {
+            width: 100%; height: 180px; border-radius: 8px; border: 1px dashed #ccc; 
+            display: flex; align-items: center; justify-content: center; background: #f9f9f9; overflow: hidden;
+            margin-top: 10px; display: none;
+        }
+        .media-preview-container img, .media-preview-container video {
+            max-width: 100%; max-height: 100%; object-fit: contain;
+        }
     </style>
 
     <div class="dashboard-container">
-        
         @include('partials.sidebar')
 
         <main class="main-content">
-            
             @include('partials.topbar')
             
             <div class="header-section">
@@ -108,21 +106,13 @@
                                     {{ $nombreEstado }}
                                 </span>
                             </td>
-                            
-                            {{-- COLUMNA DE ACCIONES MINIMALISTAS --}}
                             <td style="text-align: right; white-space: nowrap;">
-                                
-                                {{-- Botón Historia / Fotos --}}
                                 <a href="{{ route('proyectos.historias', $proyecto->id_proyecto) }}" class="btn-icon-action" title="Gestionar Ficha Técnica / Fotos">
                                     <i class="bi bi-images"></i>
                                 </a>
-
-                                {{-- Botón Editar --}}
                                 <button type="button" class="btn-icon-action" title="Editar Obra" onclick='editarProyecto(@json($proyecto))'>
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
-                                
-                                {{-- Botón Eliminar Permanente --}}
                                 <form action="{{ route('proyectos.destroy', $proyecto->id_proyecto) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar esta obra definitivamente?');">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn-icon-action" title="Eliminar Obra">
@@ -170,18 +160,26 @@
                     <textarea name="descripcion" id="descripcion" class="form-control border-0 bg-light" rows="3"></textarea>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Imagen (Portada)</label>
-                        <input type="file" name="portada" id="portada" class="form-control border-0 bg-light" accept="image/*">
+                <div class="row mb-3 align-items-center">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Tipo de Portada</label>
+                        <select id="tipo_media" class="form-select border-0 bg-light" onchange="cambiarTipoMedia()">
+                            <option value="imagen" selected>Imagen</option>
+                            <option value="video">Video (MP4)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-8">
+                        <label id="label_media" class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Archivo (Portada)</label>
+                        <input type="file" name="portada" id="portada" class="form-control border-0 bg-light" accept="image/*" onchange="previsualizarMedia(this)">
                         <small class="text-muted" style="font-size: 0.7rem;">Solo al crear una obra nueva</small>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Orden de aparición</label>
-                        <input type="number" name="orden" id="orden" class="form-control border-0 bg-light" placeholder="1, 2, 3..." value="0">
-                    </div>
                 </div>
-
+                
+                <div class="media-preview-container" id="preview_container">
+                    <img id="preview_img" src="" style="display: none;">
+                    <video id="preview_video" src="" controls style="display: none;"></video>
+                </div>
+                <br>
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Costo Inicial ($)</label>
@@ -209,6 +207,49 @@
 </div>
 
 <script>
+    // ================= FUNCIONES PARA LA PREVISUALIZACIÓN =================
+    function cambiarTipoMedia() {
+        let tipo = document.getElementById('tipo_media').value;
+        let input = document.getElementById('portada');
+        
+        // Limpiar el input y la previsualización
+        input.value = '';
+        document.getElementById('preview_container').style.display = 'none';
+        document.getElementById('preview_img').style.display = 'none';
+        document.getElementById('preview_video').style.display = 'none';
+
+        if (tipo === 'video') {
+            input.accept = 'video/mp4,video/webm';
+        } else {
+            input.accept = 'image/*';
+        }
+    }
+
+    function previsualizarMedia(input) {
+        let container = document.getElementById('preview_container');
+        let img = document.getElementById('preview_img');
+        let video = document.getElementById('preview_video');
+        let file = input.files[0];
+
+        if (file) {
+            container.style.display = 'flex'; // Mostrar contenedor
+            let fileURL = URL.createObjectURL(file);
+
+            if (file.type.startsWith('video/')) {
+                img.style.display = 'none';
+                video.src = fileURL;
+                video.style.display = 'block';
+            } else {
+                video.style.display = 'none';
+                img.src = fileURL;
+                img.style.display = 'block';
+            }
+        } else {
+            container.style.display = 'none'; // Ocultar si cancela
+        }
+    }
+
+    // ================= FUNCIONES DEL MODAL =================
     function prepararNuevo() {
         document.getElementById('modalTitle').innerText = 'Añadir Nueva Obra';
         document.getElementById('formProyecto').action = "{{ route('proyectos.store') }}";
@@ -217,8 +258,13 @@
         document.getElementById('titulo').value = '';
         document.getElementById('descripcion').value = '';
         document.getElementById('anio').value = '';
+        
+        // Limpiar multimedia
         document.getElementById('portada').value = ''; 
-        document.getElementById('orden').value = '0';
+        document.getElementById('preview_container').style.display = 'none';
+        document.getElementById('tipo_media').value = 'imagen';
+        cambiarTipoMedia();
+
         document.getElementById('costo_inicial').value = '';
         document.getElementById('costo_final').value = '';
         document.getElementById('id_estado').value = '';
@@ -238,8 +284,11 @@
         document.getElementById('titulo').value = proyecto.titulo;
         document.getElementById('descripcion').value = proyecto.descripcion || '';
         document.getElementById('anio').value = proyecto.anio || '';
-        document.getElementById('orden').value = proyecto.orden || '0';
-        document.getElementById('portada').value = ''; // HTML impide llenar archivos por seguridad
+        
+        // Limpiar multimedia (No se pueden rellenar inputs file por seguridad)
+        document.getElementById('portada').value = ''; 
+        document.getElementById('preview_container').style.display = 'none';
+
         document.getElementById('costo_inicial').value = proyecto.costo_inicial || '';
         document.getElementById('costo_final').value = proyecto.costo_final || '';
         document.getElementById('id_estado').value = proyecto.id_estado;

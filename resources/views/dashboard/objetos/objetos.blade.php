@@ -41,6 +41,16 @@
             border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 12px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
+
+        /* Estilos para la previsualización */
+        .media-preview-container {
+            width: 100%; height: 180px; border-radius: 8px; border: 1px dashed #ccc; 
+            display: flex; align-items: center; justify-content: center; background: #f9f9f9; overflow: hidden;
+            margin-top: 10px; display: none;
+        }
+        .media-preview-container img, .media-preview-container video {
+            max-width: 100%; max-height: 100%; object-fit: contain;
+        }
     </style>
 
     <div class="dashboard-container">
@@ -54,7 +64,7 @@
                     <h1>Catálogo de Objetos</h1>
                     <p>Administración de mobiliario, esculturas y piezas de diseño.</p>
                 </div>
-                <button class="btn-add-new" data-bs-toggle="modal" data-bs-target="#modalObjeto">+ Añadir Objeto</button>
+                <button class="btn-add-new" data-bs-toggle="modal" data-bs-target="#modalObjeto" onclick="prepararNuevoObjeto()">+ Añadir Objeto</button>
             </div>
 
             @if(session('success'))
@@ -104,33 +114,100 @@
 </div>
 
 <div class="modal fade" id="modalObjeto" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content modal-glass p-4 border-0">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h3 class="m-0 fw-bold">Añadir Nuevo Objeto</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
-            <form action="{{ route('objetos.store') }}" method="POST" enctype="multipart/form-data">
+            <form id="formObjeto" action="{{ route('objetos.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Nombre de la pieza</label>
-                    <input type="text" name="titulo" class="form-control bg-light border-0" placeholder="Ej. Silla Akira 01" required>
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Nombre de la pieza</label>
+                        <input type="text" name="titulo" class="form-control bg-light border-0" placeholder="Ej. Silla Akira 01" required>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Año de creación</label>
+                        <input type="text" name="anio" class="form-control bg-light border-0" placeholder="Ej. 2024" maxlength="4" required>
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Año de creación</label>
-                    <input type="text" name="anio" class="form-control bg-light border-0" placeholder="Ej. 2024" maxlength="4" required>
+                <div class="row mb-3 align-items-center">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Tipo de Portada</label>
+                        <select id="tipo_media" class="form-select border-0 bg-light" onchange="cambiarTipoMedia()">
+                            <option value="imagen" selected>Imagen</option>
+                            <option value="video">Video (MP4)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Archivo (Portada)</label>
+                        <input type="file" name="portada" id="portada" class="form-control bg-light border-0" accept="image/*" onchange="previsualizarMedia(this)" required>
+                    </div>
                 </div>
 
-                <div class="mb-4">
-                    <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Imagen (Portada)</label>
-                    <input type="file" name="portada" class="form-control bg-light border-0" accept="image/*" required>
+                <div class="media-preview-container mb-4" id="preview_container">
+                    <img id="preview_img" src="" style="display: none;">
+                    <video id="preview_video" src="" controls style="display: none;"></video>
                 </div>
-
                 <button type="submit" class="btn-add-new w-100 py-3 shadow-sm" style="font-family: Arial;">Guardar Objeto</button>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    // ================= FUNCIONES PARA LA PREVISUALIZACIÓN =================
+    function cambiarTipoMedia() {
+        let tipo = document.getElementById('tipo_media').value;
+        let input = document.getElementById('portada');
+        
+        // Limpiar el input y la previsualización
+        input.value = '';
+        document.getElementById('preview_container').style.display = 'none';
+        document.getElementById('preview_img').style.display = 'none';
+        document.getElementById('preview_video').style.display = 'none';
+
+        if (tipo === 'video') {
+            input.accept = 'video/mp4,video/webm';
+        } else {
+            input.accept = 'image/*';
+        }
+    }
+
+    function previsualizarMedia(input) {
+        let container = document.getElementById('preview_container');
+        let img = document.getElementById('preview_img');
+        let video = document.getElementById('preview_video');
+        let file = input.files[0];
+
+        if (file) {
+            container.style.display = 'flex'; // Mostrar contenedor
+            let fileURL = URL.createObjectURL(file);
+
+            if (file.type.startsWith('video/')) {
+                img.style.display = 'none';
+                video.src = fileURL;
+                video.style.display = 'block';
+            } else {
+                video.style.display = 'none';
+                img.src = fileURL;
+                img.style.display = 'block';
+            }
+        } else {
+            container.style.display = 'none'; // Ocultar si cancela
+        }
+    }
+
+    // ================= LIMPIAR MODAL AL ABRIR =================
+    function prepararNuevoObjeto() {
+        document.getElementById('formObjeto').reset();
+        document.getElementById('preview_container').style.display = 'none';
+        document.getElementById('tipo_media').value = 'imagen';
+        cambiarTipoMedia();
+    }
+</script>
 @endsection

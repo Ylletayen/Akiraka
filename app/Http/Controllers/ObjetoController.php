@@ -22,7 +22,7 @@ class ObjetoController extends Controller
         $request->validate([
             'titulo' => 'required|string|max:150',
             'anio' => 'nullable|string|max:4',
-            'portada' => 'nullable|image|max:15360' 
+            'portada' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,webm|max:20480' 
         ]);
 
         $objeto = Objeto::create([
@@ -79,7 +79,7 @@ class ObjetoController extends Controller
     public function storeHistoria(Request $request, $id)
     {
         $request->validate([
-            'imagen' => 'required|image|max:15360', 
+            'imagen' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,webm|max:20480', 
             'descripcion' => 'required|string',
             'anio' => 'nullable|string|max:4',
             'orden' => 'nullable|integer'
@@ -103,7 +103,7 @@ class ObjetoController extends Controller
     public function updateHistoria(Request $request, $id_imagen)
     {
         $request->validate([
-            'imagen' => 'nullable|image|max:15360', 
+            'imagen' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,webm|max:20480', 
             'descripcion' => 'required|string',
             'anio' => 'nullable|string|max:4',
             'orden' => 'nullable|integer'
