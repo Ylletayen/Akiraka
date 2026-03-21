@@ -70,9 +70,6 @@ class CitaController extends Controller
         return view('dashboard.citas.index', compact('solicitudes'));
     }
 
-   // ==========================================================
-    // 3. ACTUALIZAR ESTADO, NOTIFICAR Y LIMPIAR (AUTO-DELETE)
-    // ==========================================================
     public function actualizarEstado(Request $request, $id)
     {
         $request->validate(['estado' => 'required|in:Confirmada,Cancelada']);
@@ -81,7 +78,7 @@ class CitaController extends Controller
         $cliente = Cliente::findOrFail($cita->id_cliente);
         $servicio = \DB::table('servicios')->where('id_servicio', $cita->id_servicio)->value('nombre');
 
-        // Intentamos enviar el correo de notificación
+        
         try {
             $mensaje = $request->estado == 'Confirmada' 
                 ? "Hola {$cliente->nombre},\n\nNos alegra informarte que tu solicitud de cita para el servicio de '{$servicio}' ha sido CONFIRMADA. Nos pondremos en contacto contigo a la brevedad para afinar los detalles.\n\nSaludos,\nEl equipo de Akiraka Estudio."
@@ -92,10 +89,9 @@ class CitaController extends Controller
                      ->subject('Actualización de tu solicitud en Akiraka Estudio');
             });
         } catch (\Exception $e) {
-            // Si falla el correo (por falta de configuración), el sistema sigue funcionando
+     
         }
 
-        // MAGIA: Si el arquitecto rechaza la cita, la borramos automáticamente de la base de datos
         if ($request->estado == 'Cancelada') {
             $cita->delete();
             return back()->with('success', 'La solicitud fue rechazada, se notificó al cliente y se eliminó el registro para mantener limpia tu bandeja.');

@@ -134,6 +134,11 @@
                     <div><i class="fas fa-building me-3"></i> Obras</div>
                 </a>
             </li>
+           <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('dashboard.publicaciones') ? 'active' : '' }}" href="{{ route('dashboard.publicaciones') }}">
+                <div><i class="bi bi-journal-text me-3"></i> Publicaciones</div>
+            </a></li>
+
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('dashboard.objetos') ? 'active' : '' }}" href="{{ route('dashboard.objetos') }}">
                     <div><i class="fas fa-chair me-3"></i> Objetos</div>

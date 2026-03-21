@@ -154,6 +154,11 @@ Route::post('/solicitar-cita', [App\Http\Controllers\CitaController::class, 'sto
 // PUBLICACIONES
 Route::get('/publicaciones', [PublicacionController::class,'index'])->name('publicaciones');
 Route::get('/publicaciones/{id}', [PublicacionController::class,'show'])->name('publicaciones.show');
+// PUBLICACIONES (DASHBOARD)
+Route::get('/publicaciones', [PublicacionController::class, 'adminIndex'])->name('dashboard.publicaciones');
+Route::post('/publicaciones', [PublicacionController::class, 'store'])->name('publicaciones.store');
+Route::put('/publicaciones/{id}', [PublicacionController::class, 'update'])->name('publicaciones.update');
+Route::delete('/publicaciones/{id}', [PublicacionController::class, 'destroy'])->name('publicaciones.destroy');
 
 //CITAS
 Route::get('/citas', [CitaController::class, 'solicitudesCitas'])->name('dashboard.citas');
