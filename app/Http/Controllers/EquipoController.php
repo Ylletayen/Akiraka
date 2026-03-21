@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Equipo;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB; // <-- IMPORTANTE: Agregado para usar DB::statement
 
 class EquipoController extends Controller
 {
@@ -46,6 +47,12 @@ class EquipoController extends Controller
     public function destroy($id)
     {
         Equipo::findOrFail($id)->delete(); 
-        return redirect()->back()->with('success', 'Miembro eliminado del equipo.');
+        
+        // =========================================================
+        // MAGIA: Resetea el contador para evitar saltos en la BD
+        // =========================================================
+        DB::statement('ALTER TABLE equipo AUTO_INCREMENT = 1;');
+
+        return redirect()->back()->with('success', 'Miembro eliminado del equipo. Contador reajustado.');
     }
 }

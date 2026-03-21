@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Servicio;
+use Illuminate\Support\Facades\DB; // <-- IMPORTANTE: Agregado para poder usar DB::statement
 
 class ServicioController extends Controller
 {
@@ -54,6 +55,11 @@ class ServicioController extends Controller
     {
         $servicio = Servicio::findOrFail($id);
         $servicio->delete();
+
+        // =========================================================
+        // MAGIA: Resetea el contador para evitar saltos gigantes en BD
+        // =========================================================
+        DB::statement('ALTER TABLE servicios AUTO_INCREMENT = 1;');
 
         return back()->with('success', 'Servicio eliminado. Ya no aparecerá en la API de citas.');
     }

@@ -75,6 +75,12 @@ class ProjectController extends Controller
     public function destroy($id)
     {
         Proyecto::findOrFail($id)->delete();
+        
+        // =========================================================
+        // ¡AQUÍ ESTÁ LA MAGIA PARA LA TABLA DE PROYECTOS!
+        // =========================================================
+        DB::statement('ALTER TABLE proyectos AUTO_INCREMENT = 1;');
+
         return redirect()->back()->with('success', 'Obra eliminada del portafolio.');
     }
 
@@ -137,6 +143,11 @@ class ProjectController extends Controller
         if ($imagen) {
             Storage::disk('public')->delete($imagen->url_imagen);
             DB::table('imagenes_proyecto')->where('id_imagen', $id_imagen)->delete();
+            
+            // =========================================================
+            // ¡AQUÍ ESTÁ LA MAGIA PARA LA TABLA DE IMÁGENES DE PROYECTO!
+            // =========================================================
+            DB::statement('ALTER TABLE imagenes_proyecto AUTO_INCREMENT = 1;');
         }
 
         return redirect()->back()->with('success', 'Fase eliminada correctamente.');

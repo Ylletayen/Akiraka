@@ -131,7 +131,7 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('dashboard.proyectos') ? 'active' : '' }}" href="{{ route('dashboard.proyectos') }}">
-                    <div><i class="fas fa-building me-3"></i> Obras</div>
+                    <div><i class="fas fa-building me-3"></i> Proyectos</div>
                 </a>
             </li>
            <li class="nav-item">

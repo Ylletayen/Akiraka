@@ -47,6 +47,12 @@ class ObjetoController extends Controller
     public function destroy($id)
     {
         Objeto::findOrFail($id)->delete();
+        
+        // =========================================================
+        // MAGIA: Resetea el contador de la tabla Objetos
+        // =========================================================
+        DB::statement('ALTER TABLE objetos AUTO_INCREMENT = 1;');
+        
         return redirect()->back()->with('success', 'Objeto eliminado del catálogo.');
     }
 
@@ -95,10 +101,17 @@ class ObjetoController extends Controller
     public function destroyHistoria($id_imagen)
     {
         $imagen = DB::table('imagenes_objeto')->where('id_imagen', $id_imagen)->first();
+        
         if ($imagen) {
             Storage::disk('public')->delete($imagen->url_imagen);
             DB::table('imagenes_objeto')->where('id_imagen', $id_imagen)->delete();
+            
+            // =========================================================
+            // MAGIA: Resetea el contador de la tabla Imágenes Objeto
+            // =========================================================
+            DB::statement('ALTER TABLE imagenes_objeto AUTO_INCREMENT = 1;');
         }
+        
         return redirect()->back()->with('success', 'Imagen eliminada de la ficha técnica.');
     }
 }
