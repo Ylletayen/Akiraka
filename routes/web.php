@@ -166,3 +166,4 @@ Route::delete('/publicaciones/{id}', [PublicacionController::class, 'destroy'])-
 Route::get('/citas', [CitaController::class, 'solicitudesCitas'])->name('dashboard.citas');
 Route::put('/citas/{id}/estado', [CitaController::class, 'actualizarEstado'])->name('dashboard.citas.estado');
 Route::delete('/citas/{id}', [CitaController::class, 'destroy'])->name('dashboard.citas.destroy');
+Route::post('/api/chatbot/agendar', [CitaController::class, 'storeDesdeChat'])->name('chatbot.agendar');

@@ -107,4 +107,46 @@ class CitaController extends Controller
         $cita->update(['estado' => $request->estado]);
         return back()->with('success', 'El estado de la solicitud ha sido actualizado a: Confirmada');
     }
+
+    // ==========================================================
+    // 3. FUNCIÓN CHATBOT: Recibe y guarda la cita desde el chat JS
+    // ==========================================================
+    public function storeDesdeChat(Request $request)
+    {
+        try {
+            // 1. Validamos los datos
+            $request->validate([
+                'nombre'      => 'required|string|max:150',
+                'correo'      => 'required|email|max:150',
+                'telefono'    => 'nullable|string|max:50',
+                'id_servicio' => 'required|exists:servicios,id_servicio',
+                'fecha_hora'  => 'required|string', 
+                'notas'       => 'required|string'
+            ]);
+
+            // 2. Buscamos al cliente o lo creamos
+            $cliente = Cliente::firstOrCreate(
+                ['correo' => $request->correo],
+                ['nombre' => $request->nombre, 'telefono' => $request->telefono]
+            );
+
+            // Truco Ninja: Si Laravel no reconoce el 'id_cliente', usamos 'id' genérico
+            $idClienteFinal = $cliente->id_cliente ?? $cliente->id;
+
+            // 3. Creamos la cita con el formato exacto que pide MySQL
+            $cita = Cita::create([
+                'id_cliente'    => $idClienteFinal,
+                'id_servicio'   => $request->id_servicio,
+                'fecha_hora'    => now()->format('Y-m-d H:i:s'), 
+                'estado'        => 'Pendiente',
+                'notas_cliente' => "Desea cita para: " . $request->fecha_hora . " | Notas del proyecto: " . $request->notas,
+            ]);
+
+            return response()->json(['success' => true]);
+
+        } catch (\Exception $e) {
+            // Si algo explota, Laravel nos avisa exactamente por qué
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
+    }
 }

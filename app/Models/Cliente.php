@@ -9,16 +9,9 @@ class Cliente extends Model
 {
     use HasFactory;
 
-    // Indicamos el nombre exacto de la tabla
     protected $table = 'clientes';
-    
-    // Indicamos la llave primaria personalizada
     protected $primaryKey = 'id_cliente';
-
-    // Los campos que se pueden llenar masivamente (sin contraseñas)
-    protected $fillable = [
-        'nombre',
-        'correo',
-        'telefono'
-    ];
+    
+    // PERMISO PARA LLENAR DATOS
+    protected $fillable = ['nombre', 'correo', 'telefono'];
 }

@@ -310,4 +310,5 @@
         if (event.target == modalCita) cerrarModalCita();
     }
 </script>
+@include('Principal.cita')
 @endsection
