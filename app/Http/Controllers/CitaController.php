@@ -114,38 +114,68 @@ class CitaController extends Controller
     public function storeDesdeChat(Request $request)
     {
         try {
-            // 1. Validamos los datos
             $request->validate([
                 'nombre'      => 'required|string|max:150',
                 'correo'      => 'required|email|max:150',
-                'telefono'    => 'nullable|string|max:50',
+                'telefono'    => 'required|string|max:50', // Ahora es requerido y trae el código de país
                 'id_servicio' => 'required|exists:servicios,id_servicio',
                 'fecha_hora'  => 'required|string', 
                 'notas'       => 'required|string'
             ]);
 
-            // 2. Buscamos al cliente o lo creamos
             $cliente = Cliente::firstOrCreate(
                 ['correo' => $request->correo],
                 ['nombre' => $request->nombre, 'telefono' => $request->telefono]
             );
 
-            // Truco Ninja: Si Laravel no reconoce el 'id_cliente', usamos 'id' genérico
             $idClienteFinal = $cliente->id_cliente ?? $cliente->id;
 
-            // 3. Creamos la cita con el formato exacto que pide MySQL
             $cita = Cita::create([
                 'id_cliente'    => $idClienteFinal,
                 'id_servicio'   => $request->id_servicio,
                 'fecha_hora'    => now()->format('Y-m-d H:i:s'), 
                 'estado'        => 'Pendiente',
-                'notas_cliente' => "Desea cita para: " . $request->fecha_hora . " | Notas del proyecto: " . $request->notas,
+                'notas_cliente' => "Desea cita para: " . $request->fecha_hora . " | Notas: " . $request->notas,
             ]);
+
+            // ======================================================
+            // MAGIA: GENERAR LINK DE GOOGLE CALENDAR Y ENVIAR CORREO
+            // ======================================================
+            try {
+                // Convertimos la fecha que eligió al formato que entiende Google (YmdTHis)
+                $fechaInicio = \Carbon\Carbon::parse($request->fecha_hora);
+                $fechaFin = $fechaInicio->copy()->addHour(); // Asumimos que la cita dura 1 hora
+                $formatoGoogle = 'Ymd\THis';
+
+                // Generamos el link mágico
+                $linkCalendario = "https://calendar.google.com/calendar/render?action=TEMPLATE";
+                $linkCalendario .= "&text=" . urlencode("Cita Estudio Akiraka: " . $request->nombre);
+                $linkCalendario .= "&dates=" . $fechaInicio->format($formatoGoogle) . "/" . $fechaFin->format($formatoGoogle);
+                $linkCalendario .= "&details=" . urlencode("Servicio solicitado. Notas: " . $request->notas);
+                $linkCalendario .= "&location=" . urlencode("Estudio Akiraka (o vía Zoom)");
+
+                // Armamos el cuerpo del correo
+                $cuerpoCorreo = "¡Hola {$request->nombre}!\n\n";
+                $cuerpoCorreo .= "¡Guau! 🐾 Hemos recibido tu solicitud de proyecto en el Estudio Akiraka.\n\n";
+                $cuerpoCorreo .= "Sugeriste vernos el: {$request->fecha_hora}\n\n";
+                $cuerpoCorreo .= "Para que no se te olvide, da clic en el siguiente enlace para agregarlo a tu Google Calendar:\n";
+                $cuerpoCorreo .= "👉 {$linkCalendario}\n\n";
+                $cuerpoCorreo .= "Nuestro equipo revisará tu solicitud y te contactará al {$request->telefono} para confirmar todo.\n\n";
+                $cuerpoCorreo .= "Atte:\nAki, Guardián del Estudio Akiraka.";
+
+                // Mandamos el correo usando la configuración SMTP de tu archivo .env
+                \Illuminate\Support\Facades\Mail::raw($cuerpoCorreo, function($mail) use ($request) {
+                    $mail->to($request->correo)
+                         ->subject('Hemos recibido tu solicitud 🐾 - Estudio Akiraka');
+                });
+            } catch (\Exception $emailError) {
+                // Si falla el envío de correo (ej. falta configurar el .env), no rompemos el proceso de guardar la cita
+                \Illuminate\Support\Facades\Log::error('Error enviando correo de chat: ' . $emailError->getMessage());
+            }
 
             return response()->json(['success' => true]);
 
         } catch (\Exception $e) {
-            // Si algo explota, Laravel nos avisa exactamente por qué
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
