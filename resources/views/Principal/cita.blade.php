@@ -20,22 +20,28 @@
         background-color: #25d366; border-radius: 50%; border: 2px solid #fff;
     }
 
+    /* --- Ventana del Chat (Sin overflow: hidden para que la bandera no se corte) --- */
     .chat-window {
         position: fixed; bottom: 110px; right: 30px; width: 350px; height: 520px;
         background: #fff; border-radius: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-        display: flex; flex-direction: column; overflow: hidden; z-index: 9999;
+        display: flex; flex-direction: column; z-index: 9999;
         transform: scale(0); transform-origin: bottom right; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         border: 2px solid #111; font-family: Arial, sans-serif;
     }
     .chat-window.open { transform: scale(1); }
 
+    /* Le damos bordes curvos directos a la cabecera y pie para compensar */
     .chat-header {
         background: #111; color: #fff; padding: 15px; font-family: "Garamond", serif;
         display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #111;
+        border-top-left-radius: 12px; border-top-right-radius: 12px;
     }
     .chat-header h4 { margin: 0; font-size: 1.1rem; letter-spacing: 1px; }
-    .close-chat { cursor: pointer; background: none; border: none; color: #fff; font-size: 1.2rem; transition: transform 0.2s; }
-    .close-chat:hover { transform: scale(1.1); color: #ccc; }
+    
+    /* Botones de cabecera forzados a verse */
+    .header-actions { display: flex; align-items: center; gap: 15px; z-index: 10; position: relative; }
+    .close-chat { cursor: pointer; background: transparent !important; border: none; color: #fff !important; font-size: 1.2rem; transition: transform 0.2s; padding: 0; display: flex; align-items: center; justify-content: center; }
+    .close-chat:hover { transform: scale(1.2); color: #ccc !important; }
 
     .chat-body {
         flex-grow: 1; padding: 20px 15px; overflow-y: auto; background: #fdfdfd;
@@ -43,14 +49,17 @@
     }
 
     .msg-bot-container { display: flex; gap: 10px; align-items: flex-end; }
-    .bot-avatar-small { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 2px solid #111; background: #fff; }
+    .bot-avatar-small { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 2px solid #111; background: #fff; flex-shrink: 0; }
     .msg-user-container { display: flex; justify-content: flex-end; }
 
     .msg { max-width: 80%; padding: 12px 16px; border-radius: 18px; font-size: 0.85rem; line-height: 1.4; word-wrap: break-word; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     .msg-bot { background: #fff; color: #111; border: 2px solid #111; border-bottom-left-radius: 4px; }
     .msg-user { background: #111; color: #fff; border: 2px solid #111; border-bottom-right-radius: 4px; }
 
-    .chat-footer { padding: 15px; background: #fff; border-top: 2px solid #111; display: flex; gap: 10px; align-items: flex-end;}
+    .chat-footer { 
+        padding: 15px; background: #fff; border-top: 2px solid #111; display: flex; gap: 10px; align-items: flex-end;
+        border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+    }
     
     .chat-input { 
         flex-grow: 1; border: 1px solid #111; padding: 10px 15px; border-radius: 15px; 
@@ -59,8 +68,11 @@
     }
     .chat-input:focus { box-shadow: inset 0 0 0 1px #111; }
     
-    /* Arreglo para que el campo del teléfono con banderita no rompa el diseño */
-    .iti { width: 100%; flex-grow: 1; }
+    /* --- ARREGLOS PARA LA LIBRERÍA DE TELÉFONOS --- */
+    #phoneWrapper { flex-grow: 1; width: 100%; display: none; }
+    .iti { width: 100%; display: block; } 
+    .iti__input { width: 100% !important; padding-left: 50px !important; border-radius: 15px; border: 1px solid #111; height: 40px; font-family: Arial, sans-serif; font-size: 0.85rem; outline: none;}
+    .iti__input:focus { box-shadow: inset 0 0 0 1px #111; }
     
     .chat-send { background: #111; color: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.3s; padding-bottom: 3px; flex-shrink: 0;}
     .chat-send:hover { background: #333; }
@@ -111,9 +123,9 @@
             <img src="{{ asset('images/bot_akira.jpeg') }}" onerror="this.src='{{ asset('images/bot_akira.jpg') }}'" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #fff;">
             <h4>Guardian Aki</h4>
         </div>
-        <div>
-            <button class="close-chat" onclick="reiniciarChat()" title="Reiniciar Chat" style="margin-right: 10px;"><i class="bi bi-arrow-clockwise"></i></button>
-            <button class="close-chat" onclick="toggleChat()"><i class="bi bi-x-lg"></i></button>
+        <div class="header-actions">
+            <button class="close-chat" onclick="reiniciarChat()" title="Reiniciar Chat"><i class="bi bi-arrow-clockwise"></i></button>
+            <button class="close-chat" onclick="toggleChat()" title="Cerrar"><i class="bi bi-x-lg"></i></button>
         </div>
     </div>
     
@@ -122,9 +134,11 @@
     <div class="chat-footer" id="chatFooter">
         <textarea id="chatInput" class="chat-input" rows="1" placeholder="Escribe aquí tu respuesta..."></textarea>
         
-        <input type="tel" id="chatInputPhone" class="chat-input" style="display:none;" onkeypress="handleKeyPress(event)">
+        <div id="phoneWrapper">
+            <input type="tel" id="chatInputPhone" autocomplete="off" onkeypress="handleKeyPress(event)">
+        </div>
         
-        <input type="datetime-local" id="chatInputDate" class="chat-input" style="display:none;" onkeypress="handleKeyPress(event)">
+        <input type="datetime-local" id="chatInputDate" class="chat-input" style="display:none; flex-grow:1;" onkeypress="handleKeyPress(event)">
         
         <button class="chat-send" onclick="procesarEntrada()"><i class="bi bi-send-fill"></i></button>
     </div>
@@ -177,14 +191,16 @@
     const chatInputArea = document.getElementById('chatInput');
     const chatInputDate = document.getElementById('chatInputDate');
     const chatInputPhone = document.getElementById('chatInputPhone');
+    const phoneWrapper = document.getElementById('phoneWrapper');
 
-    // Inicializamos el plugin de la banderita en el input de teléfono
+    // Inicializamos el plugin de la banderita (Sin document.body para que salga arriba del input naturalmente)
     const phoneIti = window.intlTelInput(chatInputPhone, {
         utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        preferredCountries: ["mx", "co", "ar", "es"], // México primero
+        preferredCountries: ["mx", "co", "ar", "es"],
         initialCountry: "mx"
     });
 
+    // Auto-ajuste del textarea
     chatInputArea.addEventListener('input', function() {
         this.style.height = '38px';
         this.style.height = (this.scrollHeight) + 'px';
@@ -249,7 +265,6 @@
     function handleKeyPress(e) { if (e.key === 'Enter') procesarEntrada(); }
 
     function procesarEntrada(valorBoton = null, textoBoton = null) {
-        // Saber de qué input sacar el valor dependiendo del paso
         let inputActivo = chatInputArea;
         if(chatState.step === 5) inputActivo = chatInputDate;
         if(chatState.step === 3) inputActivo = chatInputPhone;
@@ -259,13 +274,14 @@
 
         if (!userInputRaw && chatState.step !== 4) return; 
 
-        // Caso especial paso 3: Extraer el número internacional formateado (ej. +52 722...)
+        // PASO 3: Guardamos el número de teléfono ¡ANTES de limpiar la caja!
         if(chatState.step === 3 && valorBoton === null) {
-            userInputRaw = phoneIti.getNumber(); 
-            userText = userInputRaw; // Lo mostramos bonito en el chat
+            let numValidado = phoneIti.getNumber();
+            // Si la librería no lo procesa bien, armamos el número nosotros mismos
+            userInputRaw = numValidado ? numValidado : ("+" + phoneIti.getSelectedCountryData().dialCode + " " + userInputRaw); 
+            userText = userInputRaw; 
         }
 
-        // Caso especial paso 5: Formatear la fecha para que se vea bonita en el globo
         if(chatState.step === 5 && valorBoton === null) {
             try {
                 let dObj = new Date(userInputRaw);
@@ -276,6 +292,7 @@
 
         if(valorBoton === null) addMessage('user', userText); 
         
+        // ¡Aquí es donde limpiamos la caja!
         inputActivo.value = '';
         if(chatState.step !== 5 && chatState.step !== 3) inputActivo.style.height = '38px';
 
@@ -345,13 +362,15 @@
                 break;
 
             case 3: 
-                // LA MAGIA DE LA LIBRERÍA: Valida si es un número real según las reglas internacionales
-                if (!phoneIti.isValidNumber()) {
-                    addMessage('bot', 'Ese número no parece válido para el país seleccionado. Por favor, verifica y escríbelo de nuevo:');
+                // Ahora sí usamos el userInputRaw que guardamos intacto
+                let digitos = userInputRaw.replace(/\D/g, ''); 
+
+                if (digitos.length < 10 || digitos.length > 15) {
+                    addMessage('bot', 'Ese número parece incompleto. Por favor, verifica que tenga al menos 10 dígitos (tu código de área y tu número) y escríbelo de nuevo:');
                     return;
                 }
 
-                chatState.formData.telefono = userInputRaw; // Guarda el formato +52...
+                chatState.formData.telefono = userInputRaw; 
                 chatState.step = 4;
                 let botonesHTML = 'Genial. ¿En cuál de nuestros servicios estás interesado? 📐<br>';
                 serviciosActivos.forEach(serv => {
@@ -378,8 +397,8 @@
                     return;
                 }
 
-                chatState.formData.fecha_hora = userInputRaw; // Lo guardamos en crudo (Y-m-dTH:i) para Laravel
-                chatState.formData.fecha_hora_texto = userText; // Lo guardamos bonito para el Modal
+                chatState.formData.fecha_hora = userInputRaw; 
+                chatState.formData.fecha_hora_texto = userText; 
                 chatState.step = 6;
                 addMessage('bot', '¡Anotado! ✍️ Por último, cuéntame un poco sobre tu proyecto o la idea que tienes en mente: <span class="small-instruction">(Puedes escribir libremente, el cuadro crecerá para ti)</span>');
                 break;
@@ -406,19 +425,14 @@
         } else {
             document.getElementById('chatFooter').style.display = 'flex';
             
-            // Ocultamos todos los inputs primero
             chatInputArea.style.display = 'none';
             chatInputDate.style.display = 'none';
-            
-            // Ocultamos el contenedor .iti (del teléfono)
-            let phoneContainer = document.querySelector('.iti');
-            if(phoneContainer) phoneContainer.style.display = 'none';
+            phoneWrapper.style.display = 'none'; // Ocultamos el wrapper completo
 
-            // Mostramos el que toque
             if (chatState.step === 5) {
                 chatInputDate.style.display = 'block';
             } else if (chatState.step === 3) {
-                if(phoneContainer) phoneContainer.style.display = 'block';
+                phoneWrapper.style.display = 'block'; // Mostramos el wrapper completo con la librería adentro
             } else {
                 chatInputArea.style.display = 'block';
                 chatInputArea.disabled = false;
