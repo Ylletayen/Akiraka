@@ -179,4 +179,21 @@ class CitaController extends Controller
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
+// ==========================================================
+    // 4. FUNCIÓN ELIMINAR: Borra la cita definitivamente
+    // ==========================================================
+    public function destroy($id)
+    {
+        // Buscamos la cita por su ID
+        $cita = Cita::findOrFail($id);
+        
+        // Ejecutamos la eliminación
+        $cita->delete();
+
+        // Limpieza de IDs para que sigan un orden visual limpio
+        \Illuminate\Support\Facades\DB::statement('ALTER TABLE citas AUTO_INCREMENT = 1;');
+
+        // Regresamos a la bandeja con un mensaje
+        return back()->with('success', 'La solicitud ha sido eliminada.');
+    }
 }
