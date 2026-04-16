@@ -4,7 +4,6 @@
 @endphp
 
 <style>
-    /* Botón Flotante */
     .chat-widget-btn {
         position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
         background-color: #fff; border-radius: 50%;
@@ -20,14 +19,22 @@
         background-color: #25d366; border-radius: 50%; border: 2px solid #fff;
     }
 
-    /* --- Ventana del Chat --- */
+    @keyframes waterEffect {
+        0% { border-radius: 15px 15px 15px 15px; }
+        25% { border-radius: 25px 10px 25px 10px; }
+        50% { border-radius: 10px 25px 10px 25px; }
+        75% { border-radius: 20px 15px 20px 15px; }
+        100% { border-radius: 15px 15px 15px 15px; }
+    }
+
     .chat-window {
         position: fixed; bottom: 105px; right: 30px; width: 320px; height: 480px; 
         background: #fff; border-radius: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.25);
         display: flex; flex-direction: column; overflow: hidden; z-index: 9999;
         transform: translateY(50px) scale(0.8); opacity: 0; pointer-events: none; 
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s;
         transform-origin: bottom right; border: 2px solid #111; font-family: Arial, sans-serif;
+        animation: waterEffect 6s ease-in-out infinite;
     }
     .chat-window.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
 
@@ -45,7 +52,6 @@
         display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth;
     }
 
-    /* Animaciones de Burbujas */
     @keyframes slideUpPop {
         0% { opacity: 0; transform: translateY(15px) scale(0.95); }
         100% { opacity: 1; transform: translateY(0) scale(1); }
@@ -60,7 +66,9 @@
     .msg-bot { background: #fff; color: #111; border: 2px solid #111; border-bottom-left-radius: 4px; }
     .msg-user { background: #111; color: #fff; border: 2px solid #111; border-bottom-right-radius: 4px; }
 
-    /* Animación de Escribiendo */
+    .msg-bot a { color: #d9534f; font-weight: bold; text-decoration: underline; transition: color 0.3s; }
+    .msg-bot a:hover { color: #111; }
+
     .typing-indicator { display: flex; gap: 4px; align-items: center; justify-content: center; padding: 12px 16px; }
     .typing-dot { width: 6px; height: 6px; background-color: #111; border-radius: 50%; animation: typingAnim 1.4s infinite ease-in-out both; }
     .typing-dot:nth-child(1) { animation-delay: -0.32s; }
@@ -70,7 +78,6 @@
         40% { transform: scale(1); }
     }
 
-    /* --- FOOTER Y BOTONES (CHIPS) COMPACTOS --- */
     .chat-footer { 
         padding: 12px; background: #fff; border-top: 2px solid #111; 
         display: flex; flex-direction: column; gap: 10px; align-items: center;
@@ -83,9 +90,12 @@
     .chat-option-btn { 
         background: #fff; border: 1px solid #111; color: #111; padding: 8px 14px; 
         border-radius: 20px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; 
-        text-align: center; font-weight: bold; width: auto; /* Ancho dinámico */
+        text-align: center; font-weight: bold; width: auto; 
     }
     .chat-option-btn:hover { background: #111; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    
+    .btn-agendar-chip { background-color: #111; color: #fff; }
+    .btn-agendar-chip:hover { background-color: #333; color: #fff; }
 
     .small-instruction { display: block; font-size: 0.7rem; color: #888; text-align: center; font-style: italic; margin-bottom: 2px; }
 </style>
@@ -102,7 +112,7 @@
             <h4>Guardian Aki</h4>
         </div>
         <div class="header-actions">
-            <button class="close-chat" onclick="reiniciarChat()" title="Reiniciar Chat"><i class="bi bi-arrow-clockwise"></i></button>
+            <button class="close-chat" onclick="reiniciarChat()"><i class="bi bi-arrow-clockwise"></i></button>
             <button class="close-chat" onclick="toggleChat()"><i class="bi bi-x-lg"></i></button>
         </div>
     </div>
@@ -110,13 +120,14 @@
     <div class="chat-body" id="chatBody"></div>
     
     <div class="chat-footer">
-        <span class="small-instruction">Selecciona una opción:</span>
+        <span class="small-instruction">Selecciona una opcion:</span>
         <div class="options-wrapper">
-            <button class="chat-option-btn" onclick="procesarEntrada('Horarios')">🕒 Horarios</button>
-            <button class="chat-option-btn" onclick="procesarEntrada('Costos')">💰 Costos</button>
-            <button class="chat-option-btn" onclick="procesarEntrada('Servicios')">📐 Servicios</button>
-            <button class="chat-option-btn" onclick="procesarEntrada('Contacto')">📞 Contacto</button>
-            <button class="chat-option-btn" onclick="procesarEntrada('Nosotros')">👷‍♂️ Nosotros</button>
+            <button class="chat-option-btn btn-agendar-chip" onclick="procesarEntrada('Agendar Cita')">Agendar Cita</button>
+            <button class="chat-option-btn" onclick="procesarEntrada('Horarios')">Horarios</button>
+            <button class="chat-option-btn" onclick="procesarEntrada('Costos')">Costos</button>
+            <button class="chat-option-btn" onclick="procesarEntrada('Servicios')">Servicios</button>
+            <button class="chat-option-btn" onclick="procesarEntrada('Contacto')">Contacto</button>
+            <button class="chat-option-btn" onclick="procesarEntrada('Nosotros')">Nosotros</button>
         </div>
     </div>
 </div>
@@ -131,7 +142,7 @@
     let chatState = {
         isOpen: false,
         history: [
-            { sender: 'bot', text: '¡Hola! ¡Guau! 🐾 Soy Aki, el asistente virtual del Estudio Akiraka. ¿En qué te puedo ayudar hoy?' }
+            { sender: 'bot', text: 'Hola, soy Aki, el asistente virtual del Estudio Akiraka. En que te puedo ayudar hoy?' }
         ]
     };
 
@@ -173,7 +184,7 @@
         let div = document.createElement('div');
         if (sender === 'bot') {
             div.className = 'msg-bot-container';
-            div.innerHTML = `<img src="${rutaAvatarBot}" onerror="this.src='{{ asset('images/bot_akira.jpg') }}'" alt="Bot" class="bot-avatar-small"><div class="msg msg-bot">${text}</div>`;
+            div.innerHTML = `<img src="${rutaAvatarBot}" onerror="this.src='{{ asset('images/bot_akira.jpg') }}'" class="bot-avatar-small"><div class="msg msg-bot">${text}</div>`;
         } else {
             div.className = 'msg-user-container';
             div.innerHTML = `<div class="msg msg-user">${text}</div>`;
@@ -217,34 +228,38 @@
         if(typingBubble) typingBubble.remove();
     }
 
-    // CEREBRO DE AKI
     function buscarRespuestaAki(pregunta) {
         let texto = pregunta.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
+        if (texto.includes('agendar') || texto.includes('cita')) {
+            let enlaceContacto = "{{ route('contacto') }}";
+            return `Para formalizar una reunion y poder dedicarte el tiempo que tu proyecto merece, por favor ingresa a nuestra <a href="${enlaceContacto}">Pagina de Contacto</a> y envianos un mensaje con tu disponibilidad. Un humano del equipo te confirmara a la brevedad.`;
+        }
+
         if (texto.includes('horario')) {
-            return "Nuestro horario de atención a clientes y revisión de proyectos es de <b>Lunes a Viernes, de 12:00 PM a 5:00 PM</b>. 🕒 ¿Te puedo ayudar con otra duda?";
+            return "Nuestro horario de atencion a clientes y revision de proyectos es de <b>Lunes a Viernes, de 12:00 PM a 5:00 PM</b>. Te puedo ayudar con otra duda?";
         }
 
         if (texto.includes('costo') || texto.includes('presupuesto')) {
-            return "En Akiraka creemos que cada proyecto arquitectónico es único, por lo que <b>no tenemos un costo 'mínimo' estándar</b>. 💰 Nos adaptamos a tus necesidades. Te invitamos a enviarnos un correo en la sección de Contacto para cotizar tu idea.";
+            return "En Akiraka creemos que cada proyecto arquitectonico es unico, por lo que <b>no tenemos un costo minimo estandar</b>. Nos adaptamos a tus necesidades. Te invitamos a enviarnos un correo en la seccion de Contacto para cotizar tu idea.";
         }
 
         if (texto.includes('servicio')) {
             let listaServicios = serviciosDB.map(s => "• <b>" + s.nombre + "</b>: " + s.descripcion).join('<br>');
-            return "¡Claro! 📐 Actualmente ofrecemos los siguientes servicios:<br><br>" + listaServicios + "<br><br>Puedes ver ejemplos de nuestro trabajo en la sección de Proyectos.";
+            return "Actualmente ofrecemos los siguientes servicios:<br><br>" + listaServicios + "<br><br>Puedes ver ejemplos de nuestro trabajo en la seccion de Proyectos.";
         }
 
         if (texto.includes('contacto')) {
             let tel = configDB?.telefono || 'No disponible por ahora';
             let correo = configDB?.correo_contacto || 'akirakaestudio14@gmail.com';
-            return "¡Nos encantaría platicar contigo! 🐾<br><br>Puedes escribirnos al correo: <b>" + correo + "</b><br>O llamarnos al número: <b>" + tel + "</b>.";
+            return "Puedes escribirnos al correo: <b>" + correo + "</b><br>O llamarnos al numero: <b>" + tel + "</b>.";
         }
 
-        if (texto.includes('arquitecto') || texto.includes('akira') || texto.includes('Estudio')) {
-            let quienesSomos = configDB?.quienes_somos_texto || "Somos un estudio de arquitectura que encuentra su filosofía en el concepto japonés de 'akiraka', creado por el Arq. Akira Kameta.";
-            return "👷‍♂️ <b>Sobre nosotros:</b><br>" + quienesSomos;
+        if (texto.includes('arquitecto') || texto.includes('akira') || texto.includes('nosotros')) {
+            let quienesSomos = configDB?.quienes_somos_texto || "Somos un estudio de arquitectura que encuentra su filosofia en el concepto japones de akiraka, creado por el Arq. Akira Kameta.";
+            return "<b>Sobre nosotros:</b><br>" + quienesSomos;
         }
 
-        return "Aki está un poco confundido 🐶. Intenta seleccionar otra opción de abajo.";
+        return "Intenta seleccionar otra opcion de abajo.";
     }
 </script>
