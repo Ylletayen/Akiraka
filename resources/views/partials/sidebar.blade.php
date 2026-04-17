@@ -171,9 +171,12 @@
                     <a class="nav-link {{ request()->routeIs('dashboard.publicaciones') ? 'active' : '' }}" href="{{ route('dashboard.publicaciones') }}">
                         <div><i class="fas fa-newspaper me-3"></i> Publicaciones</div>
                     </a>
+                
+                    @if(in_array(Auth::user()->id_rol, [1, 2]))
                     <a class="nav-link {{ request()->routeIs('dashboard.servicios') ? 'active' : '' }}" href="{{ route('dashboard.servicios') }}">
                         <div><i class="fas fa-drafting-compass me-3"></i> Servicios</div>
                     </a>
+                    @endif
                 </div>
             </li>
 
