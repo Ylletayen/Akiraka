@@ -118,14 +118,6 @@
                                 <a href="mailto:{{ $solicitud->cliente_correo }}?subject=Sobre tu solicitud de {{ $solicitud->asunto_servicio }}" class="btn-icon-action icon-email" title="Enviar correo manual">
                                     <i class="bi bi-envelope"></i>
                                 </a>
-
-                                {{-- Botón Eliminar Permanente --}}
-                                <form action="{{ route('dashboard.citas.destroy', $solicitud->id_cita) }}" method="POST" style="display: inline-block;">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn-icon-action icon-delete" title="Eliminar sin avisar" onclick="return confirm('¿Eliminar esta solicitud de forma permanente sin notificar al cliente?');">
-                                        <i class="bi bi-trash3"></i>
-                                    </button>
-                                </form>
                             </td>
                         </tr>
                     @empty

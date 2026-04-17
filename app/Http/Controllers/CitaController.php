@@ -70,40 +70,50 @@ class CitaController extends Controller
         return view('dashboard.citas.index', compact('solicitudes'));
     }
 
+    // ==========================================================
+    // ACTUALIZAR ESTADO DE LA CITA (ACEPTAR / RECHAZAR)
+    // ==========================================================
     public function actualizarEstado(Request $request, $id)
     {
         $request->validate(['estado' => 'required|in:Confirmada,Cancelada']);
 
-        $cita = Cita::findOrFail($id);
-        $cliente = Cliente::findOrFail($cita->id_cliente);
-        $servicio = DB::table('servicios')->where('id_servicio', $cita->id_servicio)->value('nombre');
-
-        
-        try {
-            $mensaje = $request->estado == 'Confirmada' 
-                ? "Hola {$cliente->nombre},\n\nNos alegra informarte que tu solicitud de cita para el servicio de '{$servicio}' ha sido CONFIRMADA. Nos pondremos en contacto contigo a la brevedad para afinar los detalles.\n\nSaludos,\nEl equipo de Akiraka Estudio."
-                : "Hola {$cliente->nombre},\n\nTe informamos que por motivos de agenda, tu solicitud de cita para '{$servicio}' ha sido CANCELADA. Te invitamos a solicitar una nueva fecha en nuestra página web.\n\nSaludos,\nEl equipo de Akiraka Estudio.";
-
-            \Illuminate\Support\Facades\Mail::raw($mensaje, function($mail) use ($cliente) {
-                $mail->to($cliente->correo)
-                     ->subject('Actualización de tu solicitud en Akiraka Estudio');
-            });
-        } catch (\Exception $e) {
-     
+        // 1. Buscamos la cita de forma segura (sin que lance 404 si no existe)
+        $cita = Cita::where('id_cita', $id)->first();
+        if (!$cita) {
+            return back()->with('error', 'Esta cita ya no existe en la base de datos.');
         }
 
+        // 2. Buscamos al cliente (Puede ser null si era una cita de prueba rota)
+        $cliente = Cliente::where('id_cliente', $cita->id_cliente)->first();
+        $servicio = DB::table('servicios')->where('id_servicio', $cita->id_servicio)->value('nombre') ?? 'Servicio';
+
+        // 3. Mandar correo SOLO si el cliente existe y tiene email
+        if ($cliente && $cliente->correo) {
+            try {
+                $mensaje = $request->estado == 'Confirmada' 
+                    ? "Hola {$cliente->nombre},\n\nNos alegra informarte que tu solicitud de cita para el servicio de '{$servicio}' ha sido CONFIRMADA. Nos pondremos en contacto contigo a la brevedad para afinar los detalles.\n\nSaludos,\nEl equipo de Akiraka Estudio."
+                    : "Hola {$cliente->nombre},\n\nTe informamos que por motivos de agenda, tu solicitud de cita para '{$servicio}' ha sido CANCELADA. Te invitamos a solicitar una nueva fecha en nuestra página web.\n\nSaludos,\nEl equipo de Akiraka Estudio.";
+
+                \Illuminate\Support\Facades\Mail::raw($mensaje, function($mail) use ($cliente) {
+                    $mail->to($cliente->correo)
+                         ->subject('Actualización de tu solicitud en Akiraka Estudio');
+                });
+            } catch (\Exception $e) {
+                // Si falla el correo (ej. sin internet), no rompemos la página
+            }
+        }
+
+        // 4. Si la rechazas, la borramos para limpiar la bandeja
         if ($request->estado == 'Cancelada') {
             $cita->delete();
             
-            // =========================================================
-            // MAGIA DE IDs: Resetea el contador para evitar saltos gigantes
-            // =========================================================
+            // Reseteo limpio de IDs
             DB::statement('ALTER TABLE citas AUTO_INCREMENT = 1;');
             
-            return back()->with('success', 'La solicitud fue rechazada, se notificó al cliente y se eliminó el registro para mantener limpia tu bandeja.');
+            return back()->with('success', 'La solicitud fue rechazada y eliminada del sistema.');
         }
 
-        // Si solo la acepta, actualizamos el estado
+        // 5. Si la aceptas, solo actualizamos su estado
         $cita->update(['estado' => $request->estado]);
         return back()->with('success', 'El estado de la solicitud ha sido actualizado a: Confirmada');
     }
@@ -179,21 +189,20 @@ class CitaController extends Controller
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
-// ==========================================================
-    // 4. FUNCIÓN ELIMINAR: Borra la cita definitivamente
+
+/// ==========================================================
+    // ELIMINAR CITA DEFINITIVAMENTE (BOTÓN DE BASURA)
     // ==========================================================
     public function destroy($id)
     {
-        // Buscamos la cita por su ID
-        $cita = Cita::findOrFail($id);
+        $cita = Cita::where('id_cita', $id)->first();
         
-        // Ejecutamos la eliminación
-        $cita->delete();
+        if ($cita) {
+            $cita->delete();
+        }
 
-        // Limpieza de IDs para que sigan un orden visual limpio
-        \Illuminate\Support\Facades\DB::statement('ALTER TABLE citas AUTO_INCREMENT = 1;');
+        DB::statement('ALTER TABLE citas AUTO_INCREMENT = 1;');
 
-        // Regresamos a la bandeja con un mensaje
         return back()->with('success', 'La solicitud ha sido eliminada.');
     }
 }

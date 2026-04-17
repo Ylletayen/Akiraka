@@ -229,9 +229,6 @@
                     <a class="nav-link {{ request()->routeIs('dashboard.citas') ? 'active' : '' }}" href="{{ route('dashboard.citas') }}">
                         <div><i class="fas fa-calendar-alt me-3"></i> Prospectos / Citas</div>
                     </a>
-                    <a class="nav-link {{ request()->routeIs('mensajes') ? 'active' : '' }}" href="{{ route('mensajes') }}">
-                        <div><i class="fas fa-envelope me-3"></i> Mensajes Web</div>
-                    </a>
                 </div>
             </li>
 
@@ -251,7 +248,7 @@
                     </a>
                     @endif
 
-                    @if(in_array(Auth::user()->id_rol, [1]))
+                    @if(in_array(Auth::user()->id_rol, [1, 2]))
                     <a class="nav-link {{ request()->routeIs('dashboard.equipo.quienes_somos') ? 'active' : '' }}" href="{{ route('dashboard.equipo.quienes_somos') ?? '#' }}">
                         <div><i class="fas fa-users me-3"></i> Equipo</div>
                     </a>
