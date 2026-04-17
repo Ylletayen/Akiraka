@@ -192,9 +192,6 @@
                     <a class="nav-link {{ request()->routeIs('dashboard.citas') ? 'active' : '' }}" href="{{ route('dashboard.citas') }}">
                         <div><i class="fas fa-calendar-alt me-3"></i> Prospectos / Citas</div>
                     </a>
-                    <a class="nav-link {{ request()->routeIs('mensajes') ? 'active' : '' }}" href="{{ route('mensajes') }}">
-                        <div><i class="fas fa-envelope me-3"></i> Mensajes Web</div>
-                    </a>
                 </div>
             </li>
 
