@@ -58,11 +58,15 @@ Route::get('/contacto', function () {
 Route::post('/enviar-mensaje', [MensajesController::class, 'guardarMensaje'])->name('contacto.mensaje.store');
 
 // --- AUTENTICACIÓN ---
+// CORRECCIÓN PANTALLA BLANCA: Redirigimos al inicio con un error en lugar de cargar la vista modal oculta
 Route::get('/login', function () {
-    return view('dashboard.login.login');
-})->name('login.form');
+    return redirect('/')->withErrors([
+        'email' => 'Por favor, inicia sesión para acceder al panel de administración.'
+    ]);
+})->name('login');
 
-Route::post('/login', [AuthController::class, 'login'])->name('login');
+// Se le quita el nombre a esta ruta para evitar que choque con el nombre 'login' de arriba
+Route::post('/login', [AuthController::class, 'login']); 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/registro', function () {
@@ -143,28 +147,28 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
     Route::post('/objetos/{id}/historia', [ObjetoController::class, 'storeHistoria'])->name('objetos.historias.store');
     Route::put('/objetos/historia/{id_imagen}', [ObjetoController::class, 'updateHistoria'])->name('objetos.historias.update');
     Route::delete('/objetos/historia/{id_imagen}', [ObjetoController::class, 'destroyHistoria'])->name('objetos.historias.destroy');
+
+    // PUBLICACIONES (DASHBOARD) - Movido adentro por seguridad
+    Route::get('/publicaciones', [PublicacionController::class, 'adminIndex'])->name('dashboard.publicaciones');
+    Route::post('/publicaciones', [PublicacionController::class, 'store'])->name('publicaciones.store');
+    Route::put('/publicaciones/{id}', [PublicacionController::class, 'update'])->name('publicaciones.update');
+    Route::delete('/publicaciones/{id}', [PublicacionController::class, 'destroy'])->name('publicaciones.destroy');
+
+    // CITAS (DASHBOARD) - Movido adentro por seguridad
+    Route::get('/citas', [CitaController::class, 'solicitudesCitas'])->name('dashboard.citas');
+    Route::put('/citas/{id}/estado', [CitaController::class, 'actualizarEstado'])->name('dashboard.citas.estado');
+    Route::delete('/citas/{id}', [CitaController::class, 'destroy'])->name('dashboard.citas.destroy');
+    Route::get('/citas/eliminar/{id}', [CitaController::class, 'destroy'])->name('dashboard.citas.destroy_get');
 });
 
 // DETALLE EXTERNO
 Route::get('/proyecto/{id}', [ProjectController::class, 'show'])->name('project.main');
 Route::get('/objeto/{id}', [ObjetoController::class, 'show'])->name('objeto.main');
 
-
 // Ruta para recibir el formulario de citas desde la página pública
-Route::post('/solicitar-cita', [App\Http\Controllers\CitaController::class, 'store'])->name('api.citas.store');
+Route::post('/solicitar-cita', [CitaController::class, 'store'])->name('api.citas.store');
+Route::post('/api/chatbot/agendar', [CitaController::class, 'storeDesdeChat'])->name('chatbot.agendar');
 
-// PUBLICACIONES
+// PUBLICACIONES (VISTA PÚBLICA EXTERNA)
 Route::get('/publicaciones', [PublicacionController::class,'index'])->name('publicaciones');
 Route::get('/publicaciones/{id}', [PublicacionController::class,'show'])->name('publicaciones.show');
-// PUBLICACIONES (DASHBOARD)
-Route::get('/publicaciones', [PublicacionController::class, 'adminIndex'])->name('dashboard.publicaciones');
-Route::post('/publicaciones', [PublicacionController::class, 'store'])->name('publicaciones.store');
-Route::put('/publicaciones/{id}', [PublicacionController::class, 'update'])->name('publicaciones.update');
-Route::delete('/publicaciones/{id}', [PublicacionController::class, 'destroy'])->name('publicaciones.destroy');
-
-//CITAS
-Route::get('/citas', [CitaController::class, 'solicitudesCitas'])->name('dashboard.citas');
-Route::put('/citas/{id}/estado', [CitaController::class, 'actualizarEstado'])->name('dashboard.citas.estado');
-Route::delete('/citas/{id}', [CitaController::class, 'destroy'])->name('dashboard.citas.destroy');
-Route::post('/api/chatbot/agendar', [CitaController::class, 'storeDesdeChat'])->name('chatbot.agendar');
-Route::get('/citas/eliminar/{id}', [CitaController::class, 'destroy'])->name('dashboard.citas.destroy');
