@@ -252,29 +252,22 @@
 
         <section>
             <h2 class="column-title">Publicaciones</h2>
+            
+            <ul class="project-list">
+                @forelse($publicaciones as $publicacion)
+                    <li>
+                        <span class="year-label">{{ \Carbon\Carbon::parse($publicacion->fecha)->format('Y') }}</span> 
+                        
+                        <a href="{{ route('publicaciones.show', $publicacion->id_publicacion) }}" class="project-link" data-img="{{ $publicacion->portada ? asset('storage/' . $publicacion->portada) : 'https://via.placeholder.com/320x220?text=Publicación' }}">
+                            {{ $publicacion->titulo }}
+                        </a>
+                    </li>
+                @empty
+                    <li style="color: #ccc; font-style: italic; font-size: 0.85rem;">Ninguna publicación disponible.</li>
+                @endforelse
+            </ul>
 
-                @if($publicaciones->isEmpty())
-
-                <p style="color: #ccc; font-style: italic; font-size: 0.85rem;">Ninguna publicación disponible</p>
-
-                @else
-
-                @foreach($publicaciones as $publicacion)
-
-                <div class="publicacion-item">
-
-                <a href="{{ route('publicaciones.show', $publicacion->id_publicacion) }}">
-                    <h4>{{ $publicacion->titulo }}</h4>
-                </a>
-
-                <p>{{ $publicacion->fecha }}</p>
-
-                </div>
-
-                @endforeach
-
-                @endif
-                @include('Principal.cita')
+            @include('Principal.cita')
         </section>
 
     </main>
