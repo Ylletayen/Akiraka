@@ -214,7 +214,7 @@
                     </a>
                     @endif
 
-                    @if(in_array(Auth::user()->id_rol, [1]))
+                    @if(in_array(Auth::user()->id_rol, [1, 2]))
                     <a class="nav-link {{ request()->routeIs('dashboard.equipo.quienes_somos') ? 'active' : '' }}" href="{{ route('dashboard.equipo.quienes_somos') ?? '#' }}">
                         <div><i class="fas fa-users me-3"></i> Equipo</div>
                     </a>
