@@ -9,6 +9,9 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+
 <style>
     /* ================= ESTILOS BASE DEL ESTUDIO ================= */
     .akira-container {
@@ -94,6 +97,8 @@
         color: #8c8c8c !important;
         transform: translateX(-5px); /* Efecto sutil al pasar el mouse */
     }
+     /* Regla para que la librería respete el ancho de tu diseño */
+    .iti { width: 100%; }
 </style>
 
 <!-- ¡BOTÓN FLOTANTE QUE SIGUE AL USUARIO! -->
@@ -220,9 +225,14 @@
         <form action="{{ route('api.citas.store') }}" method="POST">
             @csrf
             <div style="margin-bottom: 20px;">
-                <label class="form-label-small">NOMBRE COMPLETO</label>
-                <input type="text" name="nombre" class="form-input-contact" style="margin-bottom: 0;" required>
-            </div>
+               <label class="form-label-small">NOMBRE COMPLETO</label>
+                <input type="text" 
+                       name="nombre" 
+                       class="form-input-contact" 
+                       style="margin-bottom: 0;" 
+                       pattern="^[A-ZÁÉÍÓÚÑ][a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*[aeiouáéíóúAEIOUÁÉÍÓÚ][a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$" 
+                       title="El nombre debe iniciar con Mayúscula y contener al menos una vocal." 
+                       required>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                 <div>
@@ -231,7 +241,7 @@
                 </div>
                 <div>
                     <label class="form-label-small">TELÉFONO</label>
-                    <input type="text" name="telefono" class="form-input-contact" style="margin-bottom: 0;">
+                    <input type="tel" name="telefono" id="telefonoCita" class="form-input-contact" style="margin-bottom: 0;" required>
                 </div>
             </div>
 
@@ -309,6 +319,51 @@
         if (event.target == modalContacto) cerrarModalContacto();
         if (event.target == modalCita) cerrarModalCita();
     }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const phoneInputField = document.querySelector("#telefonoCita");
+
+        if (phoneInputField) {
+            // 1. Inicializar la librería con la bandera de México por defecto
+            const phoneInput = window.intlTelInput(phoneInputField, {
+                preferredCountries: ["mx", "us", "es"],
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+            });
+
+            // 2. Interceptar la tecla antes de que se escriba en el input (Bloqueo y Límite)
+            phoneInputField.addEventListener('keypress', function (e) {
+                // Si intenta teclear algo que NO sea número (y no es Enter), lo bloqueamos
+                if (!/[0-9]/.test(e.key) && e.key !== 'Enter') {
+                    e.preventDefault(); 
+                    return; 
+                }
+
+                // Contamos cuántos NÚMEROS hay actualmente (ignorando los espacios de la bandera)
+                const cantidadNumeros = this.value.replace(/[^0-9]/g, '').length;
+
+                // Si ya hay 10 números, bloqueamos cualquier intento de escribir el 11vo
+                if (cantidadNumeros >= 10 && /[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+
+            // 3. Interceptar el envío del formulario para mandar el número limpio a Laravel
+            const formCita = phoneInputField.closest('form');
+            formCita.addEventListener("submit", function(event) {
+                // Obtenemos el número completo (ej. +527221234567)
+                const numeroCompleto = phoneInput.getNumber();
+                
+                // Actualizamos el valor del input justo antes de que se envíe a la base de datos
+                if (numeroCompleto) {
+                    phoneInputField.value = numeroCompleto;
+                }
+            });
+        }
+    });
 </script>
 @include('Principal.cita')
 @endsection
