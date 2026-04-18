@@ -202,7 +202,7 @@
             @csrf
             <input type="hidden" name="departamento_email" id="inputDepartamento" value="">
             
-            <input type="text" name="nombre" class="form-input-contact" placeholder="Tu Nombre" required>
+            <input type="text" name="nombre" class="form-input-contact" placeholder="Tu Nombre" pattern="^[A-ZÁÉÍÓÚÑ][a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*[aeiouáéíóúAEIOUÁÉÍÓÚ][a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$" title="El nombre debe iniciar con Mayúscula y contener al menos una vocal." required>
             <input type="email" name="correo" class="form-input-contact" placeholder="Tu Correo" required>
             <input type="text" name="asunto" class="form-input-contact" placeholder="Asunto" required>
             <textarea name="mensaje" class="form-input-contact" rows="4" placeholder="Escribe tu mensaje aquí..." required></textarea>
@@ -250,9 +250,11 @@
                     <label class="form-label-small">ASUNTO / SERVICIO</label>
                     <select name="id_servicio" class="form-input-contact" style="margin-bottom: 0; padding: 10px 0;" required>
                         <option value="" disabled selected>Selecciona una opción...</option>
-                        <option value="1">Diseño Arquitectónico</option>
-                        <option value="2">Diseño de Interiores</option>
-                        <option value="3">Renderizado 3D</option>
+                        
+                        @foreach($servicios as $servicio)
+                            <option value="{{ $servicio->id }}">{{ $servicio->nombre }}</option>
+                        @endforeach
+                        
                     </select>
                 </div>
                 <div>

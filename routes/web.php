@@ -11,6 +11,7 @@ use App\Http\Controllers\ObjetoController;
 use App\Http\Controllers\PublicacionController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\CitaController;
+use App\Http\Controllers\ContactoController;
 use App\Models\Proyecto;
 use App\Models\Publicacion;
 
@@ -50,9 +51,7 @@ Route::get('/info', function () {
     return view('agregados.informacion.info'); 
 })->name('info');
 
-Route::get('/contacto', function () {
-    return view('agregados.contacto.contacto'); 
-})->name('contacto');
+Route::get('/contacto', [ContactoController::class, 'index'])->name('contacto');;
 
 // --- SISTEMA DE MENSAJES (PÚBLICO) ---
 Route::post('/enviar-mensaje', [MensajesController::class, 'guardarMensaje'])->name('contacto.mensaje.store');
@@ -164,10 +163,6 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 // DETALLE EXTERNO
 Route::get('/proyecto/{id}', [ProjectController::class, 'show'])->name('project.main');
 Route::get('/objeto/{id}', [ObjetoController::class, 'show'])->name('objeto.main');
-
-// Ruta para recibir el formulario de citas desde la página pública
-Route::post('/solicitar-cita', [CitaController::class, 'store'])->name('api.citas.store');
-Route::post('/api/chatbot/agendar', [CitaController::class, 'storeDesdeChat'])->name('chatbot.agendar');
 
 // PUBLICACIONES (VISTA PÚBLICA EXTERNA)
 Route::get('/publicaciones', [PublicacionController::class,'index'])->name('publicaciones');
