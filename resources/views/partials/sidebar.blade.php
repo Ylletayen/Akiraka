@@ -1,18 +1,21 @@
 <style>
-    /* ================= SIDEBAR (Estilo Original Oscuro Restaurado) ================= */
+    /* ================= SIDEBAR FIJO (Te sigue al hacer scroll) ================= */
     .sidebar {
+        position: fixed; /* <-- LA MAGIA: Fija el elemento en la pantalla */
+        top: 0;          /* <-- Pegado al techo */
+        left: 0;         /* <-- Pegado a la pared izquierda */
         width: 260px;
         background-color: #1c1c1c; 
         color: #fff; 
         padding: 30px 25px;
-        border-radius: 12px;
+        border-radius: 0; /* <-- Lo dejamos cuadrado para que encaje perfecto en la esquina */
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        z-index: 10;
+        z-index: 1000;   /* <-- Asegura que siempre esté por encima del contenido */
         box-shadow: 4px 0 15px rgba(0,0,0,0.2); 
-        height: 100vh; /* Aseguramos que ocupe todo el alto para hacer scroll si es necesario */
-        overflow-y: auto; /* Scroll interno si hay muchas opciones */
+        height: 100vh;   /* <-- Ocupa el 100% del alto de tu pantalla */
+        overflow-y: auto; /* Scroll interno solo si el menú es muy largo */
     }
 
     /* Ocultar barra de scroll para estética limpia */
@@ -72,7 +75,7 @@
 
     /* Títulos de Agrupación */
     .sidebar .nav-group-title {
-        background-color: #111; /* Un poco más oscuro para diferenciar */
+        background-color: #111; 
         margin-top: 10px;
         border-left: 3px solid transparent;
     }
@@ -96,13 +99,12 @@
         max-height: 0;
         overflow: hidden;
         transition: max-height 0.3s ease-out;
-        padding-left: 15px; /* Indentación para jerarquía */
+        padding-left: 15px; 
         border-left: 1px solid #333;
         margin-left: 15px;
         margin-bottom: 5px;
     }
 
-    /* Sub-enlaces más pequeños */
     .sidebar .nav-sub-menu .nav-link {
         padding: 8px 15px;
         font-size: 0.85rem;
@@ -135,6 +137,41 @@
         margin-top: 20px;
         border-top: 1px solid #333;
         padding-top: 15px;
+    }
+
+    /* =====================================================================
+       MAGIA: COMPENSACIÓN GLOBAL PARA EVITAR QUE SE SOBREPONGA AL CONTENIDO
+       ===================================================================== */
+    .dash-admin-view {
+        padding: 0 !important; /* Quitamos bordes para que el panel use toda la pantalla */
+        display: block !important; 
+    }
+
+    .dashboard-container {
+        display: block !important; 
+        width: 100% !important;
+        max-width: 100% !important; /* Permite que el panel se expanda libremente */
+    }
+
+    .main-content {
+        margin-left: 260px !important; /* Empuja el contenido exactamente el ancho del sidebar */
+        width: calc(100% - 260px) !important; /* Ajusta el ancho restante */
+        min-height: 100vh;
+        border-radius: 0 !important; /* Quita curvas innecesarias al pegarse a los bordes */
+        box-sizing: border-box;
+    }
+
+    /* Evita problemas en tablets/celulares donde el menú colapsaría */
+    @media (max-width: 992px) {
+        .sidebar {
+            position: relative;
+            width: 100%;
+            height: auto;
+        }
+        .main-content {
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
     }
 </style>
 
@@ -242,14 +279,11 @@
 
 <script>
     function toggleSubmenu(button) {
-        // Encontramos el contenedor padre (.nav-group) y el submenú (.nav-sub-menu)
         const navGroup = button.parentElement;
         const subMenu = navGroup.querySelector('.nav-sub-menu');
 
-        // Alternamos la clase 'open' para rotar la flecha
         navGroup.classList.toggle('open');
 
-        // Animamos el max-height para abrir/cerrar suavemente
         if (subMenu.style.maxHeight && subMenu.style.maxHeight !== '0px') {
             subMenu.style.maxHeight = '0px';
         } else {
