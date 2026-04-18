@@ -164,6 +164,10 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 Route::get('/proyecto/{id}', [ProjectController::class, 'show'])->name('project.main');
 Route::get('/objeto/{id}', [ObjetoController::class, 'show'])->name('objeto.main');
 
+// Ruta para recibir el formulario de citas desde la página pública
+Route::post('/solicitar-cita', [CitaController::class, 'store'])->name('api.citas.store');
+Route::post('/api/chatbot/agendar', [CitaController::class, 'storeDesdeChat'])->name('chatbot.agendar');
+
 // PUBLICACIONES (VISTA PÚBLICA EXTERNA)
 Route::get('/publicaciones', [PublicacionController::class,'index'])->name('publicaciones');
 Route::get('/publicaciones/{id}', [PublicacionController::class,'show'])->name('publicaciones.show');
