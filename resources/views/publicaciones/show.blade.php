@@ -75,6 +75,7 @@
         </div>
     </section>
 
+
     <section class="fase-slide" style="justify-content: flex-start;">
         <div class="publicacion-content-wrapper">
             <span class="fase-num">
