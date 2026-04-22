@@ -6,6 +6,10 @@
     $defaultValores = "- Colaboración y Empatía: Se establece una relación con el cliente y la comunidad, diseñando desde un entendimiento profundo de sus necesidades para lograr un éxito compartido.\n- Impacto Regenerativo: El enfoque supera la sostenibilidad convencional buscando la regeneración activa de los ecosistemas y el fortalecimiento del tejido social.\n- Materialidad Sostenible: La madera de origen responsable es la protagonista (\"materia viva\"), valorada por su estética, capacidad de secuestro de carbono y beneficios biológicos.\n- Simplicidad y Honestidad: Se apuesta por la claridad conceptual para transformar ideas complejas en soluciones ejecutables (ideales para la autoconstrucción) y una transparencia radical en cuanto a costos, plazos y origen de los materiales.";
 @endphp
 
+<!-- LIBRERÍAS PARA EL SELECTOR DE PAÍS (Banderitas) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+
 <div class="dash-admin-view">
     <style>
         .dash-admin-view { min-height: 100vh; background-color: #ffffff; font-family: "Helvetica Neue", Arial, sans-serif; color: #111; padding: 20px; display: flex; justify-content: center; }
@@ -35,9 +39,9 @@
 
         /* ESTILOS DEL MODAL (CORREGIDOS PARA OCULTARLO) */
         .custom-modal-overlay { 
-            display: none !important; /* Forzamos el ocultamiento por defecto */
+            display: none !important; 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+            background: rgba(0, 0, 0, 0.5); 
             backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center; 
             opacity: 0; transition: opacity 0.3s ease; 
         }
@@ -50,6 +54,15 @@
         .btn-modal { flex: 1; padding: 12px; border-radius: 4px; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; cursor: pointer; border: 1px solid transparent; }
         .btn-modal-cancel { background: #fafafa; color: #555; border-color: #ddd; }
         .btn-modal-confirm { background: #111; color: #fff; }
+
+        /* ================= AJUSTES PARA EL PLUGIN DE BANDERITAS ================= */
+        .iti { width: 100%; display: block; }
+        .iti__selected-flag { background-color: #fafafa; border-radius: 4px 0 0 4px; border-right: 1px solid #eaeaea; transition: background-color 0.3s; padding: 0 12px; }
+        .iti__selected-flag:hover { background-color: #f0f0f0; }
+        .iti input[type="tel"] { padding-left: 90px !important; }
+        .iti__country-list { border-radius: 4px; border: 1px solid #eaeaea; box-shadow: 0 10px 30px rgba(0,0,0,0.08); font-family: "Helvetica Neue", Arial, sans-serif; font-size: 0.85rem; }
+        .iti__flag { background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/img/flags.png"); }
+        @media (min-resolution: 2x) { .iti__flag { background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/img/flags@2x.png"); } }
     </style>
 
     <div class="dashboard-container">
@@ -69,7 +82,6 @@
             </div>
 
             <div class="options-card">
-                {{-- Título dinámico para que no le diga "Administrador" a un colaborador --}}
                 <h3 class="section-title-card">Mi Perfil ({{ Auth::user()->id_rol == 1 ? 'Superadmin' : (Auth::user()->id_rol == 2 ? 'Administrador' : 'Colaborador') }})</h3>
                 <form id="form-perfil" action="{{ route('opciones.perfil.update') }}" method="POST" enctype="multipart/form-data" onsubmit="triggerCustomModal(event, this, '¿Guardar cambios en tu perfil?');">
                     @csrf @method('PUT')
@@ -82,7 +94,17 @@
                         <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                             <div class="form-group"><label>Nombre</label><input type="text" name="nombre" class="form-control" value="{{ Auth::user()->nombre }}" required></div>
                             <div class="form-group"><label>Correo</label><input type="email" name="correo" class="form-control" value="{{ Auth::user()->correo }}" required></div>
-                            <div class="form-group" style="grid-column: 1 / -1;"><label>Nueva Contraseña</label><input type="password" name="password_nueva" class="form-control" placeholder="Dejar vacío para no cambiar"></div>
+                            
+                            <div class="form-group">
+                                <label>Contraseña Actual</label>
+                                <input type="password" class="form-control" value="••••••••" disabled title="Por seguridad del sistema, tu contraseña está encriptada.">
+                            </div>
+                            
+                            <div class="form-group" style="position: relative;">
+                                <label>Nueva Contraseña</label>
+                                <input type="password" id="password_nueva" name="password_nueva" class="form-control" placeholder="Dejar vacío para no cambiar">
+                                <i class="fas fa-eye" id="togglePasswordBtn" onclick="togglePassword()" style="position: absolute; right: 15px; top: 35px; cursor: pointer; color: #888; font-size: 1.1rem; transition: color 0.3s;"></i>
+                            </div>
                         </div>
                     </div>
                     <div style="display: flex; justify-content: flex-end; margin-top: 10px;"><button type="submit" class="btn-save" style="max-width: 200px; padding: 12px;">Guardar Perfil</button></div>
@@ -90,7 +112,8 @@
             </div>
 
             @if(in_array(Auth::user()->id_rol, [1, 2]))
-            <form action="{{ route('opciones.publicos.update') }}" method="POST" enctype="multipart/form-data" onsubmit="triggerCustomModal(event, this, '¿Actualizar contenido y roles del equipo?');">
+            <!-- ID AGREGADO PARA INTERCEPTAR EL GUARDADO DEL TELÉFONO -->
+            <form id="form-publicos" action="{{ route('opciones.publicos.update') }}" method="POST" enctype="multipart/form-data" onsubmit="triggerCustomModal(event, this, '¿Actualizar contenido y roles del equipo?');">
                 @csrf @method('PUT')
 
                 <div class="options-card">
@@ -99,7 +122,6 @@
                     
                     @isset($equipo)
                         @foreach($equipo as $miembro)
-                            {{-- MAGIA DE INVISIBILIDAD: Ocultar a los Superadmins de esta lista pública --}}
                             @if($miembro->usuario && $miembro->usuario->id_rol == 1)
                                 @continue
                             @endif
@@ -141,17 +163,29 @@
                             </div>
                             <input type="file" name="landing_hero_image" class="form-control" accept="image/*,video/mp4" onchange="previewMedia(this)">
                         </div>
-                        <div class="form-group"><label>Instagram</label><input type="url" name="instagram" class="form-control" value="{{ $configuracion->instagram }}"></div>
-                        <div class="form-group"><label>Facebook</label><input type="url" name="facebook" class="form-control" value="{{ $configuracion->facebook }}"></div>
+
+                        <div class="form-group">
+                            <label>Instagram</label>
+                            <input type="url" name="instagram" class="form-control" value="{{ $configuracion->instagram }}" pattern="https://.*" title="El enlace debe comenzar con https://">
+                        </div>
+                        <div class="form-group">
+                            <label>Facebook</label>
+                            <input type="url" name="facebook" class="form-control" value="{{ $configuracion->facebook }}" pattern="https://.*" title="El enlace debe comenzar con https://">
+                        </div>
                     </div>
                 </div>
 
                 <div class="options-card">
                     <h3 class="subsection-title">Contacto & Ubicación</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        
+                        <!-- MAGIA DE LAS BANDERITAS APLICADA AQUÍ -->
                         <div class="form-group">
                             <label>Teléfono (WhatsApp)</label>
-                            <input type="text" name="telefono" class="form-control" value="{{ $configuracion->telefono }}">
+                            <!-- Input visible para que el usuario teclee -->
+                            <input type="tel" id="telefono_visible" class="form-control" placeholder="722 123 4567">
+                            <!-- Input oculto que mandará el número completo con clave al servidor -->
+                            <input type="hidden" name="telefono" id="telefono_hidden" value="{{ $configuracion->telefono }}">
                         </div>
                         
                         <div class="form-group" style="grid-row: span 2;">
@@ -203,9 +237,56 @@
 <script>
     function previewImage(e) { var r = new FileReader(); r.onload = function(){ document.getElementById('preview-foto').src = r.result; }; if(e.target.files[0]) r.readAsDataURL(e.target.files[0]); }
     function previewMedia(i) { var c = document.getElementById('media-preview-container'); var f = i.files[0]; if(f) { var u = URL.createObjectURL(f); if(f.type.startsWith('video/')) { c.innerHTML = `<video src="${u}" autoplay loop muted playsinline style="width:100%; height:100%; object-fit:cover;"></video>`; } else { c.innerHTML = `<img src="${u}" style="width:100%; height:100%; object-fit:cover;">`; } } }
+    
+    function togglePassword() {
+        const input = document.getElementById("password_nueva");
+        const icon = document.getElementById("togglePasswordBtn");
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+
     let fTS = null;
     function triggerCustomModal(e, f, m) { e.preventDefault(); fTS = f; document.getElementById('custom-modal-message').innerText = m; document.getElementById('custom-confirm-modal').classList.add('active'); }
     function closeCustomModal() { document.getElementById('custom-confirm-modal').classList.remove('active'); }
-    document.getElementById('btn-modal-accept').onclick = function() { if(fTS) fTS.submit(); };
+    
+    // =================================================================
+    // LÓGICA DE LAS BANDERITAS (Intl-Tel-Input)
+    // =================================================================
+    const inputTelVisible = document.querySelector("#telefono_visible");
+    const inputTelHidden = document.querySelector("#telefono_hidden");
+    let iti = null;
+
+    if (inputTelVisible) {
+        iti = window.intlTelInput(inputTelVisible, {
+            // Configuración recomendada
+            initialCountry: "mx", // Por defecto arranca en México
+            preferredCountries: ["mx", "us", "es", "co", "ar"], // Países frecuentes arriba
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js",
+            separateDialCode: true, // Separa el +52 de la cajita de texto
+        });
+
+        // Si ya hay un número guardado en BD, decirle al plugin que lo dibuje
+        if (inputTelHidden.value) {
+            iti.setNumber(inputTelHidden.value);
+        }
+    }
+
+    // MODIFICAMOS EL BOTÓN ACEPTAR DEL MODAL PARA QUE INYECTE EL NÚMERO
+    document.getElementById('btn-modal-accept').onclick = function() { 
+        if(fTS) {
+            // Si están guardando las opciones públicas, sacamos el número armado (+521234...) y lo mandamos al form
+            if(fTS.id === 'form-publicos' && iti) {
+                inputTelHidden.value = iti.getNumber();
+            }
+            fTS.submit(); 
+        }
+    };
 </script>
 @endsection
