@@ -8,8 +8,6 @@
 @endphp
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
 
 <style>
@@ -78,14 +76,14 @@
     /* --- ESTILOS PARA EL BOTÓN DE REGRESAR FLOTANTE --- */
     .btn-flotante-regresar {
         position: fixed;
-        bottom: clamp(20px, 4vh, 40px); /* Fijo en la parte inferior */
-        left: clamp(30px, 5vw, 60px);   /* Alineado a la izquierda */
+        bottom: clamp(20px, 4vh, 40px);
+        left: clamp(30px, 5vw, 60px);
         font-weight: bold;
         font-size: 0.95rem;
         color: #111111 !important;
         text-decoration: underline !important;
-        z-index: 9999; /* Asegura que esté por encima de todo */
-        background-color: rgba(253, 253, 253, 0.85); /* Fondo difuminado para legibilidad */
+        z-index: 9999;
+        background-color: rgba(253, 253, 253, 0.85);
         backdrop-filter: blur(5px);
         padding: 8px 15px 8px 0;
         border-radius: 4px;
@@ -95,18 +93,38 @@
 
     .btn-flotante-regresar:hover {
         color: #8c8c8c !important;
-        transform: translateX(-5px); /* Efecto sutil al pasar el mouse */
+        transform: translateX(-5px);
     }
-     /* Regla para que la librería respete el ancho de tu diseño */
+    
+    /* Regla para que la librería respete el ancho de tu diseño */
     .iti { width: 100%; }
+
+    /* FOOTER ESTÉTICO PARA LOS BOTONES DE IDIOMA */
+    .site-footer-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.95rem;
+        color: #8c8c8c;
+        padding-top: 40px;
+        margin-top: 40px;
+        border-top: 1px solid #eee;
+    }
+    .site-footer-info a {
+        color: #8c8c8c;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    .site-footer-info a:hover {
+        color: #111;
+    }
 </style>
 
-<!-- ¡BOTÓN FLOTANTE QUE SIGUE AL USUARIO! -->
-<a href="{{ route('landing') }}" class="btn-flotante-regresar">&larr; regresar</a>
+<a href="{{ route('landing') }}" class="btn-flotante-regresar">← regresar</a>
 
 <div class="akira-container">
     <header class="site-header-main">
-        <a href="{{ route('project.detail') }}" style="text-decoration: none; color: inherit;">Estudio Akiraka, </a>
+        <a href="{{ route('project.detail') }}" class="notranslate" style="text-decoration: none; color: inherit;">Estudio Akiraka, </a>
         <a href="{{ route('info') }}" style="text-decoration: none; color: inherit;">Info</a>, 
         <a href="{{ route('contacto') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Contacto</a>.
     </header>
@@ -122,24 +140,24 @@
     <div class="row contact-group-section mb-5">
         <div class="col-md-4 mb-4">
             <span class="contact-label">Proyectos y Eventos</span>
-            <div class="contact-value-reset" onclick="abrirModalContacto('{{ $config->correo_contacto ?? 'akiraka.estudio@gmail.com' }}')">
+            <div class="contact-value-reset notranslate" onclick="abrirModalContacto('{{ $config->correo_contacto ?? 'akiraka.estudio@gmail.com' }}')">
                 {{ $config->correo_contacto ?? 'akiraka.estudio@gmail.com' }}
             </div>
         </div>
 
         <div class="col-md-4 mb-4">
             <span class="contact-label">Prensa</span>
-            <div class="contact-value-reset" onclick="abrirModalContacto('{{ $config->correo_prensa ?? 'proyectos@akirakastudio.com' }}')">
+            <div class="contact-value-reset notranslate" onclick="abrirModalContacto('{{ $config->correo_prensa ?? 'proyectos@akirakastudio.com' }}')">
                 {{ $config->correo_prensa ?? 'proyectos@akirakastudio.com' }}
             </div>
         </div>
 
         <div class="col-md-4 mb-4">
             <span class="contact-label">Oportunidades laborales</span>
-            <div class="contact-value-reset" onclick="abrirModalContacto('{{ $config->correo_laboral_1 ?? 'dirección@akirakastudio.com' }}')">
+            <div class="contact-value-reset notranslate" onclick="abrirModalContacto('{{ $config->correo_laboral_1 ?? 'dirección@akirakastudio.com' }}')">
                 {{ $config->correo_laboral_1 ?? 'dirección@akirakastudio.com' }}<br>
             </div>
-            <div class="contact-value-reset" onclick="abrirModalContacto('{{ $config->correo_laboral_1 ?? 'dirección@akirakastudio.com' }}')">
+            <div class="contact-value-reset notranslate" onclick="abrirModalContacto('{{ $config->correo_laboral_2 ?? 'studio@akirakastudio.com' }}')">
                 {{ $config->correo_laboral_2 ?? 'studio@akirakastudio.com' }}<br>
             </div>
         </div>
@@ -149,7 +167,7 @@
         <div class="row">
             <div class="col-md-6 mb-3">
                 <span class="location-year-label">Teléfono</span>
-                <span class="contact-value-reset"><br>{{ $config->telefono ?? '+52 722 165 5901' }}</span>
+                <span class="contact-value-reset notranslate"><br>{{ $config->telefono ?? '+52 722 165 5901' }}</span>
             </div>
             <div class="col-md-6 mb-3">
                 <span class="location-year-label">Dirección</span>
@@ -178,6 +196,13 @@
         <button class="btn-agendar-cita" onclick="abrirModalCita()">Iniciar Proyecto / Agendar Cita</button>
     </div>
 
+    <footer class="site-footer-info">
+        <div>2026</div>
+        <div>
+            <a href="#" id="btn-traducir" onclick="cambiarIdioma('en', event)">Read in English</a>
+            <a href="#" id="btn-espanol" onclick="cambiarIdioma('es', event)" style="display:none;">Leer en Español</a>
+        </div>
+    </footer>
 </div>
 
 <div id="modalContactoElegir" class="modal-overlay-contact">
@@ -200,7 +225,7 @@
 
         <form id="formMensajeDirecto" action="{{ route('contacto.mensaje.store') }}" method="POST" style="display: none;">
             @csrf
-            <input type="hidden" name="departamento_email" id="inputDepartamento" value="">
+            <input type="hidden" name="departamento_email" id="inputDepartamento" value="" class="notranslate">
             
             <input type="text" name="nombre" class="form-input-contact" placeholder="Tu Nombre" pattern="^[A-ZÁÉÍÓÚÑ][a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*[aeiouáéíóúAEIOUÁÉÍÓÚ][a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$" title="El nombre debe iniciar con Mayúscula y contener al menos una vocal." required>
             <input type="email" name="correo" class="form-input-contact" placeholder="Tu Correo" required>
@@ -234,7 +259,7 @@
                        title="El nombre debe iniciar con Mayúscula y contener al menos una vocal." 
                        required>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; margin-top: 20px;">
                 <div>
                     <label class="form-label-small">CORREO ELECTRÓNICO</label>
                     <input type="email" name="correo" class="form-input-contact" style="margin-bottom: 0;" required>
@@ -273,7 +298,37 @@
     </div>
 </div>
 
+<div id="google_translate_element" style="display:none;"></div>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'es', autoDisplay: false}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 <script>
+    // =========================================================
+    // SISTEMA DE TRADUCCIÓN (GOOGLE TRANSLATE HACK)
+    // =========================================================
+    function cambiarIdioma(idioma, event) {
+        event.preventDefault();
+        
+        // Forzamos la cookie de traducción de Google
+        document.cookie = `googtrans=/es/${idioma}; path=/;`;
+        document.cookie = `googtrans=/es/${idioma}; domain=${window.location.hostname}; path=/;`;
+        
+        // Recargamos la página para aplicar
+        window.location.reload();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Alternamos botones si ya está en inglés
+        if (document.cookie.includes('googtrans=/es/en')) {
+            document.getElementById('btn-traducir').style.display = 'none';
+            document.getElementById('btn-espanol').style.display = 'inline-block';
+        }
+    });
+
     // Variables Modal 1 (Contacto Correos)
     const modalContacto = document.getElementById('modalContactoElegir');
     const btnMailto = document.getElementById('btnMailto');
@@ -323,7 +378,6 @@
     }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

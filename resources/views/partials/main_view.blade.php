@@ -34,6 +34,13 @@
             .fase-imagen-wrapper { height: 45vh; }
             .fase-texto { text-align: center; }
         }
+        
+        body {
+            -webkit-user-select: none; /* Para Safari */
+            -moz-user-select: none;    /* Para Firefox antiguo */
+            -ms-user-select: none;     /* Para Internet Explorer/Edge antiguo */
+            user-select: none;         /* Estándar moderno */
+        }
     </style>
 
     {{-- MAGIA LARAVEL: Separamos la portada del resto de la galería --}}

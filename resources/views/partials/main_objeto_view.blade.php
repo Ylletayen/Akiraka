@@ -36,7 +36,6 @@
         }
     </style>
 
-    {{-- MAGIA LARAVEL: Separamos la portada del resto de la galería --}}
     @php
         $portada = $imagenes->firstWhere('descripcion', 'Portada principal');
         $galeria = $imagenes->filter(function($img) use ($portada) {

@@ -185,6 +185,13 @@
             opacity: 1;
             transform: translateY(0); 
         }
+
+        body {
+            -webkit-user-select: none; /* Para Safari */
+            -moz-user-select: none;    /* Para Firefox antiguo */
+            -ms-user-select: none;     /* Para Internet Explorer/Edge antiguo */
+            user-select: none;         /* Estándar moderno */
+        }
     </style>
 
     <!-- ¡NUEVO BOTÓN FLOTANTE QUE SIGUE AL USUARIO! -->
@@ -274,10 +281,10 @@
 
     <footer class="site-footer-main">
         <div class="footer-left">
-            <!-- Desplazamos el año ligeramente para que no choque con el botón flotante al llegar al fondo -->
             <span style="padding-left: 100px;">2026</span>
         </div>
-        <a href="#">Read in English</a>
+        <a href="#" id="btn-traducir" onclick="cambiarIdioma('en', event)">Read in English</a>
+        <a href="#" id="btn-espanol" onclick="cambiarIdioma('es', event)" style="display:none;">Leer en Español</a>
     </footer>
 
     <div id="hover-preview" class="hover-preview">
@@ -288,8 +295,15 @@
         <button class="modal-close-btn" onclick="cerrarModalHistoria()">✕</button>
         <div id="historia-content"></div>
     </div>
-
 </div>
+
+<div id="google_translate_element" style="display:none;"></div>
+        <script type="text/javascript">
+            function googleTranslateElementInit() {
+                new google.translate.TranslateElement({pageLanguage: 'es', autoDisplay: false}, 'google_translate_element');
+            }
+        </script>
+        <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
     const previewContainer = document.getElementById('hover-preview');
@@ -404,5 +418,26 @@
     // Ponemos al observador a vigilar cada elemento
     scrollElements.forEach(el => {
         menuObserver.observe(el);
+    });
+    // =========================================================
+    // SISTEMA DE TRADUCCIÓN (GOOGLE TRANSLATE HACK)
+    // =========================================================
+    function cambiarIdioma(idioma, event) {
+        event.preventDefault();
+        
+        // Forzamos la cookie de traducción de Google
+        document.cookie = `googtrans=/es/${idioma}; path=/;`;
+        document.cookie = `googtrans=/es/${idioma}; domain=${window.location.hostname}; path=/;`;
+        
+        // Recargamos la página para que Google aplique los cambios a todo el texto y la base de datos
+        window.location.reload();
+    }
+
+    // Lógica para alternar los botones si la página ya está en inglés
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.cookie.includes('googtrans=/es/en')) {
+            document.getElementById('btn-traducir').style.display = 'none';
+            document.getElementById('btn-espanol').style.display = 'inline-block';
+        }
     });
 </script>
