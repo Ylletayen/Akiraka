@@ -19,7 +19,6 @@ class AuthController extends Controller
 
         if (Auth::attempt(['correo' => $credentials['email'], 'password' => $credentials['password']])) {
             
-            // FILTRO DE SEGURIDAD: Si el rol es 4 (Pendiente), lo botamos
             if (Auth::user()->id_rol == 4) {
                 Auth::logout();
                 $request->session()->invalidate();
@@ -65,7 +64,7 @@ class AuthController extends Controller
             'correo' => $request->correo,
             'password' => Hash::make($request->password),
             'foto' => $rutaFoto,
-            'id_rol' => 4, // <-- Le clavamos el rol "Pendiente" por defecto
+            'id_rol' => 4,
         ]);
 
         return redirect()->route('landing')->with('success', 'Usuario registrado con éxito. Tu cuenta está en proceso de validación.');

@@ -198,22 +198,15 @@
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
-    // =========================================================
-    // SISTEMA DE TRADUCCIÓN (GOOGLE TRANSLATE HACK)
-    // =========================================================
     function cambiarIdioma(idioma, event) {
         event.preventDefault();
-        
-        // Forzamos la cookie de traducción de Google
         document.cookie = `googtrans=/es/${idioma}; path=/;`;
         document.cookie = `googtrans=/es/${idioma}; domain=${window.location.hostname}; path=/;`;
         
-        // Recargamos la página para aplicar
         window.location.reload();
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Alternamos botones si ya está en inglés
         if (document.cookie.includes('googtrans=/es/en')) {
             document.getElementById('btn-traducir').style.display = 'none';
             document.getElementById('btn-espanol').style.display = 'inline-block';
