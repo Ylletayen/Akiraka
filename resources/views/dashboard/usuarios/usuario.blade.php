@@ -35,8 +35,7 @@
         }
 
         .badge-role { font-family: Arial, sans-serif; font-size: 0.75rem; font-weight: bold; padding: 4px 10px; border-radius: 12px; background: #eee; color: #333; }
-        
-        /* ================= MODAL GLASSMORPHISM ================= */
+
         .modal-glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 12px; }
     </style>
 
