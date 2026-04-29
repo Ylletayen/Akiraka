@@ -7,22 +7,95 @@ use Illuminate\Support\Facades\DB; // <-- IMPORTADO para manejar la base de dato
 
 class DashboardController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth'); // Bloquea el acceso si no han pasado por el login
-    }
-
     public function index()
     {
-        return view('dashboard.main'); // Tu vista principal de administrador
+        $totalProyectos = \App\Models\Proyecto::count();
+        $inversionTotal = \App\Models\Proyecto::sum('costo_inicial') ?? 0;
+
+        $totalObjetos = \App\Models\Objeto::count();
+        
+        $proyectosEnProceso = \App\Models\Proyecto::where('id_estado', 1)->take(2)->get();
+        $proyectosFuturos = \App\Models\Proyecto::whereIn('id_estado', [2, 3])->take(2)->get();
+
+        $citasRecientes = DB::table('citas')
+            ->join('clientes', 'citas.id_cliente', '=', 'clientes.id_cliente')
+            ->join('servicios', 'citas.id_servicio', '=', 'servicios.id_servicio')
+            ->select(
+                'citas.id_cita',
+                'citas.created_at',
+                'clientes.nombre as cliente_nombre',
+                'servicios.nombre as servicio_nombre'
+            )
+            ->where('citas.estado', 'Pendiente') // Solo mostramos las que no ha atendido
+            ->orderBy('citas.created_at', 'asc')
+            ->take(4)
+            ->get();
+
+        $visitasSemanales = [];
+        $labelsSemanales = [];
+        
+        for ($i = 6; $i >= 0; $i--) {
+            $inicioDia = \Carbon\Carbon::now()->subDays($i)->startOfDay()->getTimestamp();
+            $finDia = \Carbon\Carbon::now()->subDays($i)->endOfDay()->getTimestamp();
+            
+            $conteo = DB::table('sessions')
+                ->whereNull('user_id') 
+                ->whereBetween('last_activity', [$inicioDia, $finDia])
+                ->count();
+                
+            $visitasSemanales[] = $conteo;
+            $labelsSemanales[] = \Carbon\Carbon::now()->subDays($i)->isoFormat('ddd D'); 
+        }
+
+        $inicioMes = \Carbon\Carbon::now()->startOfMonth()->getTimestamp();
+        $sesionesMes = DB::table('sessions')
+            ->whereNull('user_id')
+            ->where('last_activity', '>=', $inicioMes)
+            ->get();
+
+        $totalVisitasMes = $sesionesMes->count();
+        $visitantesNuevos = 0;
+        $visitantesRecurrentes = 0;
+
+        foreach ($sesionesMes as $sesion) {
+            if (isset($sesion->created_at) && \Carbon\Carbon::parse($sesion->created_at)->getTimestamp() < $inicioMes) {
+                $visitantesRecurrentes++;
+            } else {
+                $visitantesNuevos++;
+            }
+        }
+
+        $inicioAnio = \Carbon\Carbon::now()->startOfYear()->getTimestamp();
+        $agent = new \Jenssegers\Agent\Agent();
+
+        $sesionesAnio = DB::table('sessions')
+            ->whereNull('user_id')
+            ->where('last_activity', '>=', $inicioAnio)
+            ->get();
+
+        $totalVisitasAnio = $sesionesAnio->count();
+        $vistasMovil = 0;
+        $vistasEscritorio = 0;
+
+        foreach ($sesionesAnio as $sesion) {
+            $agent->setUserAgent($sesion->user_agent);
+            if ($agent->isMobile() || $agent->isTablet()) {
+                $vistasMovil++;
+            } else {
+                $vistasEscritorio++;
+            }
+        }
+
+        return view('dashboard.dash.main', compact(
+            'totalProyectos', 'inversionTotal', 'totalObjetos', 'proyectosEnProceso', 'proyectosFuturos',
+            'citasRecientes',
+            'visitasSemanales', 'labelsSemanales', 'totalVisitasMes', 'visitantesNuevos',
+            'visitantesRecurrentes', 'totalVisitasAnio', 'vistasMovil', 'vistasEscritorio'
+        ));
     }
 
-    // =======================================================
-    // LISTAR SOLICITUDES DE CITAS
-    // =======================================================
     public function solicitudesCitas()
     {
-        // Unimos Citas + Clientes + Servicios en una sola consulta
         $solicitudes = DB::table('citas')
             ->join('clientes', 'citas.id_cliente', '=', 'clientes.id_cliente')
             ->join('servicios', 'citas.id_servicio', '=', 'servicios.id_servicio')
@@ -42,20 +115,10 @@ class DashboardController extends Controller
         return view('dashboard.citas.index', compact('solicitudes'));
     }
 
-    // =================================================================
-    // ELIMINAR SOLICITUD DE CITA (Con protección de IDs)
-    // =================================================================
     public function destroyCita($id)
     {
-        // Borramos la cita
         DB::table('citas')->where('id_cita', $id)->delete();
 
-        // Nota: Dependiendo de tu lógica, podrías querer borrar también al cliente 
-        // si no tiene más citas, pero por seguridad es mejor solo borrar la cita.
-
-        // =========================================================
-        // MAGIA: Resetea el contador para evitar saltos gigantes en BD
-        // =========================================================
         DB::statement('ALTER TABLE citas AUTO_INCREMENT = 1;');
 
         return back()->with('success', 'Solicitud de cita eliminada correctamente.');

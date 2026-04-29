@@ -12,6 +12,7 @@ use App\Http\Controllers\PublicacionController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\ContactoController;
+use App\Http\Controllers\DashboardController;
 use App\Models\Proyecto;
 use App\Models\Publicacion;
 
@@ -77,26 +78,7 @@ Route::post('/registro', [AuthController::class, 'store'])->name('registro.store
 // --- DASHBOARD (PROTEGIDO) ---
 Route::middleware('auth')->prefix('dashboard')->group(function () {
     
-    Route::get('/main', function () {
-        $totalProyectos = Proyecto::count();
-        $inversionTotal = Proyecto::sum('costo_inicial');
-
-        $proyectosEnProceso = Proyecto::where('id_estado', 1)->take(3)->get()->map(function ($proyecto) {
-            $proyecto->portada = \Illuminate\Support\Facades\DB::table('imagenes_proyecto')
-                                    ->where('id_proyecto', $proyecto->id_proyecto)
-                                    ->value('url_imagen');
-            return $proyecto;
-        });
-
-        $proyectosFuturos = Proyecto::where('id_estado', 2)->take(2)->get()->map(function ($proyecto) {
-            $proyecto->portada = \Illuminate\Support\Facades\DB::table('imagenes_proyecto')
-                                    ->where('id_proyecto', $proyecto->id_proyecto)
-                                    ->value('url_imagen');
-            return $proyecto;
-        });
-
-        return view('dashboard.dash.main', compact('totalProyectos', 'inversionTotal', 'proyectosEnProceso', 'proyectosFuturos'));
-    })->name('dashboard.main');
+    Route::get('/main', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard.main');
 
     // OPCIONES
     Route::get('/opciones', [OpcionesController::class, 'index'])->name('dashboard.opciones');
