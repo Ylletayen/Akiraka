@@ -190,9 +190,6 @@ class CitaController extends Controller
         }
     }
 
-/// ==========================================================
-    // ELIMINAR CITA DEFINITIVAMENTE (BOTÓN DE BASURA)
-    // ==========================================================
     public function destroy($id)
     {
         $cita = Cita::where('id_cita', $id)->first();

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // <-- IMPORTADO para manejar la base de datos limpiamente
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -26,7 +26,7 @@ class DashboardController extends Controller
                 'clientes.nombre as cliente_nombre',
                 'servicios.nombre as servicio_nombre'
             )
-            ->where('citas.estado', 'Pendiente') // Solo mostramos las que no ha atendido
+            ->where('citas.estado', 'Pendiente')
             ->orderBy('citas.created_at', 'asc')
             ->take(4)
             ->get();

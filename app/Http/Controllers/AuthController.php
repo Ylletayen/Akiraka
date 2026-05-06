@@ -29,7 +29,6 @@ class AuthController extends Controller
                 ]);
             }
 
-            // Si pasa el filtro, lo dejamos entrar normal
             $request->session()->regenerate();
             return redirect()->route('dashboard.main');
         }
