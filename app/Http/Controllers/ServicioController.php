@@ -4,16 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Servicio;
-use Illuminate\Support\Facades\DB; // <-- IMPORTANTE: Agregado para poder usar DB::statement
+use Illuminate\Support\Facades\DB;
 
 class ServicioController extends Controller
 {
     public function index()
     {
         $servicios = Servicio::all();
-        
-        // ¡AQUÍ ESTÁ LA MAGIA! 
-        // Cambiamos 'dashboard.servicios.index' por 'dashboard.servicios.servicios'
         return view('dashboard.servicios.servicios', compact('servicios'));
     }
 
@@ -55,10 +52,6 @@ class ServicioController extends Controller
     {
         $servicio = Servicio::findOrFail($id);
         $servicio->delete();
-
-        // =========================================================
-        // MAGIA: Resetea el contador para evitar saltos gigantes en BD
-        // =========================================================
         DB::statement('ALTER TABLE servicios AUTO_INCREMENT = 1;');
 
         return back()->with('success', 'Servicio eliminado.');

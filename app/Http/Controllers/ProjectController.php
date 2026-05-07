@@ -5,16 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Proyecto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage; // <-- Importante para borrar fotos del servidor
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
-    // =======================================================
-    // 1. DASHBOARD: CATÁLOGO DE OBRAS
-    // =======================================================
     public function index()
     {
-        // Traemos todos los proyectos ordenados (si usas la columna orden) o por defecto
         $proyectos = Proyecto::orderBy('orden', 'asc')->get();
         $estados = DB::table('estados_proyecto')->get();
 
@@ -34,11 +30,9 @@ class ProjectController extends Controller
             'portada' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,webm|max:20480' 
         ]);
 
-        // Separamos la portada de los datos de la obra
         $data = $request->except('portada');
         $proyecto = Proyecto::create($data);
-        
-        // Si subieron portada, la guardamos
+
         if ($request->hasFile('portada')) {
             $rutaImagen = $request->file('portada')->store('historias', 'public');
             
@@ -75,19 +69,11 @@ class ProjectController extends Controller
     public function destroy($id)
     {
         Proyecto::findOrFail($id)->delete();
-        
-        // =========================================================
-        // ¡AQUÍ ESTÁ LA MAGIA PARA LA TABLA DE PROYECTOS!
-        // =========================================================
         DB::statement('ALTER TABLE proyectos AUTO_INCREMENT = 1;');
 
         return redirect()->back()->with('success', 'Obra eliminada del portafolio.');
     }
 
-
-    // =======================================================
-    // 2. VISTA PÚBLICA: CARRUSEL DE LA OBRA
-    // =======================================================
     public function show($id)
     {
         $proyecto = Proyecto::findOrFail($id);
@@ -99,10 +85,6 @@ class ProjectController extends Controller
         return view('partials.main_view', compact('proyecto', 'imagenes'));
     }
 
-
-    // =======================================================
-    // 3. DASHBOARD: HISTORIA (FASES) DE LA OBRA
-    // =======================================================
     public function historias($id)
     {
         $proyecto = Proyecto::findOrFail($id);
@@ -136,9 +118,6 @@ class ProjectController extends Controller
         return redirect()->back()->with('success', 'Nueva fase agregada a la historia de la obra.');
     }
 
-    // =======================================================
-    // NUEVA FUNCIÓN: ACTUALIZAR FASE (HISTORIA)
-    // =======================================================
     public function updateHistoria(Request $request, $id_imagen)
     {
         $request->validate([
@@ -160,7 +139,6 @@ class ProjectController extends Controller
             'orden' => $request->orden ?? 0
         ];
 
-        // Si el usuario subió una imagen nueva, borramos la anterior y guardamos la nueva
         if ($request->hasFile('imagen')) {
             if ($imagenActual->url_imagen) {
                 Storage::disk('public')->delete($imagenActual->url_imagen);
@@ -184,10 +162,6 @@ class ProjectController extends Controller
         if ($imagen) {
             Storage::disk('public')->delete($imagen->url_imagen);
             DB::table('imagenes_proyecto')->where('id_imagen', $id_imagen)->delete();
-            
-            // =========================================================
-            // ¡AQUÍ ESTÁ LA MAGIA PARA LA TABLA DE IMÁGENES DE PROYECTO!
-            // =========================================================
             DB::statement('ALTER TABLE imagenes_proyecto AUTO_INCREMENT = 1;');
         }
 

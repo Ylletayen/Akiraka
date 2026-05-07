@@ -7,15 +7,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage; 
 use App\Models\Configuracion; 
-use App\Models\Equipo; // Importamos el modelo Equipo
+use App\Models\Equipo;
 
 class OpcionesController extends Controller
 {
     public function index()
     {
         $configuracion = Configuracion::first() ?: new Configuracion();
-        
-        // Cargamos a todo el equipo con su usuario relacionado
+
         $equipo = Equipo::with('usuario')->get();
 
         return view('dashboard.opciones.opciones', compact('configuracion', 'equipo'));
@@ -24,14 +23,12 @@ class OpcionesController extends Controller
     public function updatePerfil(Request $request)
     {
         $user = Auth::user();
-        
-        // 1. AÑADIDAS VALIDACIONES ESTRICTAS DE BACKEND
+
         $request->validate([
             'nombre'         => 'required|string|max:100',
-            // Asegura que el correo no esté tomado, exceptuando el del propio usuario actual
             'correo'         => 'required|email|unique:usuarios,correo,' . $user->id_usuario . ',id_usuario',
-            'foto'           => 'nullable|image|max:2048', // Máximo 2MB
-            'password_nueva' => 'nullable|string|min:6'    // Mínimo 6 caracteres si decide cambiarla
+            'foto'           => 'nullable|image|max:2048',
+            'password_nueva' => 'nullable|string|min:6'
         ]);
 
         if ($request->hasFile('foto')) {
@@ -52,7 +49,6 @@ class OpcionesController extends Controller
 
     public function updatePublicos(Request $request)
     {
-        // 1. AÑADIDAS VALIDACIONES PARA LOS DATOS PÚBLICOS
         $request->validate([
             'telefono'           => 'nullable|string|max:50',
             'correo_contacto'    => 'nullable|email|max:150',
@@ -64,15 +60,12 @@ class OpcionesController extends Controller
             'direccion'          => 'nullable|string',
             'quienes_somos_texto'=> 'nullable|string',
             'valores_texto'      => 'nullable|string',
-            // Permite imágenes o videos de hasta 20MB
             'landing_hero_image' => 'nullable|file|mimes:jpg,jpeg,png,gif,mp4,webm|max:20480', 
-            // Valida que los puestos del array no pasen de 100 letras
             'puestos.*.puesto'   => 'nullable|string|max:100' 
         ]);
 
         $configuracion = Configuracion::first() ?: new Configuracion();
 
-        // 2. Guardar Imagen o Video de Landing si existe
         if ($request->hasFile('landing_hero_image')) {
             if ($configuracion->landing_hero_image) {
                 Storage::disk('public')->delete($configuracion->landing_hero_image);
@@ -80,7 +73,6 @@ class OpcionesController extends Controller
             $configuracion->landing_hero_image = $request->file('landing_hero_image')->store('landing', 'public');
         }
 
-        // 3. Guardar Datos de Configuración
         $configuracion->fill($request->only([
             'telefono', 'correo_contacto', 'correo_prensa', 
             'correo_laboral_1', 'correo_laboral_2', 'direccion', 
@@ -88,7 +80,6 @@ class OpcionesController extends Controller
         ]));
         $configuracion->save();
 
-        // 4. ¡MAGIA! Guardar Puestos del Equipo de forma masiva
         if ($request->has('puestos')) {
             foreach ($request->puestos as $id_miembro => $datos) {
                 $miembro = Equipo::find($id_miembro);
