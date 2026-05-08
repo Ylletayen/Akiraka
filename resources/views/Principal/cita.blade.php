@@ -4,15 +4,28 @@
 @endphp
 
 <style>
+    /* ========================================================
+       BOTÓN PRINCIPAL FLOTANTE
+       ======================================================== */
     .chat-widget-btn {
         position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
-        background-color: #fff; border-radius: 50%;
+        background-color: #111; 
+        border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
         cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.25);
         z-index: 9998; transition: transform 0.3s; border: 3px solid #111;
     }
     .chat-widget-btn:hover { transform: scale(1.1) rotate(-5deg); }
-    .chat-widget-btn img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+    
+    /* ZOOM AL LOGO: Quitamos padding, usamos cover y scale() para acercarlo */
+    .chat-widget-btn img { 
+        width: 100%; height: 100%; 
+        border-radius: 50%; 
+        object-fit: cover; 
+        padding: 0; 
+        transform: scale(1.35); /* <--- Aquí está la magia del zoom */
+        clip-path: circle(50% at 50% 50%); /* Evita que la imagen se desborde del botón */
+    }
     
     .online-dot {
         position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px;
@@ -27,6 +40,9 @@
         100% { border-radius: 15px 15px 15px 15px; }
     }
 
+    /* ========================================================
+       VENTANA DEL CHAT
+       ======================================================== */
     .chat-window {
         position: fixed; bottom: 105px; right: 30px; width: 320px; height: 480px; 
         background: #fff; border-radius: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.25);
@@ -57,8 +73,19 @@
         100% { opacity: 1; transform: translateY(0) scale(1); }
     }
 
+    /* ========================================================
+       AVATARES PEQUEÑOS (Zoom sin romper bordes)
+       ======================================================== */
     .msg-bot-container { display: flex; gap: 8px; align-items: flex-end; animation: slideUpPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-    .bot-avatar-small { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #111; background: #fff; flex-shrink: 0; }
+    
+    .bot-avatar-wrapper { 
+        width: 32px; height: 32px; border-radius: 50%; border: 2px solid #111; 
+        background: #111; flex-shrink: 0; overflow: hidden; 
+        display: flex; align-items: center; justify-content: center; 
+    }
+    .bot-avatar-wrapper img { 
+        width: 100%; height: 100%; object-fit: cover; transform: scale(1.35); /* Zoom */
+    }
     
     .msg-user-container { display: flex; justify-content: flex-end; animation: slideUpPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
@@ -101,14 +128,17 @@
 </style>
 
 <div class="chat-widget-btn" onclick="toggleChat()">
-    <img src="{{ asset('images/bot_akira.jpeg') }}" alt="Asistente Arqui" onerror="this.src='{{ asset('images/bot_akira.jpg') }}'">
+    <img src="{{ asset('images/logo_akiraka.png') }}" alt="Asistente Arqui">
     <div class="online-dot"></div>
 </div>
 
 <div class="chat-window" id="akiraChatWindow"> 
     <div class="chat-header">
         <div style="display: flex; align-items: center; gap: 10px;">
-            <img src="{{ asset('images/bot_akira.jpeg') }}" onerror="this.src='{{ asset('images/bot_akira.jpg') }}'" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid #fff;">
+            <!-- Contenedor Wrapper para el header con Zoom -->
+            <div style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #fff; background: #111; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <img src="{{ asset('images/logo_akiraka.png') }}" style="width: 100%; height: 100%; object-fit: cover; transform: scale(1.35);">
+            </div>
             <h4>Guardian Aki</h4>
         </div>
         <div class="header-actions">
@@ -135,7 +165,7 @@
 <script>
     const serviciosDB = @json($serviciosChat);
     const configDB = @json($configuracionChat);
-    const rutaAvatarBot = "{{ asset('images/bot_akira.jpeg') }}";
+    const rutaAvatarBot = "{{ asset('images/logo_akiraka.png') }}";
 </script>
 
 <script>
@@ -184,7 +214,12 @@
         let div = document.createElement('div');
         if (sender === 'bot') {
             div.className = 'msg-bot-container';
-            div.innerHTML = `<img src="${rutaAvatarBot}" onerror="this.src='{{ asset('images/bot_akira.jpg') }}'" class="bot-avatar-small"><div class="msg msg-bot">${text}</div>`;
+            // Insertamos el wrapper para que la bolita del chat también tenga zoom
+            div.innerHTML = `
+                <div class="bot-avatar-wrapper">
+                    <img src="${rutaAvatarBot}">
+                </div>
+                <div class="msg msg-bot">${text}</div>`;
         } else {
             div.className = 'msg-user-container';
             div.innerHTML = `<div class="msg msg-user">${text}</div>`;
@@ -214,8 +249,11 @@
         let div = document.createElement('div');
         div.className = 'msg-bot-container';
         div.id = 'typingBubble';
+        // Insertamos el wrapper para que la bolita al escribir también tenga zoom
         div.innerHTML = `
-            <img src="${rutaAvatarBot}" onerror="this.src='{{ asset('images/bot_akira.jpg') }}'" class="bot-avatar-small">
+            <div class="bot-avatar-wrapper">
+                <img src="${rutaAvatarBot}">
+            </div>
             <div class="msg msg-bot typing-indicator">
                 <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
             </div>`;

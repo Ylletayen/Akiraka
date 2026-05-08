@@ -7,7 +7,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+<<<<<<< HEAD
         "jenssegers/agent": "^2.6",
+=======
+        "intervention/image": "^3.11",
+>>>>>>> 273fd207d16642a04d794979a88c52b704359c9b
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1"
     },
