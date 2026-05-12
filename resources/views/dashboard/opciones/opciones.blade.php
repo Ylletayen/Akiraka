@@ -8,7 +8,6 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
 <div class="dash-admin-view">
@@ -16,12 +15,13 @@
         .dash-admin-view { min-height: 100vh; background-color: #ffffff; font-family: "Helvetica Neue", Arial, sans-serif; color: #111; padding: 20px; display: flex; justify-content: center; overflow-x: hidden; }
         .dashboard-container { display: flex; width: 100%; max-width: 1400px; gap: 20px; align-items: stretch; }
         .main-content { flex-grow: 1; background: #ffffff; padding: 40px 50px; border-radius: 12px; position: relative; }
+        
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        @media (max-width: 992px) { .options-grid { grid-template-columns: 1fr; } }
-        /* Las tarjetas inician con opacidad 0 para que Anime.js las anime al entrar */
+        
+        /* Animaciones base de Anime.js */
         .options-card { opacity: 0; background: #ffffff; border: 1px solid #eaeaea; border-radius: 8px; padding: 40px 30px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.03); transition: all 0.3s ease; margin-bottom: 30px; }
         .options-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background-color: #111; }
-        .header-section { opacity: 0; } /* Para animar el título principal */
+        .header-section { opacity: 0; } 
         
         .section-title-card { font-family: 'Garamond', serif; font-size: 1.6rem; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 10px; color: #111; }
         .subsection-title { font-family: 'Garamond', serif; font-size: 1.3rem; margin-bottom: 20px; color: #111; }
@@ -29,10 +29,10 @@
         .form-group label { display: block; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; color: #555; margin-bottom: 8px; }
         .form-control { width: 100%; padding: 12px 15px; background-color: #fafafa; border: 1px solid #eaeaea; border-radius: 4px; font-size: 0.95rem; font-family: inherit; }
         .form-control:focus { outline: none; border-color: #111; background-color: #fff; }
-        .form-control::placeholder { color: #bbb; font-style: italic; } /* Estilo para los placeholders */
+        .form-control::placeholder { color: #bbb; font-style: italic; }
         .btn-save { display: block; width: 100%; padding: 16px; background-color: #111; color: #fff; border: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: all 0.3s; }
         .btn-save:hover { background-color: #333; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .profile-pic-wrapper { width: 120px; height: 120px; border-radius: 50%; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background-color: #fafafa; overflow: hidden; border: 1px solid #eaeaea; }
+        .profile-pic-wrapper { width: 120px; height: 120px; border-radius: 50%; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background-color: #fafafa; overflow: hidden; border: 1px solid #eaeaea; margin-left: auto; margin-right: auto; }
         .profile-pic { width: 100%; height: 100%; object-fit: cover; }
         .media-preview-box { width: 100%; height: 180px; border-radius: 4px; margin-bottom: 10px; border: 1px solid #eee; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f9f9f9; }
         .media-preview-box img, .media-preview-box video { width: 100%; height: 100%; object-fit: cover; }
@@ -43,13 +43,7 @@
         .role-input-group { flex: 2; display: flex; gap: 10px; }
 
         /* ESTILOS DEL MODAL */
-        .custom-modal-overlay { 
-            display: none !important; 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0, 0, 0, 0.5); 
-            backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center; 
-            opacity: 0; transition: opacity 0.3s ease; 
-        }
+        .custom-modal-overlay { display: none !important; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
         .custom-modal-overlay.active { display: flex !important; opacity: 1; }
         .custom-modal-box { background: #ffffff; border: 1px solid #eaeaea; border-radius: 8px; padding: 40px; width: 90%; max-width: 420px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.2); }
         .custom-modal-icon { font-size: 2.5rem; color: #111; margin-bottom: 20px; }
@@ -60,7 +54,7 @@
         .btn-modal-cancel { background: #fafafa; color: #555; border-color: #ddd; }
         .btn-modal-confirm { background: #111; color: #fff; }
 
-        /* AJUSTES PARA EL PLUGIN DE BANDERITAS */
+        /* BANDERITAS */
         .iti { width: 100%; display: block; }
         .iti__selected-flag { background-color: #fafafa; border-radius: 4px 0 0 4px; border-right: 1px solid #eaeaea; transition: background-color 0.3s; padding: 0 12px; }
         .iti__selected-flag:hover { background-color: #f0f0f0; }
@@ -68,6 +62,38 @@
         .iti__country-list { border-radius: 4px; border: 1px solid #eaeaea; box-shadow: 0 10px 30px rgba(0,0,0,0.08); font-family: "Helvetica Neue", Arial, sans-serif; font-size: 0.85rem; }
         .iti__flag { background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/img/flags.png"); }
         @media (min-resolution: 2x) { .iti__flag { background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/img/flags@2x.png"); } }
+
+        /* =========================================================
+           CLASES ESTRUCTURALES RESPONSIVAS (MAGIA PARA MÓVILES)
+           ========================================================= */
+        .profile-layout { display: flex; flex-wrap: wrap; gap: 40px; align-items: center; }
+        .profile-sidebar { flex: 0 0 150px; text-align: center; }
+        .profile-form-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        @media (max-width: 992px) { 
+            .options-grid { grid-template-columns: 1fr; } 
+            /* Se empuja el contenido hacia abajo para que el botón hamburguesa del sidebar no estorbe */
+            .main-content { padding: 80px 20px 40px 20px !important; }
+        }
+
+        @media (max-width: 768px) {
+            .options-card { padding: 25px 20px; } /* Menos relleno lateral en tarjetas */
+            .header-section h1 { font-size: 1.8rem !important; }
+            
+            /* Reordenar Perfil */
+            .profile-layout { flex-direction: column; text-align: center; gap: 25px; }
+            .profile-form-grid { grid-template-columns: 1fr; width: 100%; }
+            .profile-sidebar { margin: 0 auto; }
+            
+            /* Reordenar Contacto */
+            .contact-grid { grid-template-columns: 1fr; }
+            .contact-grid .form-group { grid-column: 1 / -1 !important; grid-row: auto !important; }
+            
+            /* Reordenar Roles de Equipo */
+            .roles-list-item { flex-direction: column; align-items: stretch; gap: 10px; }
+            .member-info strong { margin-bottom: 0; }
+        }
     </style>
 
     <div class="dashboard-container">
@@ -90,13 +116,16 @@
                 <h3 class="section-title-card">Mi Perfil ({{ Auth::user()->id_rol == 1 ? 'Superadmin' : (Auth::user()->id_rol == 2 ? 'Administrador' : 'Colaborador') }})</h3>
                 <form id="form-perfil" action="{{ route('opciones.perfil.update') }}" method="POST" enctype="multipart/form-data" onsubmit="triggerCustomModal(event, this, '¿Guardar cambios en tu perfil?');">
                     @csrf @method('PUT')
-                    <div style="display: flex; flex-wrap: wrap; gap: 40px; align-items: center;">
-                        <div style="flex: 0 0 150px; text-align: center;">
+                    
+                    <!-- ESTRUCTURA RESPONSIVA DE PERFIL -->
+                    <div class="profile-layout">
+                        <div class="profile-sidebar">
                             <div class="profile-pic-wrapper"><img src="{{ Auth::user()->foto ? asset('storage/' . Auth::user()->foto) : asset('images/default-avatar.png') }}" id="preview-foto" class="profile-pic"></div>
                             <label for="foto-upload" style="font-size: 0.7rem; cursor: pointer; color: #555; text-decoration: underline;">Cambiar foto</label>
                             <input type="file" id="foto-upload" name="foto" accept="image/*" style="display: none;" onchange="previewImage(event)">
                         </div>
-                        <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        
+                        <div class="profile-form-grid">
                             <div class="form-group"><label>Nombre</label><input type="text" name="nombre" class="form-control" value="{{ Auth::user()->nombre }}" placeholder="Ej: Eduardo Pérez" required></div>
                             <div class="form-group"><label>Correo</label><input type="email" name="correo" class="form-control" value="{{ Auth::user()->correo }}" placeholder="ejemplo@estudioakiraka.com" required></div>
                             
@@ -112,7 +141,10 @@
                             </div>
                         </div>
                     </div>
-                    <div style="display: flex; justify-content: flex-end; margin-top: 10px;"><button type="submit" class="btn-save" style="max-width: 200px; padding: 12px;">Guardar Perfil</button></div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
+                        <button type="submit" class="btn-save" style="max-width: 200px; padding: 12px;">Guardar Perfil</button>
+                    </div>
                 </form>
             </div>
 
@@ -187,8 +219,9 @@
 
                 <div class="options-card">
                     <h3 class="subsection-title">Contacto & Ubicación</h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        
+                    
+                    <!-- ESTRUCTURA RESPONSIVA DE CONTACTO -->
+                    <div class="contact-grid">
                         <div class="form-group">
                             <label>Teléfono (WhatsApp)</label>
                             <input type="tel" id="telefono_visible" class="form-control" placeholder="722 123 4567">
@@ -246,7 +279,6 @@
     // ANIMACIONES CON ANIME.JS
     // =================================================================
     document.addEventListener("DOMContentLoaded", function() {
-        // Animamos el encabezado primero
         anime({
             targets: '.header-section',
             translateY: [30, 0],
@@ -256,14 +288,13 @@
             delay: 100
         });
 
-        // Animamos las tarjetas en cascada
         anime({
             targets: '.options-card',
             translateY: [40, 0],
             opacity: [0, 1],
             easing: 'easeOutExpo',
             duration: 800,
-            delay: anime.stagger(150, {start: 200}) // Stagger hace que aparezcan una tras otra
+            delay: anime.stagger(150, {start: 200}) 
         });
     });
 
