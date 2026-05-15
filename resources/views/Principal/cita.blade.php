@@ -8,7 +8,7 @@
        BOTÓN PRINCIPAL FLOTANTE
        ======================================================== */
     .chat-widget-btn {
-        position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+        position: fixed; bottom: 30px; right: 30px; width: 45px; height: 45px;
         background-color: #111; 
         border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
@@ -23,7 +23,7 @@
         border-radius: 50%; 
         object-fit: cover; 
         padding: 0; 
-        transform: scale(1.35); /* <--- Aquí está la magia del zoom */
+        transform: scale(1.0); /* <--- Aquí está la magia del zoom */
         clip-path: circle(50% at 50% 50%); /* Evita que la imagen se desborde del botón */
     }
     
