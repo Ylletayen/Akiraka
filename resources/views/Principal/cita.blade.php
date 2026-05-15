@@ -85,14 +85,17 @@
        ======================================================== */
     .msg-bot-container { display: flex; gap: 8px; align-items: flex-end; animation: slideUpPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
     
-    .bot-avatar-wrapper { 
-        width: 32px; height: 32px; border-radius: 50%; border: 2px solid #111; 
-        background: #111; flex-shrink: 0; overflow: hidden; 
-        display: flex; align-items: center; justify-content: center; 
-    }
-    .bot-avatar-wrapper img { 
-        width: 100%; height: 100%; object-fit: cover; transform: scale(1.35); /* Zoom */
-    }
+        .bot-avatar-wrapper { 
+                width: 32px; height: 32px; border-radius: 50%; border: 2px solid #111; 
+                background: #fff; /* <--- Fondo blanco para que contraste tu logo */
+                flex-shrink: 0; overflow: hidden; 
+                display: flex; align-items: center; justify-content: center; 
+            }
+            .bot-avatar-wrapper img { 
+                width: 100%; height: 100%; 
+                object-fit: contain; /* <--- Evita que se corte */
+                transform: scale(0.8); /* <--- Lo hace un poco más pequeño para que no toque los bordes */
+            }
     
     .msg-user-container { display: flex; justify-content: flex-end; animation: slideUpPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
@@ -143,10 +146,8 @@
     <div class="chat-header">
         <div style="display: flex; align-items: center; gap: 10px;">
             <!-- Contenedor Wrapper para el header con Zoom -->
-            <div style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #fff; background: #111; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <img src="{{ asset('images/logo_akiraka.png') }}" style="width: 100%; height: 100%; object-fit: contain; transform: scale(1.35);">
-            </div>
-            <h4>Guardian Aki</h4>
+           
+            <h4>¿Preguntas Frecuentes?</h4>
         </div>
         <div class="header-actions">
             <button class="close-chat" onclick="reiniciarChat()"><i class="bi bi-arrow-clockwise"></i></button>
