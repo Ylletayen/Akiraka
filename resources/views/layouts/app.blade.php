@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AkiraArquitectura | Portafolio</title>
+
+    <!-- Aquí están los enlaces de tu Favicon -->
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -11,7 +19,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-                /* Estilos para el Landing basado en la imagen */
+        /* Estilos para el Landing basado en la imagen */
         .logo-brand-text {
             font-family: 'Helvetica', sans-serif;
             font-size: 0.75rem;
@@ -27,15 +35,28 @@
             align-items: flex-end;
             gap: 2px;
         }
+
         .custom-logo-triangles div {
-            width: 0; height: 0;
+            width: 0;
+            height: 0;
             border-left: 15px solid transparent;
             border-right: 15px solid transparent;
             border-bottom: 25px solid #666;
         }
-        .custom-logo-triangles .tri-1 { border-bottom-width: 35px; border-left-width: 20px; border-right-width: 20px; }
-        .custom-logo-triangles .tri-2 { border-bottom-width: 25px; }
-        .custom-logo-triangles .tri-3 { border-bottom-width: 30px; }
+
+        .custom-logo-triangles .tri-1 {
+            border-bottom-width: 35px;
+            border-left-width: 20px;
+            border-right-width: 20px;
+        }
+
+        .custom-logo-triangles .tri-2 {
+            border-bottom-width: 25px;
+        }
+
+        .custom-logo-triangles .tri-3 {
+            border-bottom-width: 30px;
+        }
 
         /* Navegación */
         .nav-link-akira {
@@ -46,15 +67,21 @@
             text-decoration: none;
             letter-spacing: 1px;
         }
-        .nav-link-akira:hover { color: #888; }
+
+        .nav-link-akira:hover {
+            color: #888;
+        }
 
         .social-links-akira i {
             font-size: 1.2rem;
             color: #fff;
             background-color: #666;
-            width: 35px; height: 35px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Imagen de fondo (Office Interior) */
@@ -75,9 +102,14 @@
             color: #333;
             transition: 0.3s;
         }
-        .btn-enter:hover { background: #000; color: #fff; }
+
+        .btn-enter:hover {
+            background: #000;
+            color: #fff;
+        }
     </style>
 </head>
+
 <body>
 
     @yield('content')
@@ -86,15 +118,15 @@
     <script>
         // 1. Entrar desde Landing al Main
         function entrarAlSitio() {
-    document.getElementById('landing-view').classList.add('d-none');
-    document.getElementById('project-view').classList.remove('d-none');
-}
+            document.getElementById('landing-view').classList.add('d-none');
+            document.getElementById('project-view').classList.remove('d-none');
+        }
 
         // 2. Lógica de Hover (Previsualización)
         document.querySelectorAll('.project-link').forEach(link => {
             link.addEventListener('mouseenter', e => {
                 const img = e.target.getAttribute('data-img');
-                if(img) {
+                if (img) {
                     const container = document.getElementById('preview-container');
                     container.style.backgroundImage = `url(${img})`;
                     container.style.opacity = '1';
@@ -103,7 +135,7 @@
             link.addEventListener('mouseleave', () => {
                 document.getElementById('preview-container').style.opacity = '0';
             });
-            
+
             // 3. Abrir Proyecto al hacer Clic
             link.addEventListener('click', e => {
                 const nombre = e.target.innerText;
@@ -120,7 +152,7 @@
             window.scrollTo(0, 0);
 
             document.getElementById('project-title').innerText = nombre;
-            
+
             // Simulación de imágenes para el carrusel de AkiraArquitectura
             const carousel = document.getElementById('project-carousel');
             carousel.innerHTML = `
@@ -136,7 +168,8 @@
             window.scrollTo(0, 0);
         }
 
-        
+
     </script>
 </body>
+
 </html>
