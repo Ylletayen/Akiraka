@@ -5,19 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Cliente;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // <-- IMPORTANTE: Agregado para resetear el contador
+use Illuminate\Support\Facades\DB;
 
 class ClienteController extends Controller
 {
-    // GET /api/clientes -> Obtiene todos los clientes
     public function index()
     {
-        // Ordenados del más reciente al más antiguo
         $clientes = Cliente::orderBy('created_at', 'desc')->get();
         return response()->json($clientes, 200);
     }
 
-    // POST /api/clientes -> Crea un nuevo cliente
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -31,10 +28,9 @@ class ClienteController extends Controller
         return response()->json([
             'mensaje' => 'Cliente registrado exitosamente',
             'data'    => $cliente
-        ], 201); // 201 Created
+        ], 201);
     }
 
-    // GET /api/clientes/{id} -> Muestra un cliente en específico
     public function show($id)
     {
         $cliente = Cliente::find($id);

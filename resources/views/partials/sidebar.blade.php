@@ -231,7 +231,6 @@
                     </a>
                 </div>
             </li>
-
             @php
                 $isAdminActive = request()->routeIs('dashboard.usuarios') || request()->routeIs('dashboard.equipo.quienes_somos') || request()->routeIs('dashboard.opciones');
             @endphp
