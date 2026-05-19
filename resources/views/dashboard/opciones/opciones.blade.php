@@ -6,28 +6,33 @@
     $defaultValores = "- Colaboración y Empatía: Se establece una relación con el cliente y la comunidad, diseñando desde un entendimiento profundo de sus necesidades para lograr un éxito compartido.\n- Impacto Regenerativo: El enfoque supera la sostenibilidad convencional buscando la regeneración activa de los ecosistemas y el fortalecimiento del tejido social.\n- Materialidad Sostenible: La madera de origen responsable es la protagonista (\"materia viva\"), valorada por su estética, capacidad de secuestro de carbono y beneficios biológicos.\n- Simplicidad y Honestidad: Se apuesta por la claridad conceptual para transformar ideas complejas en soluciones ejecutables (ideales para la autoconstrucción) y una transparencia radical en cuanto a costos, plazos y origen de los materiales.";
 @endphp
 
-<!-- LIBRERÍAS PARA EL SELECTOR DE PAÍS (Banderitas) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
 <div class="dash-admin-view">
     <style>
-        .dash-admin-view { min-height: 100vh; background-color: #ffffff; font-family: "Helvetica Neue", Arial, sans-serif; color: #111; padding: 20px; display: flex; justify-content: center; }
+        .dash-admin-view { min-height: 100vh; background-color: #ffffff; font-family: "Helvetica Neue", Arial, sans-serif; color: #111; padding: 20px; display: flex; justify-content: center; overflow-x: hidden; }
         .dashboard-container { display: flex; width: 100%; max-width: 1400px; gap: 20px; align-items: stretch; }
         .main-content { flex-grow: 1; background: #ffffff; padding: 40px 50px; border-radius: 12px; position: relative; }
+        
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        @media (max-width: 992px) { .options-grid { grid-template-columns: 1fr; } }
-        .options-card { background: #ffffff; border: 1px solid #eaeaea; border-radius: 8px; padding: 40px 30px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.03); transition: all 0.3s ease; margin-bottom: 30px; }
+        
+        /* Animaciones base de Anime.js */
+        .options-card { opacity: 0; background: #ffffff; border: 1px solid #eaeaea; border-radius: 8px; padding: 40px 30px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.03); transition: all 0.3s ease; margin-bottom: 30px; }
         .options-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background-color: #111; }
+        .header-section { opacity: 0; } 
+        
         .section-title-card { font-family: 'Garamond', serif; font-size: 1.6rem; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 10px; color: #111; }
         .subsection-title { font-family: 'Garamond', serif; font-size: 1.3rem; margin-bottom: 20px; color: #111; }
         .form-group { margin-bottom: 20px; position: relative; }
         .form-group label { display: block; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; color: #555; margin-bottom: 8px; }
         .form-control { width: 100%; padding: 12px 15px; background-color: #fafafa; border: 1px solid #eaeaea; border-radius: 4px; font-size: 0.95rem; font-family: inherit; }
         .form-control:focus { outline: none; border-color: #111; background-color: #fff; }
+        .form-control::placeholder { color: #bbb; font-style: italic; }
         .btn-save { display: block; width: 100%; padding: 16px; background-color: #111; color: #fff; border: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: all 0.3s; }
         .btn-save:hover { background-color: #333; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .profile-pic-wrapper { width: 120px; height: 120px; border-radius: 50%; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background-color: #fafafa; overflow: hidden; border: 1px solid #eaeaea; }
+        .profile-pic-wrapper { width: 120px; height: 120px; border-radius: 50%; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background-color: #fafafa; overflow: hidden; border: 1px solid #eaeaea; margin-left: auto; margin-right: auto; }
         .profile-pic { width: 100%; height: 100%; object-fit: cover; }
         .media-preview-box { width: 100%; height: 180px; border-radius: 4px; margin-bottom: 10px; border: 1px solid #eee; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f9f9f9; }
         .media-preview-box img, .media-preview-box video { width: 100%; height: 100%; object-fit: cover; }
@@ -37,14 +42,8 @@
         .member-info strong { font-size: 0.9rem; color: #111; display: block; margin-bottom: 5px; }
         .role-input-group { flex: 2; display: flex; gap: 10px; }
 
-        /* ESTILOS DEL MODAL (CORREGIDOS PARA OCULTARLO) */
-        .custom-modal-overlay { 
-            display: none !important; 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0, 0, 0, 0.5); 
-            backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center; 
-            opacity: 0; transition: opacity 0.3s ease; 
-        }
+        /* ESTILOS DEL MODAL */
+        .custom-modal-overlay { display: none !important; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
         .custom-modal-overlay.active { display: flex !important; opacity: 1; }
         .custom-modal-box { background: #ffffff; border: 1px solid #eaeaea; border-radius: 8px; padding: 40px; width: 90%; max-width: 420px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.2); }
         .custom-modal-icon { font-size: 2.5rem; color: #111; margin-bottom: 20px; }
@@ -55,7 +54,7 @@
         .btn-modal-cancel { background: #fafafa; color: #555; border-color: #ddd; }
         .btn-modal-confirm { background: #111; color: #fff; }
 
-        /* ================= AJUSTES PARA EL PLUGIN DE BANDERITAS ================= */
+        /* BANDERITAS */
         .iti { width: 100%; display: block; }
         .iti__selected-flag { background-color: #fafafa; border-radius: 4px 0 0 4px; border-right: 1px solid #eaeaea; transition: background-color 0.3s; padding: 0 12px; }
         .iti__selected-flag:hover { background-color: #f0f0f0; }
@@ -63,6 +62,38 @@
         .iti__country-list { border-radius: 4px; border: 1px solid #eaeaea; box-shadow: 0 10px 30px rgba(0,0,0,0.08); font-family: "Helvetica Neue", Arial, sans-serif; font-size: 0.85rem; }
         .iti__flag { background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/img/flags.png"); }
         @media (min-resolution: 2x) { .iti__flag { background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/img/flags@2x.png"); } }
+
+        /* =========================================================
+           CLASES ESTRUCTURALES RESPONSIVAS (MAGIA PARA MÓVILES)
+           ========================================================= */
+        .profile-layout { display: flex; flex-wrap: wrap; gap: 40px; align-items: center; }
+        .profile-sidebar { flex: 0 0 150px; text-align: center; }
+        .profile-form-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        @media (max-width: 992px) { 
+            .options-grid { grid-template-columns: 1fr; } 
+            /* Se empuja el contenido hacia abajo para que el botón hamburguesa del sidebar no estorbe */
+            .main-content { padding: 80px 20px 40px 20px !important; }
+        }
+
+        @media (max-width: 768px) {
+            .options-card { padding: 25px 20px; } /* Menos relleno lateral en tarjetas */
+            .header-section h1 { font-size: 1.8rem !important; }
+            
+            /* Reordenar Perfil */
+            .profile-layout { flex-direction: column; text-align: center; gap: 25px; }
+            .profile-form-grid { grid-template-columns: 1fr; width: 100%; }
+            .profile-sidebar { margin: 0 auto; }
+            
+            /* Reordenar Contacto */
+            .contact-grid { grid-template-columns: 1fr; }
+            .contact-grid .form-group { grid-column: 1 / -1 !important; grid-row: auto !important; }
+            
+            /* Reordenar Roles de Equipo */
+            .roles-list-item { flex-direction: column; align-items: stretch; gap: 10px; }
+            .member-info strong { margin-bottom: 0; }
+        }
     </style>
 
     <div class="dashboard-container">
@@ -85,15 +116,18 @@
                 <h3 class="section-title-card">Mi Perfil ({{ Auth::user()->id_rol == 1 ? 'Superadmin' : (Auth::user()->id_rol == 2 ? 'Administrador' : 'Colaborador') }})</h3>
                 <form id="form-perfil" action="{{ route('opciones.perfil.update') }}" method="POST" enctype="multipart/form-data" onsubmit="triggerCustomModal(event, this, '¿Guardar cambios en tu perfil?');">
                     @csrf @method('PUT')
-                    <div style="display: flex; flex-wrap: wrap; gap: 40px; align-items: center;">
-                        <div style="flex: 0 0 150px; text-align: center;">
+                    
+                    <!-- ESTRUCTURA RESPONSIVA DE PERFIL -->
+                    <div class="profile-layout">
+                        <div class="profile-sidebar">
                             <div class="profile-pic-wrapper"><img src="{{ Auth::user()->foto ? asset('storage/' . Auth::user()->foto) : asset('images/default-avatar.png') }}" id="preview-foto" class="profile-pic"></div>
                             <label for="foto-upload" style="font-size: 0.7rem; cursor: pointer; color: #555; text-decoration: underline;">Cambiar foto</label>
                             <input type="file" id="foto-upload" name="foto" accept="image/*" style="display: none;" onchange="previewImage(event)">
                         </div>
-                        <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                            <div class="form-group"><label>Nombre</label><input type="text" name="nombre" class="form-control" value="{{ Auth::user()->nombre }}" required></div>
-                            <div class="form-group"><label>Correo</label><input type="email" name="correo" class="form-control" value="{{ Auth::user()->correo }}" required></div>
+                        
+                        <div class="profile-form-grid">
+                            <div class="form-group"><label>Nombre</label><input type="text" name="nombre" class="form-control" value="{{ Auth::user()->nombre }}" placeholder="Ej: Eduardo Pérez" required></div>
+                            <div class="form-group"><label>Correo</label><input type="email" name="correo" class="form-control" value="{{ Auth::user()->correo }}" placeholder="ejemplo@estudioakiraka.com" required></div>
                             
                             <div class="form-group">
                                 <label>Contraseña Actual</label>
@@ -107,12 +141,14 @@
                             </div>
                         </div>
                     </div>
-                    <div style="display: flex; justify-content: flex-end; margin-top: 10px;"><button type="submit" class="btn-save" style="max-width: 200px; padding: 12px;">Guardar Perfil</button></div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
+                        <button type="submit" class="btn-save" style="max-width: 200px; padding: 12px;">Guardar Perfil</button>
+                    </div>
                 </form>
             </div>
 
             @if(in_array(Auth::user()->id_rol, [1, 2]))
-            <!-- ID AGREGADO PARA INTERCEPTAR EL GUARDADO DEL TELÉFONO -->
             <form id="form-publicos" action="{{ route('opciones.publicos.update') }}" method="POST" enctype="multipart/form-data" onsubmit="triggerCustomModal(event, this, '¿Actualizar contenido y roles del equipo?');">
                 @csrf @method('PUT')
 
@@ -137,7 +173,7 @@
                                                class="form-control" 
                                                style="padding: 8px 12px; font-size: 0.85rem;"
                                                value="{{ $miembro->puesto }}" 
-                                               placeholder="Ej: Dirección general">
+                                               placeholder="Ej: Dirección general / Arquitecto Senior">
                                     </div>
                                 </div>
                             </div>
@@ -148,8 +184,14 @@
                 <div class="options-grid">
                     <div class="options-card">
                         <h3 class="subsection-title">Textos del Estudio</h3>
-                        <div class="form-group"><label>¿Quiénes Somos?</label><textarea name="quienes_somos_texto" class="form-control" rows="6">{{ $configuracion->quienes_somos_texto ?? $defaultQuienesSomos }}</textarea></div>
-                        <div class="form-group"><label>Valores</label><textarea name="valores_texto" class="form-control" rows="10">{{ $configuracion->valores_texto ?? $defaultValores }}</textarea></div>
+                        <div class="form-group">
+                            <label>¿Quiénes Somos?</label>
+                            <textarea name="quienes_somos_texto" class="form-control" rows="6" placeholder="Escribe una breve introducción sobre la historia y visión de Estudio Akiraka...">{{ $configuracion->quienes_somos_texto ?? $defaultQuienesSomos }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Valores</label>
+                            <textarea name="valores_texto" class="form-control" rows="10" placeholder="Ej:&#10;- Colaboración y Empatía...&#10;- Sostenibilidad y Regeneración...">{{ $configuracion->valores_texto ?? $defaultValores }}</textarea>
+                        </div>
                     </div>
 
                     <div class="options-card">
@@ -166,51 +208,49 @@
 
                         <div class="form-group">
                             <label>Instagram</label>
-                            <input type="url" name="instagram" class="form-control" value="{{ $configuracion->instagram }}" pattern="https://.*" title="El enlace debe comenzar con https://">
+                            <input type="url" name="instagram" class="form-control" value="{{ $configuracion->instagram }}" pattern="https://.*" title="El enlace debe comenzar con https://" placeholder="https://www.instagram.com/estudioakiraka">
                         </div>
                         <div class="form-group">
                             <label>Facebook</label>
-                            <input type="url" name="facebook" class="form-control" value="{{ $configuracion->facebook }}" pattern="https://.*" title="El enlace debe comenzar con https://">
+                            <input type="url" name="facebook" class="form-control" value="{{ $configuracion->facebook }}" pattern="https://.*" title="El enlace debe comenzar con https://" placeholder="https://www.facebook.com/estudioakiraka">
                         </div>
                     </div>
                 </div>
 
                 <div class="options-card">
                     <h3 class="subsection-title">Contacto & Ubicación</h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        
-                        <!-- MAGIA DE LAS BANDERITAS APLICADA AQUÍ -->
+                    
+                    <!-- ESTRUCTURA RESPONSIVA DE CONTACTO -->
+                    <div class="contact-grid">
                         <div class="form-group">
                             <label>Teléfono (WhatsApp)</label>
-                            <!-- Input visible para que el usuario teclee -->
                             <input type="tel" id="telefono_visible" class="form-control" placeholder="722 123 4567">
-                            <!-- Input oculto que mandará el número completo con clave al servidor -->
                             <input type="hidden" name="telefono" id="telefono_hidden" value="{{ $configuracion->telefono }}">
                         </div>
                         
                         <div class="form-group" style="grid-row: span 2;">
                             <label>Dirección</label>
-                            <textarea name="direccion" class="form-control" rows="5">{{ $configuracion->direccion }}</textarea>
+                            <textarea name="direccion" class="form-control" rows="5" placeholder="Ej: Calle Principal 123, Colonia Centro, CP 51200, Valle de Bravo, Méx.">{{ $configuracion->direccion }}</textarea>
                         </div>
 
                         <div class="form-group">
                             <label>Correo Principal</label>
-                            <input type="email" name="correo_contacto" class="form-control" value="{{ $configuracion->correo_contacto }}">
+                            <input type="email" name="correo_contacto" class="form-control" value="{{ $configuracion->correo_contacto }}" placeholder="contacto@estudioakiraka.com">
                         </div>
 
                         <div class="form-group">
                             <label>Correo Prensa</label>
-                            <input type="email" name="correo_prensa" class="form-control" value="{{ $configuracion->correo_prensa }}">
+                            <input type="email" name="correo_prensa" class="form-control" value="{{ $configuracion->correo_prensa }}" placeholder="prensa@estudioakiraka.com">
                         </div>
 
                         <div class="form-group">
                             <label>Correo Laboral 1</label>
-                            <input type="email" name="correo_laboral_1" class="form-control" value="{{ $configuracion->correo_laboral_1 }}">
+                            <input type="email" name="correo_laboral_1" class="form-control" value="{{ $configuracion->correo_laboral_1 }}" placeholder="rh@estudioakiraka.com">
                         </div>
 
                         <div class="form-group" style="grid-column: 1 / -1;">
                             <label>Correo Laboral 2</label>
-                            <input type="email" name="correo_laboral_2" class="form-control" value="{{ $configuracion->correo_laboral_2 }}">
+                            <input type="email" name="correo_laboral_2" class="form-control" value="{{ $configuracion->correo_laboral_2 }}" placeholder="talento@estudioakiraka.com">
                         </div>
                     </div>
                 </div>
@@ -235,6 +275,32 @@
 </div>
 
 <script>
+    // =================================================================
+    // ANIMACIONES CON ANIME.JS
+    // =================================================================
+    document.addEventListener("DOMContentLoaded", function() {
+        anime({
+            targets: '.header-section',
+            translateY: [30, 0],
+            opacity: [0, 1],
+            easing: 'easeOutCubic',
+            duration: 800,
+            delay: 100
+        });
+
+        anime({
+            targets: '.options-card',
+            translateY: [40, 0],
+            opacity: [0, 1],
+            easing: 'easeOutExpo',
+            duration: 800,
+            delay: anime.stagger(150, {start: 200}) 
+        });
+    });
+
+    // =================================================================
+    // FUNCIONES ORIGINALES DEL FORMULARIO
+    // =================================================================
     function previewImage(e) { var r = new FileReader(); r.onload = function(){ document.getElementById('preview-foto').src = r.result; }; if(e.target.files[0]) r.readAsDataURL(e.target.files[0]); }
     function previewMedia(i) { var c = document.getElementById('media-preview-container'); var f = i.files[0]; if(f) { var u = URL.createObjectURL(f); if(f.type.startsWith('video/')) { c.innerHTML = `<video src="${u}" autoplay loop muted playsinline style="width:100%; height:100%; object-fit:cover;"></video>`; } else { c.innerHTML = `<img src="${u}" style="width:100%; height:100%; object-fit:cover;">`; } } }
     
@@ -265,23 +331,19 @@
 
     if (inputTelVisible) {
         iti = window.intlTelInput(inputTelVisible, {
-            // Configuración recomendada
-            initialCountry: "mx", // Por defecto arranca en México
-            preferredCountries: ["mx", "us", "es", "co", "ar"], // Países frecuentes arriba
+            initialCountry: "mx",
+            preferredCountries: ["mx", "us", "es", "co", "ar"],
             utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js",
-            separateDialCode: true, // Separa el +52 de la cajita de texto
+            separateDialCode: true, 
         });
 
-        // Si ya hay un número guardado en BD, decirle al plugin que lo dibuje
         if (inputTelHidden.value) {
             iti.setNumber(inputTelHidden.value);
         }
     }
 
-    // MODIFICAMOS EL BOTÓN ACEPTAR DEL MODAL PARA QUE INYECTE EL NÚMERO
     document.getElementById('btn-modal-accept').onclick = function() { 
         if(fTS) {
-            // Si están guardando las opciones públicas, sacamos el número armado (+521234...) y lo mandamos al form
             if(fTS.id === 'form-publicos' && iti) {
                 inputTelHidden.value = iti.getNumber();
             }

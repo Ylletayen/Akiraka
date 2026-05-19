@@ -16,6 +16,18 @@ use App\Http\Controllers\DashboardController;
 use App\Models\Proyecto;
 use App\Models\Publicacion;
 
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/generar-link-storage', function () {
+    try {
+        Artisan::call('storage:link');
+        return "¡Éxito! El puente simbólico para las fotos de AkiraArquitectura ha sido creado.";
+    } catch (\Exception $e) {
+        return "Error al crear el puente: " . $e->getMessage();
+    }
+});
+
+
 // --- VISTAS PÚBLICAS ---
 Route::get('/', function () {
     return view('welcome');

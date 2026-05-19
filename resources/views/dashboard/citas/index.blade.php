@@ -14,7 +14,7 @@
             color: #888; /* Gris tenue por defecto para que no sature la vista */
         }
         .btn-icon-action:hover { 
-            transform: scale(1.15); 
+            transform: scale(1.1); 
             color: #111; /* Negro puro al pasar el ratón (Hover) */
         }
 
