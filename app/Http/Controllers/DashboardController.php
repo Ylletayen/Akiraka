@@ -9,14 +9,18 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        // =======================================================
+        // 1. ESTADÍSTICAS BÁSICAS DE PROYECTOS Y OBJETOS
+        // =======================================================
         $totalProyectos = \App\Models\Proyecto::count();
-        $inversionTotal = \App\Models\Proyecto::sum('costo_inicial') ?? 0;
-
         $totalObjetos = \App\Models\Objeto::count();
         
         $proyectosEnProceso = \App\Models\Proyecto::where('id_estado', 1)->take(2)->get();
         $proyectosFuturos = \App\Models\Proyecto::whereIn('id_estado', [2, 3])->take(2)->get();
 
+        // =======================================================
+        // 2. CITAS RECIENTES (Las más nuevas aparecen primero)
+        // =======================================================
         $citasRecientes = DB::table('citas')
             ->join('clientes', 'citas.id_cliente', '=', 'clientes.id_cliente')
             ->join('servicios', 'citas.id_servicio', '=', 'servicios.id_servicio')
@@ -27,10 +31,13 @@ class DashboardController extends Controller
                 'servicios.nombre as servicio_nombre'
             )
             ->where('citas.estado', 'Pendiente')
-            ->orderBy('citas.created_at', 'asc')
+            ->orderBy('citas.created_at', 'desc') // ✅ Corregido para que muestre las más nuevas arriba
             ->take(4)
             ->get();
 
+        // =======================================================
+        // 3. GRÁFICA SEMANAL
+        // =======================================================
         $visitasSemanales = [];
         $labelsSemanales = [];
         
@@ -47,6 +54,9 @@ class DashboardController extends Controller
             $labelsSemanales[] = \Carbon\Carbon::now()->subDays($i)->isoFormat('ddd D'); 
         }
 
+        // =======================================================
+        // 4. GRÁFICA MENSUAL (Tipos de visitante)
+        // =======================================================
         $inicioMes = \Carbon\Carbon::now()->startOfMonth()->getTimestamp();
         $sesionesMes = DB::table('sessions')
             ->whereNull('user_id')
@@ -65,32 +75,12 @@ class DashboardController extends Controller
             }
         }
 
-        $inicioAnio = \Carbon\Carbon::now()->startOfYear()->getTimestamp();
-        $agent = new \Jenssegers\Agent\Agent();
-
-        $sesionesAnio = DB::table('sessions')
-            ->whereNull('user_id')
-            ->where('last_activity', '>=', $inicioAnio)
-            ->get();
-
-        $totalVisitasAnio = $sesionesAnio->count();
-        $vistasMovil = 0;
-        $vistasEscritorio = 0;
-
-        foreach ($sesionesAnio as $sesion) {
-            $agent->setUserAgent($sesion->user_agent);
-            if ($agent->isMobile() || $agent->isTablet()) {
-                $vistasMovil++;
-            } else {
-                $vistasEscritorio++;
-            }
-        }
-
+        // Retornamos de forma limpia las variables que tu archivo Blade real necesita
         return view('dashboard.dash.main', compact(
-            'totalProyectos', 'inversionTotal', 'totalObjetos', 'proyectosEnProceso', 'proyectosFuturos',
+            'totalProyectos', 'totalObjetos', 'proyectosEnProceso', 'proyectosFuturos',
             'citasRecientes',
             'visitasSemanales', 'labelsSemanales', 'totalVisitasMes', 'visitantesNuevos',
-            'visitantesRecurrentes', 'totalVisitasAnio', 'vistasMovil', 'vistasEscritorio'
+            'visitantesRecurrentes'
         ));
     }
 
@@ -103,7 +93,7 @@ class DashboardController extends Controller
                 'citas.id_cita',
                 'citas.fecha_hora',
                 'citas.estado',
-                'citas.notas_cliente as descripcion_proyecto',
+                'citas.notes_cliente as descripcion_proyecto',
                 'clientes.nombre as cliente_nombre',
                 'clientes.correo as cliente_correo',
                 'clientes.telefono as cliente_telefono',

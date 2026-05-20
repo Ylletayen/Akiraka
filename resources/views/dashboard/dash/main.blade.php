@@ -15,7 +15,7 @@
         .btn-quick { background: #111; color: #fff; padding: 10px 20px; font-family: Arial, sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; border-radius: 6px; text-decoration: none; transition: all 0.3s ease; }
         .btn-quick:hover { background: #333; color: #fff; }
 
-        /* ================= STATS CARDS (AQUÍ ESTÁN DE VUELTA) ================= */
+        /* ================= STATS CARDS ================= */
         .stats-cards { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 40px; }
         .stat-card { background: #fff; border: 1px solid #eaeaea; border-radius: 12px; padding: 20px; flex: 1; min-width: 200px; display: flex; align-items: center; gap: 20px; transition: transform 0.3s; }
         .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
@@ -86,10 +86,10 @@
                 </div>
                 
                 <div class="stat-card">
-                    <div class="chart-placeholder" style="background: #10b981;">$</div>
+                    <div class="chart-placeholder" style="background: #10b981;"><i class="bi bi-journal-bookmark"></i></div>
                     <div class="stat-info">
-                        <h3>{{ number_format($inversionTotal / 1000000, 1) }}M</h3>
-                        <p>Inversión Estimada</p>
+                        <h3>{{ \App\Models\Publicacion::count() }}</h3>
+                        <p>Publicaciones</p>
                     </div>
                 </div>
             </div>

@@ -22,8 +22,6 @@ class ProjectController extends Controller
         $request->validate([
             'titulo' => 'required|string|max:150',
             'descripcion' => 'nullable|string',
-            'costo_inicial' => 'nullable|numeric',
-            'costo_final' => 'nullable|numeric',
             'id_estado' => 'nullable|exists:estados_proyecto,id_estado',
             'anio' => 'nullable|string|max:4',
             'orden' => 'nullable|integer',
@@ -53,8 +51,6 @@ class ProjectController extends Controller
         $request->validate([
             'titulo' => 'required|string|max:150',
             'descripcion' => 'nullable|string',
-            'costo_inicial' => 'nullable|numeric',
-            'costo_final' => 'nullable|numeric',
             'id_estado' => 'nullable|exists:estados_proyecto,id_estado',
             'anio' => 'nullable|string|max:4',
             'orden' => 'nullable|integer'

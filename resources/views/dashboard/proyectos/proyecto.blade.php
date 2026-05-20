@@ -52,7 +52,7 @@
             <div class="header-section">
                 <div>
                     <h1>Portafolio de Obras</h1>
-                    <p>Gestión de obras, costos estimados y estado de construcción.</p>
+                    <p>Gestión de obras, catálogo del portafolio y estado de construcción.</p>
                 </div>
                 <button class="btn-add-new" data-bs-toggle="modal" data-bs-target="#modalProyecto" onclick="prepararNuevo()">
                     + Añadir Obra
@@ -73,10 +73,9 @@
             <table class="project-table">
                 <thead>
                     <tr style="text-align: left; color: #888; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;">
-                        <th style="width: 35%;">Detalles de la Obra</th>
-                        <th>Costos (Inicial / Final)</th>
-                        <th>Estado</th>
-                        <th style="text-align: right;">Acciones</th>
+                        <th style="width: 55%;">Detalles de la Obra</th>
+                        <th style="width: 25%;">Estado</th>
+                        <th style="text-align: right; width: 20%;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,10 +87,6 @@
                                     @if($proyecto->anio) <span class="badge-anio">{{ $proyecto->anio }}</span> @endif
                                 </div>
                                 <div class="desc-text">{{ $proyecto->descripcion ?? 'Sin descripción.' }}</div>
-                            </td>
-                            <td style="font-family: Arial, sans-serif; font-size: 0.9rem; color: #555;">
-                                <div><strong>Inicial:</strong> ${{ number_format($proyecto->costo_inicial, 2) }}</div>
-                                <div><strong>Final:</strong> ${{ number_format($proyecto->costo_final, 2) }}</div>
                             </td>
                             <td>
                                 <span class="badge-estado">
@@ -123,7 +118,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center py-5 text-muted" style="font-style: italic;">No hay obras registradas en el portafolio.</td>
+                            <td colspan="3" class="text-center py-5 text-muted" style="font-style: italic;">No hay obras registradas en el portafolio.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -181,14 +176,6 @@
                 </div>
                 <br>
                 <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Costo Inicial ($)</label>
-                        <input type="number" step="0.01" name="costo_inicial" id="costo_inicial" class="form-control border-0 bg-light">
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Costo Final ($)</label>
-                        <input type="number" step="0.01" name="costo_final" id="costo_final" class="form-control border-0 bg-light">
-                    </div>
                     <div class="col-md-4 mb-4">
                         <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Estado</label>
                         <select name="id_estado" id="id_estado" class="form-select border-0 bg-light" required>
@@ -212,7 +199,6 @@
         let tipo = document.getElementById('tipo_media').value;
         let input = document.getElementById('portada');
         
-        // Limpiar el input y la previsualización
         input.value = '';
         document.getElementById('preview_container').style.display = 'none';
         document.getElementById('preview_img').style.display = 'none';
@@ -232,7 +218,7 @@
         let file = input.files[0];
 
         if (file) {
-            container.style.display = 'flex'; // Mostrar contenedor
+            container.style.display = 'flex';
             let fileURL = URL.createObjectURL(file);
 
             if (file.type.startsWith('video/')) {
@@ -245,7 +231,7 @@
                 img.style.display = 'block';
             }
         } else {
-            container.style.display = 'none'; // Ocultar si cancela
+            container.style.display = 'none';
         }
     }
 
@@ -259,16 +245,12 @@
         document.getElementById('descripcion').value = '';
         document.getElementById('anio').value = '';
         
-        // Limpiar multimedia
         document.getElementById('portada').value = ''; 
         document.getElementById('preview_container').style.display = 'none';
         document.getElementById('tipo_media').value = 'imagen';
         cambiarTipoMedia();
 
-        document.getElementById('costo_inicial').value = '';
-        document.getElementById('costo_final').value = '';
         document.getElementById('id_estado').value = '';
-
         document.getElementById('btnSubmit').innerText = 'Guardar Obra';
     }
 
@@ -285,14 +267,10 @@
         document.getElementById('descripcion').value = proyecto.descripcion || '';
         document.getElementById('anio').value = proyecto.anio || '';
         
-        // Limpiar multimedia (No se pueden rellenar inputs file por seguridad)
         document.getElementById('portada').value = ''; 
         document.getElementById('preview_container').style.display = 'none';
 
-        document.getElementById('costo_inicial').value = proyecto.costo_inicial || '';
-        document.getElementById('costo_final').value = proyecto.costo_final || '';
         document.getElementById('id_estado').value = proyecto.id_estado;
-
         document.getElementById('btnSubmit').innerText = 'Actualizar Cambios';
         
         var myModal = new bootstrap.Modal(document.getElementById('modalProyecto'));
