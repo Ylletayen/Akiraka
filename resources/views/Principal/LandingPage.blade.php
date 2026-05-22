@@ -16,25 +16,35 @@
 @include('dashboard.login.registro')
 
 <style>
-    /* ================= ESTILOS GENERALES Y BOTÓN ================= */
     .btn-enter { display: inline-block; padding: 10px 30px; border: 1px solid #fff; background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px); transition: all 0.3s ease; letter-spacing: 2px; font-size: 0.85rem; }
     .btn-enter:hover { transform: scale(1.05); background-color: rgba(255, 255, 255, 0.9); color: #111 !important; }
     
-    /* Quitamos el forzado a blanco y le damos un tono gris por defecto al contenedor */
-    .logo-wrapper { transition: opacity 0.3s; cursor: pointer; color: #555555; }
-    .logo-wrapper:hover { opacity: 0.7; }
-    
-    /* Quitamos el filter: invert() para que tu imagen PNG conserve su gris original */
+    .logo-wrapper { color: #555555; }
     .logo-img-landing { height: 45px; width: auto; object-fit: contain; }
     
-    /* ENLACES DEL MENÚ FLOTANTE */
-    .nav-link-akira { color: #fff !important; text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; transition: opacity 0.3s; }
+    .nav-link-akira { 
+        color: #fff !important; 
+        text-decoration: none; 
+        font-size: 0.85rem; 
+        letter-spacing: 1px; 
+        transition: opacity 0.3s; 
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+    }
     .nav-link-akira:hover { opacity: 0.6; }
+    
+    .btn-nav-action:hover { 
+        transform: scale(1.05);
+        border-color: rgba(255, 255, 255, 1);
+        background-color: rgba(255, 255, 255, 0.9); 
+        color: #111 !important; 
+    }
     
     .social-links-akira a { color: #fff; font-size: 1.2rem; transition: opacity 0.3s ease; }
     .social-links-akira a:hover { opacity: 0.6; }
 
-    /* ================= CONTENEDOR HERO FULL SCREEN ================= */
     .landing-hero-container {
         position: absolute;
         top: 0;
@@ -42,17 +52,15 @@
         width: 100vw;
         height: 100vh;
         overflow: hidden;
-        z-index: 1; /* Fondo base */
+        z-index: 1;
     }
 
-    /* SI ES IMAGEN O GIF */
     .hero-image-bg {
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
     }
 
-    /* SI ES VIDEO */
     .hero-video-bg {
         position: absolute;
         top: 50%;
@@ -66,34 +74,31 @@
         z-index: 0;
     }
 
-    /* CAPA OSCURA QUE CUBRE TODA LA PANTALLA PARA QUE EL TEXTO SEA LEGIBLE */
     .enter-overlay {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.4); /* Nivel de oscuridad (0.4 es ideal) */
+        background: rgba(0,0,0,0.4);
         z-index: 10;
     }
 
-    /* HEADER FLOTANTE Y TRANSPARENTE */
     .header-floating {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         background: transparent !important;
-        z-index: 20; /* Siempre encima del video y la capa oscura */
+        z-index: 20;
     }
 </style>
 
 <div id="landing-view" class="vh-100 position-relative">
     
     <header class="header-floating py-4 px-5 d-flex justify-content-between align-items-center">
-        <div class="logo-wrapper d-flex flex-column align-items-center" onclick="abrirLogin()" title="Acceso Administración">
+        <div class="logo-wrapper d-flex flex-column align-items-center">
             <img src="{{ asset('images/logosinbgakira.png') }}" alt="Logo Akiraka" class="logo-img-landing">
-            <!-- Texto conservando su color original (sin forzar blanco) -->
             <span class="logo-brand-text mt-1 fw-bold" style="font-size: 0.75rem; letter-spacing: 2px;">ESTUDIO AKIRAKA</span>
         </div>
 
@@ -101,6 +106,17 @@
             <a href="{{ route('project.detail') }}" class="nav-link-akira">PROYECTOS</a>
             <a href="{{ route('info') }}" class="nav-link-akira">INFORMACIÓN</a>
             <a href="{{ route('contacto') }}" class="nav-link-akira">CONTACTO</a>
+            
+            {{-- SECCIÓN ASIGNADA CON LA NUEVA CLASE Y SUS ICONOS DE ACCIÓN --}}
+            @guest
+                <a onclick="abrirLogin()" class="nav-link-akira">LOGIN</a>
+            @endguest
+
+            @auth
+                <a href="{{ route('dashboard.main') }}" class="nav-link-akira">
+                    <i class="bi bi-speedometer2"></i> PANEL ADMIN
+                </a>
+            @endauth
             
             <div class="social-links-akira d-flex gap-3 ms-3">
                 <a href="{{ $config->instagram ?? '#' }}" target="_blank"><i class="fa-brands fa-instagram"></i></a>
