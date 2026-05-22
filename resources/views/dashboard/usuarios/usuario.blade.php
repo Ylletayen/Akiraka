@@ -35,8 +35,54 @@
         }
 
         .badge-role { font-family: Arial, sans-serif; font-size: 0.75rem; font-weight: bold; padding: 4px 10px; border-radius: 12px; background: #eee; color: #333; }
-s
+
         .modal-glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 12px; }
+
+        /* =========================================
+           MENSAJES DE ERROR PERSONALIZADOS (AKIRAKA STYLE)
+           ========================================= */
+        .input-error {
+            border-color: #d9534f !important;
+            background-color: #fffcfc !important;
+            box-shadow: 0 0 0 3px rgba(217, 83, 79, 0.1) !important;
+        }
+
+        .custom-error-msg {
+            display: none; /* Oculto por defecto */
+            background-color: #1c1c1c;
+            color: #ffffff;
+            padding: 8px 12px;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            margin-top: 5px; 
+            margin-bottom: 10px;
+            position: relative;
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            animation: slideDownFade 0.3s ease;
+        }
+
+        /* El piquito del globo de diálogo apuntando hacia arriba */
+        .custom-error-msg::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 20px;
+            width: 10px;
+            height: 10px;
+            background-color: #1c1c1c;
+            transform: rotate(45deg);
+        }
+
+        .custom-error-msg.show {
+            display: block;
+        }
+
+        @keyframes slideDownFade {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 
     <div class="dashboard-container">
@@ -121,6 +167,9 @@ s
     </div>
 </div>
 
+<!-- ==============================================
+     MODAL PARA CREAR USUARIO (CON VALIDACIONES)
+     ============================================== -->
 <div class="modal fade" id="modalCrearUsuario" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-glass p-4 border-0 shadow-lg">
@@ -129,21 +178,44 @@ s
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
-            <form action="{{ route('usuarios.store') }}" method="POST">
+            <form id="formCrearUsuario" action="{{ route('usuarios.store') }}" method="POST">
                 @csrf
-                <div class="mb-3">
+                
+                <!-- CAMPO NOMBRE -->
+                <div class="mb-3 position-relative">
                     <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Nombre</label>
                     <input type="text" name="nombre" id="crear_nombre" class="form-control border-0 bg-light" required>
+                    <!-- Globo de Error -->
+                    <div id="error_crear_nombre" class="custom-error-msg">
+                        <i class="bi bi-shield-exclamation" style="margin-right: 6px; color: #d9534f;"></i>
+                        Por favor, ingresa el nombre del usuario.
+                    </div>
                 </div>
-                <div class="mb-3">
+
+                <!-- CAMPO CORREO -->
+                <div class="mb-3 position-relative">
                     <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Correo</label>
                     <input type="email" name="correo" id="crear_correo" class="form-control border-0 bg-light" required>
+                    <!-- Globo de Error -->
+                    <div id="error_crear_correo" class="custom-error-msg">
+                        <i class="bi bi-shield-exclamation" style="margin-right: 6px; color: #d9534f;"></i>
+                        Ingresa un formato de correo válido (ej. correo@akiraka.com).
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Contraseña</label>
-                    <input type="password" name="password" id="crear_password" class="form-control border-0 bg-light" required>
+
+                <!-- CAMPO CONTRASEÑA -->
+                <div class="mb-3 position-relative">
+                    <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Contraseña <span style="text-transform:none; letter-spacing:normal; font-weight:normal; color:#888;">(Mín. 6 caracteres)</span></label>
+                    <input type="password" name="password" id="crear_password" class="form-control border-0 bg-light" required minlength="6">
+                    <!-- Globo de Error -->
+                    <div id="error_crear_password" class="custom-error-msg">
+                        <i class="bi bi-shield-exclamation" style="margin-right: 6px; color: #d9534f;"></i>
+                        La contraseña debe tener al menos 6 caracteres.
+                    </div>
                 </div>
-                <div class="mb-4">
+
+                <!-- CAMPO ROL -->
+                <div class="mb-4 position-relative">
                     <label class="form-label small fw-bold text-uppercase opacity-75" style="font-family: Arial; letter-spacing: 1px;">Asignar Rol</label>
                     <select name="id_rol" id="crear_id_rol" class="form-select border-0 bg-light" required>
                         <option value="" disabled selected>Selecciona un rol...</option>
@@ -155,13 +227,22 @@ s
                             <option value="{{ $rol->id_rol }}">{{ $rol->nombre_rol }}</option>
                         @endforeach
                     </select>
+                    <!-- Globo de Error -->
+                    <div id="error_crear_id_rol" class="custom-error-msg">
+                        <i class="bi bi-shield-exclamation" style="margin-right: 6px; color: #d9534f;"></i>
+                        Debes seleccionar el nivel de acceso para este usuario.
+                    </div>
                 </div>
+
                 <button type="submit" class="btn-add-new w-100 py-3 shadow-sm" style="font-family: Arial;">Crear Usuario</button>
             </form>
         </div>
     </div>
 </div>
 
+<!-- ==============================================
+     MODAL PARA EDITAR ROL 
+     ============================================== -->
 <div class="modal fade" id="modalEditarRol" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-glass p-4 border-0 shadow-lg">
@@ -206,11 +287,55 @@ s
 </form>
 
 <script>
+    // =======================================================
+    // MAGIA DE VALIDACIONES (Evita que el navegador cierre o muestre alertas nativas)
+    // =======================================================
+    document.addEventListener("DOMContentLoaded", function() {
+        // Los IDs de los campos que queremos validar en el modal de crear
+        const inputsAValidar = ['crear_nombre', 'crear_correo', 'crear_password', 'crear_id_rol'];
+        
+        inputsAValidar.forEach(id => {
+            const inputElement = document.getElementById(id);
+            const errorElement = document.getElementById('error_' + id);
+            
+            if (inputElement && errorElement) {
+                // Cuando el usuario le da a "Crear" y el campo no cumple las reglas (vacío, corto, sin @)
+                inputElement.addEventListener('invalid', function(e) {
+                    e.preventDefault(); // Cancelamos la alerta fea del navegador
+                    errorElement.classList.add('show'); // Mostramos nuestro globito
+                    inputElement.classList.add('input-error'); // Pintamos rojo el borde
+                });
+
+                // Mientras el usuario empieza a escribir o selecciona algo, ocultamos el error
+                inputElement.addEventListener('input', function(e) {
+                    errorElement.classList.remove('show');
+                    inputElement.classList.remove('input-error');
+                });
+                
+                // Evento específico para el <select> de Rol
+                inputElement.addEventListener('change', function(e) {
+                    errorElement.classList.remove('show');
+                    inputElement.classList.remove('input-error');
+                });
+            }
+        });
+    });
+
+    // Modificamos la función para que también limpie los errores al abrir el modal
     function prepararNuevo() {
         document.getElementById('crear_nombre').value = '';
         document.getElementById('crear_correo').value = '';
         document.getElementById('crear_password').value = '';
         document.getElementById('crear_id_rol').value = '';
+
+        // Limpiar globitos rojos por si cerraron el modal cuando estaban activos
+        const inputsAValidar = ['crear_nombre', 'crear_correo', 'crear_password', 'crear_id_rol'];
+        inputsAValidar.forEach(id => {
+            const inputElement = document.getElementById(id);
+            const errorElement = document.getElementById('error_' + id);
+            if (inputElement) inputElement.classList.remove('input-error');
+            if (errorElement) errorElement.classList.remove('show');
+        });
     }
 
     function editarRolUsuario(usuario) {
