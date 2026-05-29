@@ -108,15 +108,17 @@
             <a href="{{ route('contacto') }}" class="nav-link-akira">CONTACTO</a>
             
             {{-- SECCIÓN ASIGNADA CON LA NUEVA CLASE Y SUS ICONOS DE ACCIÓN --}}
-            @guest
-                <a onclick="abrirLogin()" class="nav-link-akira">LOGIN</a>
-            @endguest
-
-            @auth
+            @if(Auth::check())
+                {{-- ESCENARIO 1: Ya inició sesión. Ve el botón para entrar al Dashboard --}}
                 <a href="{{ route('dashboard.main') }}" class="nav-link-akira">
                     <i class="bi bi-speedometer2"></i> PANEL ADMIN
                 </a>
-            @endauth
+            @elseif(request()->cookie('equipo_akiraka') == 'activo')
+                {{-- ESCENARIO 2: No ha iniciado sesión, pero tiene la cookie. Ve el botón para abrir el modal --}}
+                <a onclick="abrirLogin()" class="nav-link-akira" style="cursor: pointer;">LOGIN</a>
+            @else
+                {{-- ESCENARIO 3: Es un cliente normal sin cookie. NO VE NADA. --}}
+            @endif
             
             <div class="social-links-akira d-flex gap-3 ms-3">
                 <a href="{{ $config->instagram ?? '#' }}" target="_blank"><i class="fa-brands fa-instagram"></i></a>

@@ -202,7 +202,6 @@
                     <a class="nav-link {{ request()->routeIs('dashboard.citas') ? 'active' : '' }}" href="{{ route('dashboard.citas') }}">
                         <div><i class="fas fa-calendar-alt me-3"></i> Prospectos / Citas</div>
                     </a>
-                    
                 </div>
             </li>
             @php
@@ -226,6 +225,10 @@
                         <div><i class="fas fa-users me-3"></i> Equipo</div>
                     </a>
                     @endif
+
+                    <a class="nav-link" href="https://calculadora.akiraka.com" target="_blank">
+                        <div><i class="fas fa-calculator me-3"></i> Calculadora</div>
+                    </a>
 
                     <a class="nav-link {{ request()->routeIs('dashboard.opciones') ? 'active' : '' }}" href="{{ route('dashboard.opciones') }}">
                         <div><i class="fas fa-cog me-3"></i> Conf. General</div>
