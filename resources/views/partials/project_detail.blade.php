@@ -50,11 +50,12 @@
             transform: translateX(-5px);
         }
 
-        /* ================= CONTROL DE VISTAS EXACTO (Cero Bootstrap) ================= */
-        .vista-movil { display: none; }
-        .vista-escritorio { display: block; }
+        /* ================= CONTROL DE VISTAS EXACTO ================= */
+        .vista-movil { display: none !important; }
+        .vista-escritorio { display: block !important; }
 
-        @media (max-width: 850px) {
+        /* MAGIA: Si la pantalla es menor a 850px (Celulares/Tablets) */
+        @media screen and (max-width: 850px) {
             .vista-escritorio { display: none !important; }
             .vista-movil { display: block !important; }
         }
@@ -101,7 +102,7 @@
         }
         .footer-left { display: flex; gap: 40px; }
 
-        /* ================= ESTILOS VISTA MÓVIL (BLINDADA) ================= */
+        /* ================= ESTILOS VISTA MÓVIL ================= */
         .mobile-top-bar {
             display: flex;
             justify-content: space-between;
@@ -113,8 +114,8 @@
         
         .mobile-slider-container {
             display: flex !important;
-            flex-direction: row !important; /* Fuerza a que estén uno al lado del otro */
-            flex-wrap: nowrap !important;   /* Evita que se caigan a la siguiente línea */
+            flex-direction: row !important; 
+            flex-wrap: nowrap !important;   
             overflow-x: auto !important;
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
@@ -127,7 +128,7 @@
             display: none;
         }
         .slider-section {
-            flex: 0 0 85vw !important; /* Cada columna ocupa el 85% de la pantalla */
+            flex: 0 0 85vw !important; 
             scroll-snap-align: center;
             padding: 0 clamp(30px, 5vw, 60px);
         }
@@ -176,15 +177,15 @@
         @media (max-width: 900px) { .hover-preview { display: none; } }
     </style>
 
-    <a href="{{ route('landing') }}" class="btn-flotante-regresar">&larr; regresar</a>
+    <a href="{{ route('landing') ?? '#' }}" class="btn-flotante-regresar">&larr; regresar</a>
 
     <div class="vista-movil">
         
         <nav class="mobile-top-bar">
-            <div><a href="{{ route('project.detail') }}" class="brand-name">Estudio Akiraka ,</a></div>
+            <div><a href="#" class="brand-name">Estudio Akiraka ,</a></div>
             <div>
-                <a href="{{ route('info') }}">Info ,</a>
-                <a href="{{ route('contacto') }}">Contacto</a>
+                <a href="#">Info ,</a>
+                <a href="#">Contacto</a>
             </div>
         </nav>
 
@@ -196,7 +197,7 @@
                     <ul class="project-list">
                         <li>Proyectos</li>
                         <li class="indent-1">En proceso</li>
-                        @forelse($proyectosEnProceso as $proyecto)
+                        @forelse($proyectosEnProceso ?? [] as $proyecto)
                             <li class="indent-2">
                                 <a href="{{ route('project.main', $proyecto->id_proyecto) }}" class="project-link">
                                     {{ $proyecto->titulo }}
@@ -210,7 +211,7 @@
                 <div class="list-group">
                     <ul class="project-list">
                         <li>Construidos</li>
-                        @forelse($proyectosConstruidos as $proyecto)
+                        @forelse($proyectosConstruidos ?? [] as $proyecto)
                             <li>
                                 <span class="year-label">{{ $proyecto->anio ?? 'S/A' }}</span> 
                                 <a href="{{ route('project.main', $proyecto->id_proyecto) }}" class="project-link">
@@ -227,7 +228,7 @@
             <div class="slider-section">
                 <h2 class="column-title">Objetos</h2>
                 <ul class="project-list">
-                    @forelse($objetos as $objeto)
+                    @forelse($objetos ?? [] as $objeto)
                         <li>
                             <span class="year-label">{{ $objeto->anio ?? 'S/A' }}</span> 
                             <a href="{{ route('objeto.main', $objeto->id_objeto) }}" class="project-link">
@@ -243,7 +244,7 @@
             <div class="slider-section">
                 <h2 class="column-title">Publicaciones</h2>
                 <ul class="project-list">
-                    @forelse($publicaciones as $publicacion)
+                    @forelse($publicaciones ?? [] as $publicacion)
                         <li>
                             <span class="year-label">{{ \Carbon\Carbon::parse($publicacion->fecha)->format('Y') }}</span> 
                             <a href="{{ route('publicaciones.show', $publicacion->id_publicacion) }}" class="project-link">
@@ -255,7 +256,7 @@
                     @endforelse
                 </ul>
                 <div style="margin-top: 40px;">
-                    @include('Principal.cita')
+                    @includeIf('Principal.cita')
                 </div>
             </div>
 
@@ -273,9 +274,9 @@
 
     <div class="vista-escritorio">
         <header class="site-header-main">
-            <a href="{{ route('project.detail') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Estudio Akiraka ,</a>
-            <a href="{{ route('info') }}" class="nav-link-akira">Info ,</a>
-            <a href="{{ route('contacto') }}" class="nav-link-akira">Contacto</a>
+            <a href="#" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Estudio Akiraka ,</a>
+            <a href="#" class="nav-link-akira">Info ,</a>
+            <a href="#" class="nav-link-akira">Contacto</a>
         </header>
 
         <main class="main-content-grid">
@@ -285,7 +286,7 @@
                     <ul class="project-list">
                         <li>Proyectos</li>
                         <li class="indent-1">En proceso</li>
-                        @forelse($proyectosEnProceso as $proyecto)
+                        @forelse($proyectosEnProceso ?? [] as $proyecto)
                             <li class="indent-2">
                                 <a href="{{ route('project.main', $proyecto->id_proyecto) }}" class="project-link" data-img="{{ $proyecto->portada ? asset('storage/' . $proyecto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
                                     {{ $proyecto->titulo }}
@@ -300,7 +301,7 @@
                 <div class="list-group">
                     <ul class="project-list">
                         <li>Construidos</li>
-                        @forelse($proyectosConstruidos as $proyecto)
+                        @forelse($proyectosConstruidos ?? [] as $proyecto)
                             <li>
                                 <span class="year-label">{{ $proyecto->anio ?? 'S/A' }}</span> 
                                 <a href="{{ route('project.main', $proyecto->id_proyecto) }}" class="project-link" data-img="{{ $proyecto->portada ? asset('storage/' . $proyecto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
@@ -317,7 +318,7 @@
             <section>
                 <h2 class="column-title">Objetos</h2>
                 <ul class="project-list">
-                    @forelse($objetos as $objeto)
+                    @forelse($objetos ?? [] as $objeto)
                         <li>
                             <span class="year-label">{{ $objeto->anio ?? 'S/A' }}</span> 
                             <a href="{{ route('objeto.main', $objeto->id_objeto) }}" class="project-link" data-img="{{ $objeto->portada ? asset('storage/' . $objeto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
@@ -333,7 +334,7 @@
             <section>
                 <h2 class="column-title">Publicaciones</h2>
                 <ul class="project-list">
-                    @forelse($publicaciones as $publicacion)
+                    @forelse($publicaciones ?? [] as $publicacion)
                         <li>
                             <span class="year-label">{{ \Carbon\Carbon::parse($publicacion->fecha)->format('Y') }}</span> 
                             <a href="{{ route('publicaciones.show', $publicacion->id_publicacion) }}" class="project-link" data-img="{{ $publicacion->portada ? asset('storage/' . $publicacion->portada) : 'https://via.placeholder.com/320x220?text=Publicación' }}">
@@ -345,7 +346,7 @@
                     @endforelse
                 </ul>
 
-                @include('Principal.cita')
+                @includeIf('Principal.cita')
             </section>
         </main>
 
