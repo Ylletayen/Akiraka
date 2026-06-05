@@ -148,9 +148,19 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
     Route::delete('/publicaciones/{id}', [PublicacionController::class, 'destroy'])->name('publicaciones.destroy');
 
     // CITAS (DASHBOARD) - Movido adentro por seguridad
+    //  Acceso general: Ver bandeja y Aceptar solicitudes (Para Superadmin, Admin y Colaborador)
     Route::get('/citas', [CitaController::class, 'solicitudesCitas'])->name('dashboard.citas');
     Route::put('/citas/{id}/estado', [CitaController::class, 'actualizarEstado'])->name('dashboard.citas.estado');
-    Route::delete('/citas/{id}', [CitaController::class, 'destroy'])->name('dashboard.citas.destroy');
+
+    //  Acceso restringido: Solo Superadmin (1) y Administrador (2) pueden rechazar o eliminar
+    Route::delete('/citas/{id}', function ($id) {
+        // Validación directa del id_rol de tu base de datos sin usar archivos extra
+        if (auth()->user()->id_rol == 3) { 
+            return back()->with('error', 'No tienes los permisos suficientes para realizar esta acción.');
+        }
+        // Si no, es colaborador (id_rol 3), ejecutamos el método original del controlador
+        return app(CitaController::class)->destroy($id);
+    })->name('dashboard.citas.destroy');
 });
 
 // DETALLE EXTERNO

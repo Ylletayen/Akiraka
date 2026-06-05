@@ -247,7 +247,7 @@
         <h3 class="modal-contact-title">Inicia tu Proyecto</h3>
         <p class="modal-contact-subtitle" style="margin-bottom: 20px;">Llena este formulario y nos pondremos en contacto para confirmar tu cita.</p>
 
-        <form action="{{ route('api.citas.store') }}" method="POST">
+        <form action="{{ route('api.citas.store') }}" method="POST" id="form-cita">
             @csrf
             <div style="margin-bottom: 20px;">
                <label class="form-label-small">NOMBRE COMPLETO</label>
@@ -277,8 +277,8 @@
                         <option value="" disabled selected>Selecciona una opción...</option>
                         
                         @foreach($servicios as $servicio)
-                            <option value="{{ $servicio->id }}">{{ $servicio->nombre }}</option>
-                        @endforeach
+                        <option value="{{ $servicio->id_servicio }}">{{ $servicio->nombre }}</option>
+                        @endforeach 
                         
                     </select>
                 </div>
@@ -293,7 +293,7 @@
                 <textarea name="descripcion" class="form-input-contact" rows="3" style="margin-bottom: 0;" required></textarea>
             </div>
 
-            <button type="submit" class="btn-submit-contact">ENVIAR SOLICITUD</button>
+        <button type="submit" id="btn-enviar-cita" class="btn-submit-contact">ENVIAR SOLICITUD</button>
         </form>
     </div>
 </div>
@@ -407,15 +407,27 @@
                 }
             });
 
-            // 3. Interceptar el envío del formulario para mandar el número limpio a Laravel
+        // 3. Interceptar el envío del formulario para mandar el número limpio a Laravel y bloquear el doble clic
             const formCita = phoneInputField.closest('form');
             formCita.addEventListener("submit", function(event) {
-                // Obtenemos el número completo (ej. +527221234567)
-                const numeroCompleto = phoneInput.getNumber();
-                
-                // Actualizamos el valor del input justo antes de que se envíe a la base de datos
-                if (numeroCompleto) {
-                    phoneInputField.value = numeroCompleto;
+                // Primero validamos si todo el formulario cumple con las reglas (required, pattern, etc.)
+                if (this.checkValidity()) {
+                    var boton = document.getElementById('btn-enviar-cita');
+                    
+                    // Deshabilitamos el botón para evitar que le den clics repetidos
+                    boton.disabled = true;
+                    boton.innerText = 'ENVIANDO SOLICITUD...';
+
+                    // Obtenemos el número completo (ej. +527221234567)
+                    const numeroCompleto = phoneInput.getNumber();
+                    
+                    // Actualizamos el valor del input justo antes de que se envíe a la base de datos
+                    if (numeroCompleto) {
+                        phoneInputField.value = numeroCompleto;
+                    }
+                } else {
+                    // Si el formulario no es válido, no hacemos nada y dejamos que HTML muestre sus alertas
+                    return false;
                 }
             });
         }
