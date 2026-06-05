@@ -95,36 +95,38 @@
                                 </span>
                             </td>
                             
-                            {{-- COLUMNA DE ACCIONES MINIMALISTAS --}}
-                            <td style="padding: 15px; text-align: right; white-space: nowrap;">
-                                
-                                @if($solicitud->estado == 'Pendiente')
-                                    {{-- Botón Aceptar --}}
-                                    <form action="{{ route('dashboard.citas.estado', $solicitud->id_cita) }}" method="POST" style="display: inline-block;">
-                                        @csrf @method('PUT')
-                                        <input type="hidden" name="estado" value="Confirmada">
-                                        <button type="submit" class="btn-icon-action icon-accept" title="Aceptar Cita y Notificar" onclick="return confirm('¿Aceptar esta solicitud y enviar correo al cliente?');">
-                                            <i class="bi bi-check-circle-fill"></i>
-                                        </button>
-                                    </form>
+                           {{-- COLUMNA DE ACCIONES MINIMALISTAS --}}
+                <td style="padding: 15px; text-align: right; white-space: nowrap;">
+                    
+                    @if($solicitud->estado == 'Pendiente')
+                        {{-- Botón Aceptar --}}
+                        <form action="{{ route('dashboard.citas.estado', $solicitud->id_cita) }}" method="POST" style="display: inline-block;">
+                            @csrf @method('PUT')
+                            <input type="hidden" name="estado" value="Confirmada">
+                            <button type="submit" class="btn-icon-action icon-accept" title="Aceptar Cita y Notificar" onclick="return confirm('¿Aceptar esta solicitud y enviar correo al cliente?');">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </button>
+                        </form>
+                    @endif
 
-                                    {{-- Botón Rechazar (Abre Modal de Advertencia) --}}
-                                    <button type="button" class="btn-icon-action icon-reject" title="Rechazar y Eliminar" onclick="abrirModalRechazo('{{ $solicitud->id_cita }}', '{{ addslashes($solicitud->cliente_nombre) }}')">
-                                        <i class="bi bi-x-circle-fill"></i>
-                                    </button>
-                                @endif
+                    {{-- Botón Rechazar (Abre Modal de Advertencia) - Oculto para Colaboradores --}}
+                    @if(auth()->user()->id_rol != 3)
+                        <button type="button" class="btn-icon-action icon-reject" title="Rechazar y Eliminar" onclick="abrirModalRechazo('{{ $solicitud->id_cita }}', '{{ addslashes($solicitud->cliente_nombre) }}')">
+                            <i class="bi bi-x-circle-fill"></i>
+                        </button>
+                    @endif
 
-                                {{-- Botón Email Directo --}}
-                                <a href="mailto:{{ $solicitud->cliente_correo }}?subject=Sobre tu solicitud de {{ $solicitud->asunto_servicio }}" class="btn-icon-action icon-email" title="Enviar correo manual">
-                                    <i class="bi bi-envelope"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" style="text-align: center; padding: 40px; color: #888; font-style: italic;">No hay solicitudes de clientes por el momento.</td>
-                        </tr>
-                    @endforelse
+                    {{-- Botón Email Directo --}}
+                    <a href="mailto:{{ $solicitud->cliente_correo }}?subject=Sobre tu solicitud de {{ $solicitud->asunto_servicio }}" class="btn-icon-action icon-email" title="Enviar correo manual">
+                        <i class="bi bi-envelope"></i>
+                    </a>
+                </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 40px; color: #888; font-style: italic;">No hay solicitudes de clientes por el momento.</td>
+                </tr>
+                @endforelse
                 </tbody>
             </table>
         </main>
