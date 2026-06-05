@@ -1,7 +1,7 @@
 <div id="project-view" class="akira-project-view">
 
     <style>
-        /* ================= ESTILOS GENERALES Y ESCRITORIO ================= */
+        /* ================= ESTILOS GENERALES ================= */
         .akira-project-view {
             display: flex;
             flex-direction: column;
@@ -28,57 +28,6 @@
             margin: 0;
         }
 
-        .site-header-main {
-            margin-bottom: clamp(60px, 8vh, 120px);
-            font-size: 1.1rem;
-        }
-
-        .main-content-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: clamp(30px, 4vw, 80px);
-            flex-grow: 1;
-            margin-bottom: clamp(60px, 8vh, 120px);
-        }
-
-        .column-title {
-            font-weight: normal;
-            font-size: 1.05rem;
-            margin-bottom: 2rem;
-            letter-spacing: 0.03em;
-        }
-
-        .project-list li {
-            margin-bottom: 0.6rem;
-            font-size: 0.95rem;
-            display: flex;
-        }
-
-        .list-group { margin-bottom: 2.5rem; }
-        .indent-1 { padding-left: 2rem; }
-        .indent-2 { padding-left: 4rem; }
-
-        .year-label {
-            display: inline-block;
-            min-width: 3.5rem;
-            color: #8c8c8c;
-            font-size: 0.9rem;
-        }
-
-        .site-footer-main {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.95rem;
-            color: #8c8c8c;
-            padding-bottom: 20px;
-        }
-
-        .footer-left {
-            display: flex;
-            gap: 40px;
-        }
-
         /* --- BOTÓN DE REGRESAR FLOTANTE --- */
         .btn-flotante-regresar {
             position: fixed;
@@ -101,67 +50,58 @@
             transform: translateX(-5px);
         }
 
-        /* --- HOVER PREVIEW --- */
-        .hover-preview {
-            position: fixed;
-            pointer-events: none;
-            width: 320px;
-            height: 220px;
-            overflow: hidden;
-            opacity: 0;
-            z-index: 10000;
-            transform: translate(15px, -50%);
-            transition: opacity 0.4s ease, transform 0.2s ease-out;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .hover-preview img { width: 100%; height: 100%; object-fit: cover; }
-        .hover-preview.active { opacity: 1; }
+        /* ================= CONTROL DE VISTAS EXACTO (Cero Bootstrap) ================= */
+        .vista-movil { display: none; }
+        .vista-escritorio { display: block; }
 
-        /* --- MODAL PANTALLA COMPLETA --- */
-        .akira-modal-fullscreen {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #fdfdfd; 
-            z-index: 100000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-            overflow-y: auto;
-            padding-top: 60px; 
-        }
-        .akira-modal-fullscreen.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .modal-close-btn {
-            position: fixed;
-            top: 30px; right: 40px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 100001;
-            background: none; border: none;
-            font-family: Arial, sans-serif;
-            color: #111;
-            transition: transform 0.3s ease;
-        }
-        .modal-close-btn:hover { transform: scale(1.1); }
-
-        /* --- ANIMACIONES AL SCROLLEAR --- */
-        .akira-fade-up {
-            opacity: 0;
-            transform: translateY(25px);
-            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
-        }
-        .akira-fade-up.is-visible {
-            opacity: 1;
-            transform: translateY(0); 
+        @media (max-width: 850px) {
+            .vista-escritorio { display: none !important; }
+            .vista-movil { display: block !important; }
         }
 
-        body {
-            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+        /* ================= ESTILOS VISTA ESCRITORIO ================= */
+        .site-header-main {
+            margin-bottom: clamp(60px, 8vh, 120px);
+            font-size: 1.1rem;
         }
+        .main-content-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(30px, 4vw, 80px);
+            flex-grow: 1;
+            margin-bottom: clamp(60px, 8vh, 120px);
+        }
+        .column-title {
+            font-weight: normal;
+            font-size: 1.05rem;
+            margin-bottom: 2rem;
+            letter-spacing: 0.03em;
+        }
+        .project-list li {
+            margin-bottom: 0.6rem;
+            font-size: 0.95rem;
+            display: flex;
+        }
+        .list-group { margin-bottom: 2.5rem; }
+        .indent-1 { padding-left: 2rem; }
+        .indent-2 { padding-left: 4rem; }
+        .year-label {
+            display: inline-block;
+            min-width: 3.5rem;
+            color: #8c8c8c;
+            font-size: 0.9rem;
+        }
+        .site-footer-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            color: #8c8c8c;
+            padding-bottom: 20px;
+        }
+        .footer-left { display: flex; gap: 40px; }
 
-        /* ================= ESTILOS VISTA MÓVIL (NUEVOS) ================= */
+        /* ================= ESTILOS VISTA MÓVIL (BLINDADA) ================= */
         .mobile-top-bar {
             display: flex;
             justify-content: space-between;
@@ -169,16 +109,17 @@
             font-size: 1.1rem;
             font-weight: normal;
         }
-        .mobile-top-bar .brand-name {
-            font-weight: bold;
-        }
+        .mobile-top-bar .brand-name { font-weight: bold; }
+        
         .mobile-slider-container {
-            display: flex;
-            overflow-x: auto;
+            display: flex !important;
+            flex-direction: row !important; /* Fuerza a que estén uno al lado del otro */
+            flex-wrap: nowrap !important;   /* Evita que se caigan a la siguiente línea */
+            overflow-x: auto !important;
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
             width: 100vw;
-            margin-left: calc(-1 * clamp(30px, 5vw, 60px)); /* Ignorar padding padre */
+            margin-left: calc(-1 * clamp(30px, 5vw, 60px));
             padding-bottom: 40px;
             gap: 0;
         }
@@ -186,7 +127,7 @@
             display: none;
         }
         .slider-section {
-            flex: 0 0 85%;
+            flex: 0 0 85vw !important; /* Cada columna ocupa el 85% de la pantalla */
             scroll-snap-align: center;
             padding: 0 clamp(30px, 5vw, 60px);
         }
@@ -198,20 +139,49 @@
             color: #8c8c8c;
             border-top: 1px solid #eaeaea;
         }
-        
-        @media (max-width: 900px) {
-            .hover-preview { display: none; }
+
+        /* --- HOVER PREVIEW & MODALES --- */
+        .hover-preview {
+            position: fixed; pointer-events: none; width: 320px; height: 220px;
+            overflow: hidden; opacity: 0; z-index: 10000;
+            transform: translate(15px, -50%);
+            transition: opacity 0.4s ease, transform 0.2s ease-out;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
+        .hover-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .hover-preview.active { opacity: 1; }
+
+        .akira-modal-fullscreen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #fdfdfd; z-index: 100000; opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease; overflow-y: auto; padding-top: 60px; 
+        }
+        .akira-modal-fullscreen.active { opacity: 1; pointer-events: auto; }
+        
+        .modal-close-btn {
+            position: fixed; top: 30px; right: 40px; font-size: 1.5rem; cursor: pointer;
+            z-index: 100001; background: none; border: none; color: #111;
+            transition: transform 0.3s ease;
+        }
+        .modal-close-btn:hover { transform: scale(1.1); }
+
+        .akira-fade-up {
+            opacity: 0; transform: translateY(25px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .akira-fade-up.is-visible { opacity: 1; transform: translateY(0); }
+
+        body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        
+        @media (max-width: 900px) { .hover-preview { display: none; } }
     </style>
 
     <a href="{{ route('landing') }}" class="btn-flotante-regresar">&larr; regresar</a>
 
-    <div class="d-block d-md-none">
+    <div class="vista-movil">
         
         <nav class="mobile-top-bar">
-            <div>
-                <a href="{{ route('project.detail') }}" class="brand-name">Estudio Akiraka ,</a>
-            </div>
+            <div><a href="{{ route('project.detail') }}" class="brand-name">Estudio Akiraka ,</a></div>
             <div>
                 <a href="{{ route('info') }}">Info ,</a>
                 <a href="{{ route('contacto') }}">Contacto</a>
@@ -222,7 +192,6 @@
             
             <div class="slider-section">
                 <h2 class="column-title">Obras</h2>
-                
                 <div class="list-group">
                     <ul class="project-list">
                         <li>Proyectos</li>
@@ -238,7 +207,6 @@
                         @endforelse
                     </ul>
                 </div>
-
                 <div class="list-group">
                     <ul class="project-list">
                         <li>Construidos</li>
@@ -303,10 +271,9 @@
     </div>
 
 
-    <div class="d-none d-md-block">
+    <div class="vista-escritorio">
         <header class="site-header-main">
-            <a href="{{ route('project.detail') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">
-            Estudio Akiraka ,</a>
+            <a href="{{ route('project.detail') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Estudio Akiraka ,</a>
             <a href="{{ route('info') }}" class="nav-link-akira">Info ,</a>
             <a href="{{ route('contacto') }}" class="nav-link-akira">Contacto</a>
         </header>
@@ -314,7 +281,6 @@
         <main class="main-content-grid">
             <section>
                 <h2 class="column-title">Obras</h2>
-                
                 <div class="list-group">
                     <ul class="project-list">
                         <li>Proyectos</li>
@@ -366,12 +332,10 @@
 
             <section>
                 <h2 class="column-title">Publicaciones</h2>
-                
                 <ul class="project-list">
                     @forelse($publicaciones as $publicacion)
                         <li>
                             <span class="year-label">{{ \Carbon\Carbon::parse($publicacion->fecha)->format('Y') }}</span> 
-                            
                             <a href="{{ route('publicaciones.show', $publicacion->id_publicacion) }}" class="project-link" data-img="{{ $publicacion->portada ? asset('storage/' . $publicacion->portada) : 'https://via.placeholder.com/320x220?text=Publicación' }}">
                                 {{ $publicacion->titulo }}
                             </a>
@@ -393,7 +357,6 @@
             <a href="#" id="btn-espanol" onclick="cambiarIdioma('es', event)" style="display:none;">Leer en Español</a>
         </footer>
     </div>
-
 
     <div id="hover-preview" class="hover-preview">
         <img src="" alt="Preview" id="preview-img">
@@ -422,7 +385,6 @@
     const modalContent = document.getElementById('historia-content');
 
     projectLinks.forEach(link => {
-        // Hover Preview (Solo funciona en PC porque ocultamos la clase con CSS en móvil)
         link.addEventListener('mouseenter', () => {
             const imageSrc = link.getAttribute('data-img');
             if(imageSrc) {
@@ -440,7 +402,6 @@
             previewContainer.classList.remove('active');
         });
 
-        // Click para el Modal AJAX (Funciona igual en Móvil y PC)
         link.addEventListener('click', function(e) {
             const url = this.getAttribute('href');
             if(url === '#' || url === '') return;
@@ -481,14 +442,7 @@
         setTimeout(() => { modalContent.innerHTML = ''; }, 400);
     }
 
-    function regresarAlLanding() {
-        window.location.href = "{{ url('/') }}"; 
-    }
-
-    // =========================================================
-    // ANIMACIÓN DE SCROLL PARA EL MENÚ (FADE UP - VISTA PC)
-    // =========================================================
-    const scrollElements = document.querySelectorAll('.d-md-block .column-title, .d-md-block .project-list li');
+    const scrollElements = document.querySelectorAll('.vista-escritorio .column-title, .vista-escritorio .project-list li');
     scrollElements.forEach(el => el.classList.add('akira-fade-up'));
 
     const menuObserver = new IntersectionObserver((entries, observer) => {
@@ -507,9 +461,6 @@
 
     scrollElements.forEach(el => menuObserver.observe(el));
 
-    // =========================================================
-    // SISTEMA DE TRADUCCIÓN
-    // =========================================================
     function cambiarIdioma(idioma, event) {
         event.preventDefault();
         document.cookie = `googtrans=/es/${idioma}; path=/;`;
@@ -519,11 +470,9 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         if (document.cookie.includes('googtrans=/es/en')) {
-            // Actualizar botones de PC
             document.getElementById('btn-traducir').style.display = 'none';
             document.getElementById('btn-espanol').style.display = 'inline-block';
             
-            // Actualizar botones de Móvil
             if(document.getElementById('btn-traducir-mob')) {
                 document.getElementById('btn-traducir-mob').style.display = 'none';
                 document.getElementById('btn-espanol-mob').style.display = 'inline-block';
