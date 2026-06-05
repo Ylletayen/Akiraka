@@ -1,3 +1,6 @@
+@extends('layouts.app')
+
+@section('content')
 <div id="project-view" class="akira-project-view">
 
     <style>
@@ -460,3 +463,4 @@
         }
     });
 </script>
+@endsection
