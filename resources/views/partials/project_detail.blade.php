@@ -13,7 +13,6 @@
             padding: clamp(30px, 5vw, 60px);
             font-family: "Garamond", "Baskerville", "Times New Roman", serif !important;
             color: #111111 !important;
-            /* EVITAR DESBORDAMIENTOS EN MÓVIL */
             box-sizing: border-box;
             width: 100%;
             max-width: 100vw;
@@ -59,48 +58,60 @@
         .vista-escritorio { display: none !important; }
         .vista-movil { display: block !important; width: 100%; }
 
-        /* 2. EXCEPCIÓN: Solo si la pantalla es mayor a 850px (Monitor real), se muestra PC */
+        /* 2. EXCEPCIÓN: Solo si la pantalla es mayor a 850px, se muestra PC */
         @media screen and (min-width: 851px) {
             .vista-escritorio { display: block !important; }
             .vista-movil { display: none !important; }
         }
 
-        /* ================= ESTILOS VISTA MÓVIL ================= */
+        /* ================= ESTILOS VISTA MÓVIL (TABS) ================= */
         .mobile-top-bar {
             display: flex;
             justify-content: space-between;
-            padding-bottom: 40px;
+            padding-bottom: 20px;
             font-size: 1.1rem;
             font-weight: normal;
         }
         .mobile-top-bar .brand-name { font-weight: bold; }
         
-        .mobile-slider-container {
-            display: flex !important;
-            flex-direction: row !important; 
-            flex-wrap: nowrap !important;   
-            overflow-x: auto !important;
-            scroll-snap-type: x mandatory;
+        /* El Menú Horizontal Deslizable */
+        .mobile-nav-tabs {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            width: 100vw;
+            border-bottom: 1px solid #eaeaea;
             margin-left: calc(-1 * clamp(30px, 5vw, 60px));
-            padding-bottom: 40px;
-            gap: 0;
-        }
-        .mobile-slider-container::-webkit-scrollbar { display: none; }
-        
-        .slider-section {
-            flex: 0 0 85vw !important; 
-            min-width: 85vw !important; /* Fuerza estricta para que no se apachurre */
-            scroll-snap-align: center;
+            margin-right: calc(-1 * clamp(30px, 5vw, 60px));
             padding: 0 clamp(30px, 5vw, 60px);
-            box-sizing: border-box;
+            margin-bottom: 30px;
+        }
+        .mobile-nav-tabs::-webkit-scrollbar { display: none; }
+        
+        .mobile-nav-tabs .nav-link {
+            color: #888;
+            font-family: Arial, sans-serif;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 0;
+            white-space: nowrap;
+            padding: 15px 20px 15px 0;
+            background: transparent;
+            border: none;
         }
         
+        .mobile-nav-tabs .nav-link.active {
+            color: #111;
+            font-weight: bold;
+            box-shadow: inset 0 -2px 0 #111;
+        }
+
         .mobile-footer {
             display: flex;
             justify-content: space-between;
             padding-top: 20px;
+            margin-top: 40px;
             font-size: 0.95rem;
             color: #8c8c8c;
             border-top: 1px solid #eaeaea;
@@ -155,31 +166,41 @@
         }
         .akira-fade-up.is-visible { opacity: 1; transform: translateY(0); }
 
-        body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
         @media (max-width: 900px) { .hover-preview { display: none; } }
     </style>
 
-    <a href="{{ route('landing') }}" class="btn-flotante-regresar">&larr; regresar</a>
+    <a href="{{ route('landing') ?? '#' }}" class="btn-flotante-regresar">&larr; regresar</a>
 
     <div class="vista-movil">
         
         <nav class="mobile-top-bar">
-            <div><a href="{{ route('project.detail') }}" class="brand-name">Estudio Akiraka ,</a></div>
+            <div><a href="{{ route('project.detail') ?? '#' }}" class="brand-name">Estudio Akiraka ,</a></div>
             <div>
-                <a href="{{ route('info') }}">Info ,</a>
-                <a href="{{ route('contacto') }}">Contacto</a>
+                <a href="{{ route('info') ?? '#' }}">Info ,</a>
+                <a href="{{ route('contacto') ?? '#' }}">Contacto</a>
             </div>
         </nav>
 
-        <div class="mobile-slider-container">
+        <ul class="nav mobile-nav-tabs" id="mobileTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="obras-tab" data-bs-toggle="tab" data-bs-target="#obras" type="button" role="tab">Obras</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="objetos-tab" data-bs-toggle="tab" data-bs-target="#objetos" type="button" role="tab">Objetos</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="publicaciones-tab" data-bs-toggle="tab" data-bs-target="#publicaciones" type="button" role="tab">Publicaciones</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="mobileTabContent">
             
-            <div class="slider-section">
-                <h2 class="column-title">Obras</h2>
+            <div class="tab-pane fade show active" id="obras" role="tabpanel">
                 <div class="list-group">
                     <ul class="project-list">
                         <li>Proyectos</li>
                         <li class="indent-1">En proceso</li>
-                        @forelse($proyectosEnProceso as $proyecto)
+                        @forelse($proyectosEnProceso ?? [] as $proyecto)
                             <li class="indent-2">
                                 <a href="{{ route('project.main', $proyecto->id_proyecto) }}" class="project-link">
                                     {{ $proyecto->titulo }}
@@ -193,7 +214,7 @@
                 <div class="list-group">
                     <ul class="project-list">
                         <li>Construidos</li>
-                        @forelse($proyectosConstruidos as $proyecto)
+                        @forelse($proyectosConstruidos ?? [] as $proyecto)
                             <li>
                                 <span class="year-label">{{ $proyecto->anio ?? 'S/A' }}</span> 
                                 <a href="{{ route('project.main', $proyecto->id_proyecto) }}" class="project-link">
@@ -207,10 +228,9 @@
                 </div>
             </div>
 
-            <div class="slider-section">
-                <h2 class="column-title">Objetos</h2>
+            <div class="tab-pane fade" id="objetos" role="tabpanel">
                 <ul class="project-list">
-                    @forelse($objetos as $objeto)
+                    @forelse($objetos ?? [] as $objeto)
                         <li>
                             <span class="year-label">{{ $objeto->anio ?? 'S/A' }}</span> 
                             <a href="{{ route('objeto.main', $objeto->id_objeto) }}" class="project-link">
@@ -223,10 +243,9 @@
                 </ul>
             </div>
 
-            <div class="slider-section">
-                <h2 class="column-title">Publicaciones</h2>
+            <div class="tab-pane fade" id="publicaciones" role="tabpanel">
                 <ul class="project-list">
-                    @forelse($publicaciones as $publicacion)
+                    @forelse($publicaciones ?? [] as $publicacion)
                         <li>
                             <span class="year-label">{{ \Carbon\Carbon::parse($publicacion->fecha)->format('Y') }}</span> 
                             <a href="{{ route('publicaciones.show', $publicacion->id_publicacion) }}" class="project-link">
@@ -238,7 +257,7 @@
                     @endforelse
                 </ul>
                 <div style="margin-top: 40px;">
-                    @include('Principal.cita')
+                    @includeIf('Principal.cita')
                 </div>
             </div>
 
@@ -253,12 +272,11 @@
         </footer>
     </div>
 
-
     <div class="vista-escritorio">
         <header class="site-header-main">
-            <a href="{{ route('project.detail') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Estudio Akiraka ,</a>
-            <a href="{{ route('info') }}" class="nav-link-akira">Info ,</a>
-            <a href="{{ route('contacto') }}" class="nav-link-akira">Contacto</a>
+            <a href="{{ route('project.detail') ?? '#' }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Estudio Akiraka ,</a>
+            <a href="{{ route('info') ?? '#' }}" class="nav-link-akira">Info ,</a>
+            <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira">Contacto</a>
         </header>
 
         <main class="main-content-grid">
@@ -268,7 +286,7 @@
                     <ul class="project-list">
                         <li>Proyectos</li>
                         <li class="indent-1">En proceso</li>
-                        @forelse($proyectosEnProceso as $proyecto)
+                        @forelse($proyectosEnProceso ?? [] as $proyecto)
                             <li class="indent-2">
                                 <a href="{{ route('project.main', $proyecto->id_proyecto) }}" class="project-link" data-img="{{ $proyecto->portada ? asset('storage/' . $proyecto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
                                     {{ $proyecto->titulo }}
@@ -283,7 +301,7 @@
                 <div class="list-group">
                     <ul class="project-list">
                         <li>Construidos</li>
-                        @forelse($proyectosConstruidos as $proyecto)
+                        @forelse($proyectosConstruidos ?? [] as $proyecto)
                             <li>
                                 <span class="year-label">{{ $proyecto->anio ?? 'S/A' }}</span> 
                                 <a href="{{ route('project.main', $proyecto->id_proyecto) }}" class="project-link" data-img="{{ $proyecto->portada ? asset('storage/' . $proyecto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
@@ -300,7 +318,7 @@
             <section>
                 <h2 class="column-title">Objetos</h2>
                 <ul class="project-list">
-                    @forelse($objetos as $objeto)
+                    @forelse($objetos ?? [] as $objeto)
                         <li>
                             <span class="year-label">{{ $objeto->anio ?? 'S/A' }}</span> 
                             <a href="{{ route('objeto.main', $objeto->id_objeto) }}" class="project-link" data-img="{{ $objeto->portada ? asset('storage/' . $objeto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
@@ -316,7 +334,7 @@
             <section>
                 <h2 class="column-title">Publicaciones</h2>
                 <ul class="project-list">
-                    @forelse($publicaciones as $publicacion)
+                    @forelse($publicaciones ?? [] as $publicacion)
                         <li>
                             <span class="year-label">{{ \Carbon\Carbon::parse($publicacion->fecha)->format('Y') }}</span> 
                             <a href="{{ route('publicaciones.show', $publicacion->id_publicacion) }}" class="project-link" data-img="{{ $publicacion->portada ? asset('storage/' . $publicacion->portada) : 'https://via.placeholder.com/320x220?text=Publicación' }}">
@@ -328,7 +346,7 @@
                     @endforelse
                 </ul>
 
-                @include('Principal.cita')
+                @includeIf('Principal.cita')
             </section>
         </main>
 
@@ -360,106 +378,108 @@
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
-    const previewContainer = document.getElementById('hover-preview');
-    const previewImg = document.getElementById('preview-img');
-    const projectLinks = document.querySelectorAll('.project-link');
-    
-    const modalHistoria = document.getElementById('historia-modal');
-    const modalContent = document.getElementById('historia-content');
-
-    projectLinks.forEach(link => {
-        link.addEventListener('mouseenter', () => {
-            const imageSrc = link.getAttribute('data-img');
-            if(imageSrc) {
-                previewImg.src = imageSrc;
-                previewContainer.classList.add('active');
-            }
-        });
-
-        link.addEventListener('mousemove', (e) => {
-            previewContainer.style.left = e.clientX + 'px';
-            previewContainer.style.top = e.clientY + 'px';
-        });
-
-        link.addEventListener('mouseleave', () => {
-            previewContainer.classList.remove('active');
-        });
-
-        link.addEventListener('click', function(e) {
-            const url = this.getAttribute('href');
-            if(url === '#' || url === '') return;
-
-            e.preventDefault(); 
-            
-            modalHistoria.classList.add('active');
-            modalContent.innerHTML = '<div style="text-align:center; padding-top: 20vh; font-family: Garamond, serif; font-size: 1.5rem; color: #888;">Cargando historia...</div>';
-
-            fetch(url)
-                .then(response => response.text())
-                .then(html => {
-                    modalContent.innerHTML = html;
-                    const slides = modalContent.querySelectorAll('.akira-slide');
-                    if(slides.length > 0) {
-                        const observerAnim = new IntersectionObserver((entries) => {
-                            entries.forEach(entry => {
-                                if (entry.isIntersecting) {
-                                    entry.target.classList.add('is-visible');
-                                } else {
-                                    entry.target.classList.remove('is-visible');
-                                }
-                            });
-                        }, { threshold: 0.5 });
-                        
-                        slides.forEach(slide => observerAnim.observe(slide));
-                    }
-                })
-                .catch(error => {
-                    modalContent.innerHTML = '<div style="text-align:center; padding-top: 20vh; color: #d9534f;">Hubo un error al cargar la historia.</div>';
-                    console.error('Error:', error);
-                });
-        }); 
-    }); 
-
-    function cerrarModalHistoria() {
-        modalHistoria.classList.remove('active');
-        setTimeout(() => { modalContent.innerHTML = ''; }, 400);
-    }
-
-    const scrollElements = document.querySelectorAll('.vista-escritorio .column-title, .vista-escritorio .project-list li');
-    scrollElements.forEach(el => el.classList.add('akira-fade-up'));
-
-    const menuObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                setTimeout(() => {
-                    entry.target.classList.add('is-visible');
-                }, 50); 
-                observer.unobserve(entry.target);
-            }
-        });
-    }, {
-        threshold: 0.1, 
-        rootMargin: "0px 0px -20px 0px" 
-    });
-
-    scrollElements.forEach(el => menuObserver.observe(el));
-
-    function cambiarIdioma(idioma, event) {
-        event.preventDefault();
-        document.cookie = `googtrans=/es/${idioma}; path=/;`;
-        document.cookie = `googtrans=/es/${idioma}; domain=${window.location.hostname}; path=/;`;
-        window.location.reload();
-    }
-
     document.addEventListener('DOMContentLoaded', function() {
+        const previewContainer = document.getElementById('hover-preview');
+        const previewImg = document.getElementById('preview-img');
+        const projectLinks = document.querySelectorAll('.project-link');
+        
+        const modalHistoria = document.getElementById('historia-modal');
+        const modalContent = document.getElementById('historia-content');
+
+        projectLinks.forEach(link => {
+            link.addEventListener('mouseenter', () => {
+                const imageSrc = link.getAttribute('data-img');
+                if(imageSrc) {
+                    previewImg.src = imageSrc;
+                    previewContainer.classList.add('active');
+                }
+            });
+
+            link.addEventListener('mousemove', (e) => {
+                previewContainer.style.left = e.clientX + 'px';
+                previewContainer.style.top = e.clientY + 'px';
+            });
+
+            link.addEventListener('mouseleave', () => {
+                previewContainer.classList.remove('active');
+            });
+
+            link.addEventListener('click', function(e) {
+                const url = this.getAttribute('href');
+                if(url === '#' || url === '') return;
+
+                e.preventDefault(); 
+                
+                modalHistoria.classList.add('active');
+                modalContent.innerHTML = '<div style="text-align:center; padding-top: 20vh; font-family: Garamond, serif; font-size: 1.5rem; color: #888;">Cargando historia...</div>';
+
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => {
+                        modalContent.innerHTML = html;
+                        const slides = modalContent.querySelectorAll('.akira-slide');
+                        if(slides.length > 0) {
+                            const observerAnim = new IntersectionObserver((entries) => {
+                                entries.forEach(entry => {
+                                    if (entry.isIntersecting) {
+                                        entry.target.classList.add('is-visible');
+                                    } else {
+                                        entry.target.classList.remove('is-visible');
+                                    }
+                                });
+                            }, { threshold: 0.5 });
+                            
+                            slides.forEach(slide => observerAnim.observe(slide));
+                        }
+                    })
+                    .catch(error => {
+                        modalContent.innerHTML = '<div style="text-align:center; padding-top: 20vh; color: #d9534f;">Hubo un error al cargar la historia.</div>';
+                        console.error('Error:', error);
+                    });
+            }); 
+        }); 
+
+        window.cerrarModalHistoria = function() {
+            modalHistoria.classList.remove('active');
+            setTimeout(() => { modalContent.innerHTML = ''; }, 400);
+        };
+
+        const scrollElements = document.querySelectorAll('.vista-escritorio .column-title, .vista-escritorio .project-list li');
+        scrollElements.forEach(el => el.classList.add('akira-fade-up'));
+
+        const menuObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('is-visible');
+                    }, 50); 
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1, 
+            rootMargin: "0px 0px -20px 0px" 
+        });
+
+        scrollElements.forEach(el => menuObserver.observe(el));
+
+        window.cambiarIdioma = function(idioma, event) {
+            event.preventDefault();
+            document.cookie = `googtrans=/es/${idioma}; path=/;`;
+            document.cookie = `googtrans=/es/${idioma}; domain=${window.location.hostname}; path=/;`;
+            window.location.reload();
+        };
+
         if (document.cookie.includes('googtrans=/es/en')) {
-            document.getElementById('btn-traducir').style.display = 'none';
-            document.getElementById('btn-espanol').style.display = 'inline-block';
+            const btnTraducir = document.getElementById('btn-traducir');
+            const btnEspanol = document.getElementById('btn-espanol');
+            if (btnTraducir) btnTraducir.style.display = 'none';
+            if (btnEspanol) btnEspanol.style.display = 'inline-block';
             
-            if(document.getElementById('btn-traducir-mob')) {
-                document.getElementById('btn-traducir-mob').style.display = 'none';
-                document.getElementById('btn-espanol-mob').style.display = 'inline-block';
-            }
+            const btnTraducirMob = document.getElementById('btn-traducir-mob');
+            const btnEspanolMob = document.getElementById('btn-espanol-mob');
+            if (btnTraducirMob) btnTraducirMob.style.display = 'none';
+            if (btnEspanolMob) btnEspanolMob.style.display = 'inline-block';
         }
     });
 </script>
