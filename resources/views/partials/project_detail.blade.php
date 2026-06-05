@@ -10,6 +10,11 @@
             padding: clamp(30px, 5vw, 60px);
             font-family: "Garamond", "Baskerville", "Times New Roman", serif !important;
             color: #111111 !important;
+            /* EVITAR DESBORDAMIENTOS EN MÓVIL */
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
         }
 
         .akira-project-view a {
@@ -44,63 +49,18 @@
             border-radius: 4px;
             transition: all 0.3s ease;
         }
+        .btn-flotante-regresar:hover { transform: translateX(-5px); }
 
-        .btn-flotante-regresar:hover {
-            color: #8c8c8c !important;
-            transform: translateX(-5px);
-        }
+        /* ================= CONTROL DE VISTAS (MOBILE-FIRST) ================= */
+        /* 1. POR DEFECTO: Todos ven el diseño móvil. */
+        .vista-escritorio { display: none !important; }
+        .vista-movil { display: block !important; width: 100%; }
 
-        /* ================= CONTROL DE VISTAS EXACTO ================= */
-        .vista-movil { display: none !important; }
-        .vista-escritorio { display: block !important; }
-
-        /* MAGIA: Si la pantalla es menor a 850px (Celulares/Tablets) */
-        @media screen and (max-width: 850px) {
-            .vista-escritorio { display: none !important; }
-            .vista-movil { display: block !important; }
+        /* 2. EXCEPCIÓN: Solo si la pantalla es mayor a 850px (Monitor real), se muestra PC */
+        @media screen and (min-width: 851px) {
+            .vista-escritorio { display: block !important; }
+            .vista-movil { display: none !important; }
         }
-
-        /* ================= ESTILOS VISTA ESCRITORIO ================= */
-        .site-header-main {
-            margin-bottom: clamp(60px, 8vh, 120px);
-            font-size: 1.1rem;
-        }
-        .main-content-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: clamp(30px, 4vw, 80px);
-            flex-grow: 1;
-            margin-bottom: clamp(60px, 8vh, 120px);
-        }
-        .column-title {
-            font-weight: normal;
-            font-size: 1.05rem;
-            margin-bottom: 2rem;
-            letter-spacing: 0.03em;
-        }
-        .project-list li {
-            margin-bottom: 0.6rem;
-            font-size: 0.95rem;
-            display: flex;
-        }
-        .list-group { margin-bottom: 2.5rem; }
-        .indent-1 { padding-left: 2rem; }
-        .indent-2 { padding-left: 4rem; }
-        .year-label {
-            display: inline-block;
-            min-width: 3.5rem;
-            color: #8c8c8c;
-            font-size: 0.9rem;
-        }
-        .site-footer-main {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.95rem;
-            color: #8c8c8c;
-            padding-bottom: 20px;
-        }
-        .footer-left { display: flex; gap: 40px; }
 
         /* ================= ESTILOS VISTA MÓVIL ================= */
         .mobile-top-bar {
@@ -124,14 +84,16 @@
             padding-bottom: 40px;
             gap: 0;
         }
-        .mobile-slider-container::-webkit-scrollbar {
-            display: none;
-        }
+        .mobile-slider-container::-webkit-scrollbar { display: none; }
+        
         .slider-section {
             flex: 0 0 85vw !important; 
+            min-width: 85vw !important; /* Fuerza estricta para que no se apachurre */
             scroll-snap-align: center;
             padding: 0 clamp(30px, 5vw, 60px);
+            box-sizing: border-box;
         }
+        
         .mobile-footer {
             display: flex;
             justify-content: space-between;
@@ -140,6 +102,24 @@
             color: #8c8c8c;
             border-top: 1px solid #eaeaea;
         }
+
+        /* ================= ESTILOS VISTA ESCRITORIO ================= */
+        .site-header-main { margin-bottom: clamp(60px, 8vh, 120px); font-size: 1.1rem; }
+        .main-content-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(30px, 4vw, 80px);
+            flex-grow: 1;
+            margin-bottom: clamp(60px, 8vh, 120px);
+        }
+        .column-title { font-weight: normal; font-size: 1.05rem; margin-bottom: 2rem; letter-spacing: 0.03em; }
+        .project-list li { margin-bottom: 0.6rem; font-size: 0.95rem; display: flex; }
+        .list-group { margin-bottom: 2.5rem; }
+        .indent-1 { padding-left: 2rem; }
+        .indent-2 { padding-left: 4rem; }
+        .year-label { display: inline-block; min-width: 3.5rem; color: #8c8c8c; font-size: 0.9rem; }
+        .site-footer-main { display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; color: #8c8c8c; padding-bottom: 20px; }
+        .footer-left { display: flex; gap: 40px; }
 
         /* --- HOVER PREVIEW & MODALES --- */
         .hover-preview {
@@ -173,19 +153,18 @@
         .akira-fade-up.is-visible { opacity: 1; transform: translateY(0); }
 
         body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-        
         @media (max-width: 900px) { .hover-preview { display: none; } }
     </style>
 
-    <a href="{{ route('landing') ?? '#' }}" class="btn-flotante-regresar">&larr; regresar</a>
+    <a href="{{ route('landing') }}" class="btn-flotante-regresar">&larr; regresar</a>
 
     <div class="vista-movil">
         
         <nav class="mobile-top-bar">
-            <div><a href="#" class="brand-name">Estudio Akiraka ,</a></div>
+            <div><a href="{{ route('project.detail') }}" class="brand-name">Estudio Akiraka ,</a></div>
             <div>
-                <a href="#">Info ,</a>
-                <a href="#">Contacto</a>
+                <a href="{{ route('info') }}">Info ,</a>
+                <a href="{{ route('contacto') }}">Contacto</a>
             </div>
         </nav>
 
@@ -197,7 +176,7 @@
                     <ul class="project-list">
                         <li>Proyectos</li>
                         <li class="indent-1">En proceso</li>
-                        @forelse($proyectosEnProceso ?? [] as $proyecto)
+                        @forelse($proyectosEnProceso as $proyecto)
                             <li class="indent-2">
                                 <a href="{{ route('project.main', $proyecto->id_proyecto) }}" class="project-link">
                                     {{ $proyecto->titulo }}
@@ -211,7 +190,7 @@
                 <div class="list-group">
                     <ul class="project-list">
                         <li>Construidos</li>
-                        @forelse($proyectosConstruidos ?? [] as $proyecto)
+                        @forelse($proyectosConstruidos as $proyecto)
                             <li>
                                 <span class="year-label">{{ $proyecto->anio ?? 'S/A' }}</span> 
                                 <a href="{{ route('project.main', $proyecto->id_proyecto) }}" class="project-link">
@@ -228,7 +207,7 @@
             <div class="slider-section">
                 <h2 class="column-title">Objetos</h2>
                 <ul class="project-list">
-                    @forelse($objetos ?? [] as $objeto)
+                    @forelse($objetos as $objeto)
                         <li>
                             <span class="year-label">{{ $objeto->anio ?? 'S/A' }}</span> 
                             <a href="{{ route('objeto.main', $objeto->id_objeto) }}" class="project-link">
@@ -244,7 +223,7 @@
             <div class="slider-section">
                 <h2 class="column-title">Publicaciones</h2>
                 <ul class="project-list">
-                    @forelse($publicaciones ?? [] as $publicacion)
+                    @forelse($publicaciones as $publicacion)
                         <li>
                             <span class="year-label">{{ \Carbon\Carbon::parse($publicacion->fecha)->format('Y') }}</span> 
                             <a href="{{ route('publicaciones.show', $publicacion->id_publicacion) }}" class="project-link">
@@ -256,7 +235,7 @@
                     @endforelse
                 </ul>
                 <div style="margin-top: 40px;">
-                    @includeIf('Principal.cita')
+                    @include('Principal.cita')
                 </div>
             </div>
 
@@ -274,9 +253,9 @@
 
     <div class="vista-escritorio">
         <header class="site-header-main">
-            <a href="#" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Estudio Akiraka ,</a>
-            <a href="#" class="nav-link-akira">Info ,</a>
-            <a href="#" class="nav-link-akira">Contacto</a>
+            <a href="{{ route('project.detail') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Estudio Akiraka ,</a>
+            <a href="{{ route('info') }}" class="nav-link-akira">Info ,</a>
+            <a href="{{ route('contacto') }}" class="nav-link-akira">Contacto</a>
         </header>
 
         <main class="main-content-grid">
@@ -286,7 +265,7 @@
                     <ul class="project-list">
                         <li>Proyectos</li>
                         <li class="indent-1">En proceso</li>
-                        @forelse($proyectosEnProceso ?? [] as $proyecto)
+                        @forelse($proyectosEnProceso as $proyecto)
                             <li class="indent-2">
                                 <a href="{{ route('project.main', $proyecto->id_proyecto) }}" class="project-link" data-img="{{ $proyecto->portada ? asset('storage/' . $proyecto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
                                     {{ $proyecto->titulo }}
@@ -301,7 +280,7 @@
                 <div class="list-group">
                     <ul class="project-list">
                         <li>Construidos</li>
-                        @forelse($proyectosConstruidos ?? [] as $proyecto)
+                        @forelse($proyectosConstruidos as $proyecto)
                             <li>
                                 <span class="year-label">{{ $proyecto->anio ?? 'S/A' }}</span> 
                                 <a href="{{ route('project.main', $proyecto->id_proyecto) }}" class="project-link" data-img="{{ $proyecto->portada ? asset('storage/' . $proyecto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
@@ -318,7 +297,7 @@
             <section>
                 <h2 class="column-title">Objetos</h2>
                 <ul class="project-list">
-                    @forelse($objetos ?? [] as $objeto)
+                    @forelse($objetos as $objeto)
                         <li>
                             <span class="year-label">{{ $objeto->anio ?? 'S/A' }}</span> 
                             <a href="{{ route('objeto.main', $objeto->id_objeto) }}" class="project-link" data-img="{{ $objeto->portada ? asset('storage/' . $objeto->portada) : 'https://via.placeholder.com/320x220?text=Sin+Imagen' }}">
@@ -334,7 +313,7 @@
             <section>
                 <h2 class="column-title">Publicaciones</h2>
                 <ul class="project-list">
-                    @forelse($publicaciones ?? [] as $publicacion)
+                    @forelse($publicaciones as $publicacion)
                         <li>
                             <span class="year-label">{{ \Carbon\Carbon::parse($publicacion->fecha)->format('Y') }}</span> 
                             <a href="{{ route('publicaciones.show', $publicacion->id_publicacion) }}" class="project-link" data-img="{{ $publicacion->portada ? asset('storage/' . $publicacion->portada) : 'https://via.placeholder.com/320x220?text=Publicación' }}">
@@ -346,7 +325,7 @@
                     @endforelse
                 </ul>
 
-                @includeIf('Principal.cita')
+                @include('Principal.cita')
             </section>
         </main>
 
