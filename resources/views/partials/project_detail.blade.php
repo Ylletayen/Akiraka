@@ -4,7 +4,6 @@
 <div id="project-view" class="akira-project-view">
 
     <style>
-        /* ================= ESTILOS GENERALES ================= */
         .akira-project-view {
             display: flex;
             flex-direction: column;
@@ -35,7 +34,6 @@
             margin: 0;
         }
 
-        /* --- BOTÓN DE REGRESAR FLOTANTE --- */
         .btn-flotante-regresar {
             position: fixed;
             bottom: clamp(20px, 4vh, 40px);
@@ -53,18 +51,14 @@
         }
         .btn-flotante-regresar:hover { transform: translateX(-5px); }
 
-        /* ================= CONTROL DE VISTAS (MOBILE-FIRST) ================= */
-        /* 1. POR DEFECTO: Todos ven el diseño móvil. */
         .vista-escritorio { display: none !important; }
         .vista-movil { display: block !important; width: 100%; }
 
-        /* 2. EXCEPCIÓN: Solo si la pantalla es mayor a 850px, se muestra PC */
         @media screen and (min-width: 851px) {
             .vista-escritorio { display: block !important; }
             .vista-movil { display: none !important; }
         }
 
-        /* ================= ESTILOS VISTA MÓVIL (TABS) ================= */
         .mobile-top-bar {
             display: flex;
             justify-content: space-between;
@@ -73,8 +67,7 @@
             font-weight: normal;
         }
         .mobile-top-bar .brand-name { font-weight: bold; }
-        
-        /* El Menú Horizontal Deslizable */
+
         .mobile-nav-tabs {
             display: flex;
             flex-wrap: nowrap;
@@ -117,7 +110,6 @@
             border-top: 1px solid #eaeaea;
         }
 
-        /* ================= ESTILOS VISTA ESCRITORIO ================= */
         .site-header-main { margin-bottom: clamp(60px, 8vh, 120px); font-size: 1.1rem; }
         .main-content-grid {
             display: grid;
@@ -135,7 +127,6 @@
         .site-footer-main { display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; color: #8c8c8c; padding-bottom: 20px; }
         .footer-left { display: flex; gap: 40px; }
 
-        /* --- HOVER PREVIEW & MODALES --- */
         .hover-preview {
             position: fixed; pointer-events: none; width: 320px; height: 220px;
             overflow: hidden; opacity: 0; z-index: 10000;

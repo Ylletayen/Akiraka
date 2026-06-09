@@ -131,11 +131,9 @@
 
 <div class="akira-container">
     <div class="akira-header">
-        <a href="{{ route('project.detail') }}" style="text-decoration: none; color: inherit; font-weight: normal;">Estudio Akiraka</a>
-        <span class="text-muted-akira">
-            <a href="{{ route('info') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Info</a>, 
-            <a href="{{ route('contacto') }}" style="text-decoration: none; color: inherit;">Contacto</a>.
-        </span>
+        <a href="{{ route('project.detail') ?? '#' }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Estudio Akiraka ,</a>
+            <a href="{{ route('info') ?? '#' }}" class="nav-link-akira">Info ,</a>
+            <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira">Contacto</a>
     </div>
 
     <div class="akira-description">
@@ -166,17 +164,6 @@
         </li>
         @endforeach
     </ul>
-
-    <div>
-        <div style="text-align: left; margin-top: 20px; border-top: 1px solid #eee; padding-top: 30px;">
-            <p class="permitir-copiar">
-                ESTUDIO DE ARQUITECTURA AKIRAKA<br>
-                {!! nl2br(e($config->direccion ?? "Parque Santa María 10, Santa María Ahuacatlán,\n51200 Valle de Bravo, Estado de México")) !!}<br>
-                Cel. {{ $config->telefono ?? '722 165 5901' }}<br>
-                C.E: administracion@akirakastudio.com y {{ $config->correo_contacto ?? 'akiraka.estudio@gmail.com' }}
-            </p>
-        </div>
-    </div>
 
     <footer class="site-footer-info">
         <div>2026</div>

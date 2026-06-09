@@ -116,9 +116,9 @@
 
 <div class="akira-container">
     <header class="site-header-main">
-        <a href="{{ route('project.detail') }}" class="notranslate" style="text-decoration: none; color: inherit;">Estudio Akiraka, </a>
-        <a href="{{ route('info') }}" style="text-decoration: none; color: inherit;">Info</a>, 
-        <a href="{{ route('contacto') }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Contacto</a>.
+        <a href="{{ route('project.detail') ?? '#' }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Estudio Akiraka ,</a>
+            <a href="{{ route('info') ?? '#' }}" class="nav-link-akira">Info ,</a>
+            <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira">Contacto</a>
     </header>
 
     @if(session('success'))
