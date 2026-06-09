@@ -11,7 +11,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
 
 <style>
-    /* ================= ESTILOS BASE DEL ESTUDIO ================= */
     .akira-container {
         max-width: 1100px; 
         margin: 0 auto;
@@ -28,7 +27,6 @@
     .contact-instruction { font-style: italic; font-size: 0.95rem; margin-bottom: 40px; color: #666; text-align: center; }
     .location-year-label { color: #ccc; font-size: 0.85rem; margin-right: 15px; display: inline-block; width: 60px; }
 
-    /* ================= BOTÓN PRINCIPAL DE CITAS ================= */
     .btn-agendar-cita {
         display: inline-block;
         background: #111; color: #fff; border: none;
@@ -37,11 +35,6 @@
         transition: background 0.3s ease, transform 0.2s ease;
     }
     .btn-agendar-cita:hover { background: #333; transform: translateY(-2px); }
-
-    /* ================= SECCIÓN DEL MAPA ================= */
-    .map-section { margin-top: 60px; border-top: 1px solid #eee; padding-top: 40px; }
-    .map-wrapper { width: 100%; height: 500px; filter: grayscale(100%); border: 1px solid #111; transition: filter 0.5s ease; margin-bottom: 20px; }
-    .map-wrapper:hover { filter: grayscale(0%); }
 
     /* ================= REDES SOCIALES ================= */
     .social-group-section { margin-top: 50px; border-top: 1px solid #eee; padding-top: 30px; text-align: center; }
@@ -99,7 +92,6 @@
     /* Regla para que la librería respete el ancho de tu diseño */
     .iti { width: 100%; }
 
-    /* FOOTER ESTÉTICO PARA LOS BOTONES DE IDIOMA */
     .site-footer-info {
         display: flex;
         justify-content: space-between;
@@ -169,17 +161,6 @@
                 <span class="location-year-label">Teléfono</span>
                 <span class="contact-value-reset notranslate"><br>{{ $config->telefono ?? '+52 722 165 5901' }}</span>
             </div>
-            <div class="col-md-6 mb-3">
-                <span class="location-year-label">Dirección</span>
-                <span class="contact-value-reset"><br>{!! nl2br(e($config->direccion ?? "Parque Santa María 10,\nValle de Bravo, Méx.")) !!}</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="map-section">
-        <span class="contact-label mb-3" style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 2px;">Ubicación / Espacio Odisea</span>
-        <div class="map-wrapper">
-            <iframe width="100%" height="100%" frameborder="0" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d467.4589255627712!2d-100.1363651761623!3d19.189445173707252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cd647e9a15bc7b%3A0x59426b73189edf87!2sEspacio%20Odisea!5e0!3m2!1ses-419!2smx!4v1709673000000!5m2!1ses-419!2smx" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
         </div>
     </div>
 
