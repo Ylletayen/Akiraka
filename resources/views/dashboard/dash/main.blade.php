@@ -123,7 +123,7 @@
                                 <div class="col-md-6">
                                     <div class="project-card">
                                         <a href="{{ route('proyectos.historias', $proyecto->id_proyecto) }}" style="text-decoration: none;">
-                                            <img src="{{ $proyecto->portada ? asset('img/' . $proyecto->portada) : 'https://via.placeholder.com/400x200?text=Sin+Imagen' }}">
+                                            <img src="{{ $proyecto->portada ? asset('imagenes/' . $proyecto->portada) : 'https://via.placeholder.com/400x200?text=Sin+Imagen' }}">
                                             <small>{{ $proyecto->titulo }}</small>
                                         </a>
                                     </div>
