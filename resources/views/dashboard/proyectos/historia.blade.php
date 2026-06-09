@@ -18,7 +18,10 @@
         .fase-row { background: #fff; outline: 1px solid #eee; transition: transform 0.2s; }
         .fase-row:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .fase-row td { padding: 15px; vertical-align: middle; }
-        .img-preview { width: 140px; height: 90px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
+        
+        /* Modificado: Agregado cursor y hover para indicar que se puede hacer clic */
+        .img-preview { width: 140px; height: 90px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; cursor: pointer; transition: opacity 0.2s; }
+        .img-preview:hover { opacity: 0.85; }
         
         .badge-info { font-family: Arial, sans-serif; font-size: 0.75rem; color: #888; font-weight: bold; margin-right: 15px; }
 
@@ -36,6 +39,72 @@
         .media-preview-container img, .media-preview-container video {
             max-width: 100%; max-height: 100%; object-fit: contain;
         }
+
+        /* --- INICIO: ESTILOS PARA EL VISOR DE IMAGEN (LIGHTBOX) --- */
+        .lightbox-overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            background: rgba(0, 0, 0, 0.85); 
+            backdrop-filter: blur(5px); 
+            z-index: 99999; /* Súper alto para que nada lo tape */
+            align-items: center; 
+            justify-content: center; 
+            opacity: 0; 
+            transition: opacity 0.3s ease; 
+            box-sizing: border-box;
+            padding: 40px;
+        }
+        .lightbox-overlay.active { display: flex; opacity: 1; }
+        
+        .lightbox-content { 
+            position: relative; 
+            width: 100%; 
+            height: 100%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        .lightbox-content img, .lightbox-content video { 
+            max-width: 100%; 
+            max-height: 100%; 
+            width: auto; 
+            height: auto; 
+            object-fit: contain; /* Obliga a la imagen a no cortarse */
+            border-radius: 8px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        }
+        
+        .lightbox-close { 
+            position: fixed; 
+            top: 30px; 
+            right: 40px; 
+            background: rgba(17, 17, 17, 0.7); 
+            border: 2px solid #ffffff; 
+            color: #ffffff; 
+            font-size: 1.5rem; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            width: 45px; 
+            height: 45px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 100000; /* Encima del overlay */
+            padding: 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .lightbox-close:hover { 
+            background: #ffffff; 
+            color: #111111; 
+            transform: scale(1.1); 
+        }
+        /* --- FIN: ESTILOS PARA EL VISOR DE IMAGEN --- */
     </style>
 
     <div class="dashboard-container">
@@ -124,9 +193,11 @@
                                 {{-- MAGIA PARA MOSTRAR VIDEO O IMAGEN --}}
                                 @php $esVideoFase = preg_match('/\.(mp4|webm)$/i', $img->url_imagen); @endphp
                                 @if($esVideoFase)
-                                    <video src="{{ asset('storage/' . $img->url_imagen) }}" class="img-preview" muted loop playsinline></video>
+                                    <!-- AÑADIDO: onclick="abrirLightbox(this.src, 'video')" -->
+                                    <video src="{{ asset('storage/' . $img->url_imagen) }}" class="img-preview" muted loop playsinline onclick="abrirLightbox(this.src, 'video')"></video>
                                 @else
-                                    <img src="{{ asset('storage/' . $img->url_imagen) }}" class="img-preview" alt="Fase">
+                                    <!-- AÑADIDO: onclick="abrirLightbox(this.src, 'imagen')" -->
+                                    <img src="{{ asset('storage/' . $img->url_imagen) }}" class="img-preview" alt="Fase" onclick="abrirLightbox(this.src, 'imagen')">
                                 @endif
                             </td>
                             
@@ -167,6 +238,16 @@
         </main>
     </div>
 </div>
+
+<!-- --- INICIO: VISOR DE IMAGEN A PANTALLA COMPLETA (LIGHTBOX HTML) --- -->
+<div id="mediaLightbox" class="lightbox-overlay" onclick="cerrarLightbox(event)">
+    <button class="lightbox-close" onclick="cerrarLightbox(event, true)">✕</button>
+    <div class="lightbox-content">
+        <img id="lightboxImg" src="" style="display: none;">
+        <video id="lightboxVideo" src="" controls style="display: none;"></video>
+    </div>
+</div>
+<!-- --- FIN: VISOR DE IMAGEN --- -->
 
 <div class="modal fade" id="modalEditarFase" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -286,5 +367,50 @@
         var myModal = new bootstrap.Modal(document.getElementById('modalEditarFase'));
         myModal.show();
     }
+
+    // --- INICIO: LÓGICA DEL VISOR DE IMÁGENES (LIGHTBOX JS) ---
+    function abrirLightbox(src, tipo) {
+        try {
+            const lightbox = document.getElementById('mediaLightbox');
+            const img = document.getElementById('lightboxImg');
+            const video = document.getElementById('lightboxVideo');
+
+            if (tipo === 'video') {
+                img.style.display = 'none';
+                video.src = src;
+                video.style.display = 'block';
+                // try/catch para evitar errores con las políticas de autoplay de algunos navegadores
+                let playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => { console.log('Autoplay prevented by browser:', error); });
+                }
+            } else {
+                video.style.display = 'none';
+                video.pause();
+                img.src = src;
+                img.style.display = 'block';
+            }
+
+            lightbox.classList.add('active');
+        } catch (error) {
+            console.error('Error al abrir el visor:', error);
+        }
+    }
+
+    function cerrarLightbox(e, force = false) {
+        // Cerrar solo si hacen clic en el fondo oscuro (overlay) o en el botón de la 'X'
+        if (force || e.target.id === 'mediaLightbox') {
+            const lightbox = document.getElementById('mediaLightbox');
+            const video = document.getElementById('lightboxVideo');
+            
+            lightbox.classList.remove('active');
+            
+            // Pausar el video al cerrar para que no siga sonando
+            if (!video.paused) {
+                video.pause();
+            }
+        }
+    }
+    // --- FIN: LÓGICA DEL VISOR DE IMÁGENES ---
 </script>
 @endsection
