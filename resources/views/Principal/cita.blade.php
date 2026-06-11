@@ -4,36 +4,31 @@
 @endphp
 
 <style>
-    /* ========================================================
-       BOTÓN PRINCIPAL FLOTANTE (CUADRADO COMPLETO)
-       ======================================================== */
     .chat-widget-btn {
         position: fixed; bottom: 30px; right: 30px; 
-        width: 60px; height: 60px; /* Tamaño del cuadrado */
-        background-color: #fff; /* Fondo blanco por si la imagen tiene transparencias */
-        border-radius: 8px; /* Un ligero redondeo en las esquinas se ve más profesional, ponlo en 0 si lo quieres totalmente en punta */
+        width: 60px; height: 60px;
+        background-color: #fff;
+        border-radius: 8px;
         display: flex; align-items: center; justify-content: center;
         cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.25);
         z-index: 9998; transition: transform 0.3s; 
-        border: 2px solid #111; /* Borde del cuadrado */
+        border: 2px solid #111;
         
-        /* --- LA CLAVE: 0 padding y overflow hidden --- */
-        padding: 5 !important; /* Quitamos todo el espacio interior */
-        overflow: hidden; /* Asegura que la imagen no se salga de las esquinas del cuadrado */
+        padding: 5 !important;
+        overflow: hidden;
     }
     .chat-widget-btn:hover { transform: scale(1.1) rotate(-5deg); }
     
-    /* LOGO: Ocupa todo el cuadrado */
     .chat-widget-btn img { 
         width: 100%; height: 100%; 
-        object-fit: contain; /* Fuerza a la imagen a rellenar el 100% del cuadrado sin deformarse */
+        object-fit: contain;
         padding: 0; 
         transform: none; 
     }
     
     .online-dot {
         position: absolute; 
-        bottom: -4px; right: -4px; /* Lo movemos un poco más afuera para que no tape tu logo */
+        bottom: -4px; right: -4px;
         width: 14px; height: 14px;
         background-color: #25d366; border-radius: 50%; border: 2px solid #fff;
     }
