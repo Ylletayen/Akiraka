@@ -14,9 +14,20 @@ class DashboardController extends Controller
         // =======================================================
         $totalProyectos = \App\Models\Proyecto::count();
         $totalObjetos = \App\Models\Objeto::count();
-        
-        $proyectosEnProceso = \App\Models\Proyecto::where('id_estado', 1)->take(2)->get();
-        $proyectosFuturos = \App\Models\Proyecto::whereIn('id_estado', [2, 3])->take(2)->get();
+
+        /*
+            Cargamos portadaPrincipal e imagenes para que el dashboard
+            pueda mostrar la portada real del proyecto.
+        */
+        $proyectosEnProceso = \App\Models\Proyecto::with(['portadaPrincipal', 'imagenes'])
+            ->where('id_estado', 1)
+            ->take(2)
+            ->get();
+
+        $proyectosFuturos = \App\Models\Proyecto::with(['portadaPrincipal', 'imagenes'])
+            ->whereIn('id_estado', [2, 3])
+            ->take(2)
+            ->get();
 
         // =======================================================
         // 2. CITAS RECIENTES (Las más nuevas aparecen primero)
@@ -31,7 +42,7 @@ class DashboardController extends Controller
                 'servicios.nombre as servicio_nombre'
             )
             ->where('citas.estado', 'Pendiente')
-            ->orderBy('citas.created_at', 'desc') // ✅ Corregido para que muestre las más nuevas arriba
+            ->orderBy('citas.created_at', 'desc')
             ->take(4)
             ->get();
 
@@ -46,18 +57,19 @@ class DashboardController extends Controller
             $finDia = \Carbon\Carbon::now()->subDays($i)->endOfDay()->getTimestamp();
             
             $conteo = DB::table('sessions')
-                ->whereNull('user_id') 
+                ->whereNull('user_id')
                 ->whereBetween('last_activity', [$inicioDia, $finDia])
                 ->count();
                 
             $visitasSemanales[] = $conteo;
-            $labelsSemanales[] = \Carbon\Carbon::now()->subDays($i)->isoFormat('ddd D'); 
+            $labelsSemanales[] = \Carbon\Carbon::now()->subDays($i)->isoFormat('ddd D');
         }
 
         // =======================================================
         // 4. GRÁFICA MENSUAL (Tipos de visitante)
         // =======================================================
         $inicioMes = \Carbon\Carbon::now()->startOfMonth()->getTimestamp();
+
         $sesionesMes = DB::table('sessions')
             ->whereNull('user_id')
             ->where('last_activity', '>=', $inicioMes)
@@ -77,9 +89,15 @@ class DashboardController extends Controller
 
         // Retornamos de forma limpia las variables que tu archivo Blade real necesita
         return view('dashboard.dash.main', compact(
-            'totalProyectos', 'totalObjetos', 'proyectosEnProceso', 'proyectosFuturos',
+            'totalProyectos',
+            'totalObjetos',
+            'proyectosEnProceso',
+            'proyectosFuturos',
             'citasRecientes',
-            'visitasSemanales', 'labelsSemanales', 'totalVisitasMes', 'visitantesNuevos',
+            'visitasSemanales',
+            'labelsSemanales',
+            'totalVisitasMes',
+            'visitantesNuevos',
             'visitantesRecurrentes'
         ));
     }
