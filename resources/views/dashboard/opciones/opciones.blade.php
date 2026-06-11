@@ -153,33 +153,70 @@
                 @csrf @method('PUT')
 
                 <div class="options-card">
-                    <h3 class="section-title-card">Roles dentro de la Empresa</h3>
-                    <p style="font-size: 0.8rem; color: #888; margin-bottom: 20px;">Asigna el cargo público que aparecerá en la página de Información para cada integrante.</p>
-                    
-                    @isset($equipo)
-                        @foreach($equipo as $miembro)
-                            @if($miembro->usuario && $miembro->usuario->id_rol == 1)
-                                @continue
-                            @endif
+    <h3 class="section-title-card">Información del Equipo</h3>
+    <p style="font-size: 0.8rem; color: #888; margin-bottom: 20px;">
+        Agrega, edita o elimina integrantes que aparecerán públicamente en la página de Información.
+    </p>
 
-                            <div class="roles-list-item">
-                                <div class="member-info">
-                                    <strong>{{ $miembro->usuario->nombre ?? 'Miembro' }}</strong>
-                                </div>
-                                <div class="role-input-group">
-                                    <div style="flex: 1;">
-                                        <label style="font-size: 0.6rem; font-weight: bold; color: #999;">PUESTO / ROL</label>
-                                        <input type="text" name="puestos[{{ $miembro->id_miembro }}][puesto]" 
-                                               class="form-control" 
-                                               style="padding: 8px 12px; font-size: 0.85rem;"
-                                               value="{{ $miembro->puesto }}" 
-                                               placeholder="Ej: Dirección general / Arquitecto Senior">
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    @endisset
+    <div id="equipo-lista">
+        @isset($equipo)
+            @foreach($equipo as $index => $miembro)
+                <div class="equipo-item" data-index="{{ $index }}" style="border: 1px solid #eee; border-radius: 8px; padding: 20px; margin-bottom: 20px; background: #fff;">
+                    <input type="hidden" name="equipo_items[{{ $index }}][id_miembro]" value="{{ $miembro->id_miembro }}">
+                    <input type="hidden" name="equipo_items[{{ $index }}][eliminar]" value="0" class="input-eliminar">
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <h4 style="font-family: 'Garamond', serif; font-size: 1.2rem; margin: 0;">
+                            Integrante {{ $index + 1 }}
+                        </h4>
+
+                        <button type="button" onclick="eliminarIntegrante(this)" style="background: #fff; color: #991b1b; border: 1px solid #fecaca; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">
+                            Eliminar
+                        </button>
+                    </div>
+
+                    <div class="options-grid">
+                        <div class="form-group">
+                            <label>Nombre público</label>
+                            <input 
+                                type="text" 
+                                name="equipo_items[{{ $index }}][nombre]" 
+                                class="form-control" 
+                                value="{{ $miembro->usuario->nombre ?? '' }}"
+                                placeholder="Ej: Arq. Alberto Akira Kameta Miyamoto"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label>Rol / Puesto</label>
+                            <input 
+                                type="text" 
+                                name="equipo_items[{{ $index }}][puesto]" 
+                                class="form-control" 
+                                value="{{ $miembro->puesto ?? '' }}"
+                                placeholder="Ej: Dirección general"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Biografía / Descripción</label>
+                        <textarea 
+                            name="equipo_items[{{ $index }}][biografia]" 
+                            class="form-control" 
+                            rows="4"
+                            placeholder="Ej: Arquitecto mexicano japonés, egresado de..."
+                        >{{ $miembro->biografia ?? '' }}</textarea>
+                    </div>
                 </div>
+            @endforeach
+        @endisset
+    </div>
+
+    <button type="button" onclick="agregarIntegrante()" style="width: 100%; padding: 14px; background: #fff; color: #111; border: 1px dashed #999; border-radius: 6px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; cursor: pointer;">
+        + Añadir integrante
+    </button>
+</div>
 
                 <div class="options-grid">
                     <div class="options-card">
@@ -275,6 +312,9 @@
 </div>
 
 <script>
+
+
+
     // =================================================================
     // ANIMACIONES CON ANIME.JS
     // =================================================================
@@ -341,8 +381,97 @@
             iti.setNumber(inputTelHidden.value);
         }
     }
+    
 
-    document.getElementById('btn-modal-accept').onclick = function() { 
+    let contadorIntegrantes = document.querySelectorAll('.equipo-item').length;
+
+function agregarIntegrante() {
+    const lista = document.getElementById('equipo-lista');
+    const index = contadorIntegrantes++;
+
+    const div = document.createElement('div');
+    div.className = 'equipo-item';
+    div.dataset.index = index;
+    div.style.border = '1px solid #eee';
+    div.style.borderRadius = '8px';
+    div.style.padding = '20px';
+    div.style.marginBottom = '20px';
+    div.style.background = '#fff';
+
+    div.innerHTML = `
+        <input type="hidden" name="equipo_items[${index}][id_miembro]" value="">
+        <input type="hidden" name="equipo_items[${index}][eliminar]" value="0" class="input-eliminar">
+
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 15px;">
+            <h4 style="font-family: 'Garamond', serif; font-size: 1.2rem; margin: 0;">
+                Nuevo integrante
+            </h4>
+
+            <button type="button" onclick="eliminarIntegrante(this)" style="background: #fff; color: #991b1b; border: 1px solid #fecaca; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">
+                Eliminar
+            </button>
+        </div>
+
+        <div class="options-grid">
+            <div class="form-group">
+                <label>Nombre público</label>
+                <input 
+                    type="text" 
+                    name="equipo_items[${index}][nombre]" 
+                    class="form-control" 
+                    placeholder="Ej: Arq. Alberto Akira Kameta Miyamoto"
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Rol / Puesto</label>
+                <input 
+                    type="text" 
+                    name="equipo_items[${index}][puesto]" 
+                    class="form-control" 
+                    placeholder="Ej: Dirección general"
+                >
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Biografía / Descripción</label>
+            <textarea 
+                name="equipo_items[${index}][biografia]" 
+                class="form-control" 
+                rows="4"
+                placeholder="Ej: Arquitecto mexicano japonés, egresado de..."
+            ></textarea>
+        </div>
+    `;
+
+    lista.appendChild(div);
+
+    if (typeof anime !== 'undefined') {
+        anime({
+            targets: div,
+            opacity: [0, 1],
+            translateY: [20, 0],
+            easing: 'easeOutCubic',
+            duration: 500
+        });
+    }
+}
+
+function eliminarIntegrante(button) {
+    const item = button.closest('.equipo-item');
+    const inputEliminar = item.querySelector('.input-eliminar');
+    const idInput = item.querySelector('input[name*="[id_miembro]"]');
+
+    if (idInput && idInput.value) {
+        inputEliminar.value = '1';
+        item.style.display = 'none';
+    } else {
+        item.remove();
+    }
+}
+    document.getElementById('btn-modal-accept').onclick = function() 
+    { 
         if(fTS) {
             if(fTS.id === 'form-publicos' && iti) {
                 inputTelHidden.value = iti.getNumber();
