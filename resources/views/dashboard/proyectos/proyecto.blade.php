@@ -45,6 +45,21 @@
         .media-preview-container img, .media-preview-container video {
             max-width: 100%; max-height: 100%; object-fit: contain;
         }
+
+        /* --- ESTILOS DEL BUSCADOR MINIMALISTA --- */
+        .search-wrapper {
+            background: #fff; border: 1px solid #eaeaea; border-radius: 8px;
+            padding: 10px 20px; margin-bottom: 25px; display: flex; align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;
+        }
+        .search-wrapper:focus-within { border-color: #111; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .search-wrapper i { color: #888; font-size: 1.2rem; margin-right: 15px; }
+        .search-wrapper input {
+            border: none; outline: none; width: 100%; font-family: Arial, sans-serif;
+            font-size: 0.95rem; color: #333; background: transparent;
+        }
+        .search-wrapper input::placeholder { color: #bbb; }
+        /* ---------------------------------------- */
     </style>
 
     <div class="dashboard-container">
@@ -55,11 +70,11 @@
             
             <div class="header-section">
                 <div>
-                    <h1>Portafolio de Obras</h1>
-                    <p>Gestión de obras, catálogo del portafolio y estado de construcción.</p>
+                    <h1>Portafolio de Proyectos</h1>
+                    <p>Gestión de proyectos, catálogo del portafolio y estado de construcción.</p>
                 </div>
                 <button class="btn-add-new" data-bs-toggle="modal" data-bs-target="#modalProyecto" onclick="prepararNuevo()">
-                    + Añadir Obra
+                    + Añadir Proyecto
                 </button>
             </div>
 
@@ -74,6 +89,12 @@
                 </div>
             @endif
 
+            {{-- BARRA DE BÚSQUEDA INTERACTIVA --}}
+            <div class="search-wrapper">
+                <i class="bi bi-search"></i>
+                <input type="text" id="buscadorProyectos" onkeyup="filtrarTabla()" placeholder="Buscar por título, descripción o año del proyecto...">
+            </div>
+
             <table class="project-table">
                 <thead>
                     <tr style="text-align: left; color: #888; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;">
@@ -82,9 +103,8 @@
                         <th style="text-align: right; width: 20%;">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tablaProyectos">
                     @forelse($proyectos as $proyecto)
-                        {{-- MAGIA AQUÍ: Toda la fila te redirecciona al historial --}}
                         <tr class="project-row" onclick="window.location='{{ route('proyectos.historias', $proyecto->id_proyecto) }}'" title="Clic para gestionar historia y fotos">
                             <td>
                                 <div class="project-title-text" style="font-weight: bold; font-size: 1.05rem; display:flex; align-items:center;">
@@ -106,7 +126,6 @@
                                     {{ $nombreEstado }}
                                 </span>
                             </td>
-                            {{-- DETIENE EL CLIC AQUÍ: Si tocan esta celda, no se redirige a la historia --}}
                             <td style="text-align: right; white-space: nowrap;" onclick="event.stopPropagation();">
                                 <a href="{{ route('proyectos.historias', $proyecto->id_proyecto) }}" class="btn-icon-action" title="Gestionar Ficha Técnica / Fotos">
                                     <i class="bi bi-images"></i>
@@ -123,10 +142,14 @@
                             </td>
                         </tr>
                     @empty
-                        <tr>
+                        <tr class="no-results-row">
                             <td colspan="3" class="text-center py-5 text-muted" style="font-style: italic;">No hay obras registradas en el portafolio.</td>
                         </tr>
                     @endforelse
+                    {{-- Fila oculta por si la búsqueda no encuentra nada --}}
+                    <tr id="sinResultados" style="display: none;">
+                        <td colspan="3" class="text-center py-5 text-muted" style="font-style: italic; font-family: Arial;">No se encontraron proyectos con esa búsqueda.</td>
+                    </tr>
                 </tbody>
             </table>
         </main>
@@ -200,6 +223,38 @@
 </div>
 
 <script>
+    // ================= FUNCIÓN DE BÚSQUEDA EN TIEMPO REAL =================
+    function filtrarTabla() {
+        let input = document.getElementById("buscadorProyectos");
+        let filtro = input.value.toLowerCase();
+        let tbody = document.getElementById("tablaProyectos");
+        let filas = tbody.getElementsByClassName("project-row");
+        let sinResultados = document.getElementById("sinResultados");
+        let coincidencias = 0;
+
+        for (let i = 0; i < filas.length; i++) {
+            // Evaluamos la primera columna que tiene el Título, Año y Descripción
+            let celdaDetalles = filas[i].getElementsByTagName("td")[0];
+            
+            if (celdaDetalles) {
+                let texto = celdaDetalles.textContent || celdaDetalles.innerText;
+                if (texto.toLowerCase().indexOf(filtro) > -1) {
+                    filas[i].style.display = "";
+                    coincidencias++;
+                } else {
+                    filas[i].style.display = "none";
+                }
+            }
+        }
+
+        // Si escribes algo y no hay coincidencias, muestra el mensaje de "No se encontraron"
+        if (coincidencias === 0 && filas.length > 0) {
+            sinResultados.style.display = "";
+        } else {
+            sinResultados.style.display = "none";
+        }
+    }
+
     // ================= FUNCIONES PARA LA PREVISUALIZACIÓN =================
     function cambiarTipoMedia() {
         let tipo = document.getElementById('tipo_media').value;
