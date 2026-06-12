@@ -34,22 +34,71 @@
             margin: 0;
         }
 
-        .btn-flotante-regresar {
-            position: fixed;
-            bottom: clamp(20px, 4vh, 40px);
-            left: clamp(30px, 5vw, 60px);
-            font-weight: bold;
-            font-size: 0.95rem;
-            color: #111111 !important;
-            text-decoration: underline !important;
-            z-index: 9999;
-            background-color: rgba(253, 253, 253, 0.85);
-            backdrop-filter: blur(5px);
-            padding: 8px 15px 8px 0;
-            border-radius: 4px;
-            transition: all 0.3s ease;
+        /* --- INDICADOR DE PÁGINA ACTUAL (LÍNEA INFERIOR ANIMADA) --- */
+        .nav-link-akira, .mobile-top-bar a {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 2px; /* Un ligero espacio para que la línea respire */
         }
-        .btn-flotante-regresar:hover { transform: translateX(-5px); }
+        
+        .nav-link-akira::after, .mobile-top-bar a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: currentColor; /* Toma el color gris o negro del texto automáticamente */
+            transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        /* Efecto al pasar el cursor */
+        .nav-link-akira:hover::after, .mobile-top-bar a:hover::after {
+            width: 100%;
+        }
+        
+        /* Estilo cuando es la página activa */
+        .active-link {
+            font-weight: bold !important;
+            color: #111111 !important;
+        }
+        .active-link::after {
+            width: 100% !important; /* La línea se queda dibujada al 100% */
+        }
+        /* ------------------------------------------------------------- */
+
+        .btn-flotante-regresar {
+        position: fixed;
+        bottom: clamp(25px, 5vh, 45px); 
+        left: clamp(30px, 5vw, 60px);
+        font-size: 0.90rem;
+        color: #ffffff !important; 
+        text-decoration: none !important; 
+        z-index: 9999;
+        
+        background: rgba(255, 255, 255, 0.03); 
+        backdrop-filter: blur(25px); 
+        -webkit-backdrop-filter: blur(25px); 
+        border: 1px solid rgba(255, 255, 255, 0.1); 
+        
+        padding: 12px 32px; 
+        border-radius: 50px; 
+        
+        opacity: 0.6; 
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        font-family: "Georgia", "Times New Roman", serif;
+        letter-spacing: 1.5px; 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
+    }
+
+    .btn-flotante-regresar:hover {
+        opacity: 1; 
+        background: rgba(0, 0, 0, 0.25); 
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateX(-5px) translateY(-2px); 
+        color: #ffffff !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
+    }
 
         .vista-escritorio { display: none !important; }
         .vista-movil { display: block !important; width: 100%; }
@@ -162,13 +211,15 @@
 
     <a href="{{ route('landing') ?? '#' }}" class="btn-flotante-regresar">&larr; regresar</a>
 
+    {{-- MENU MÓVIL --}}
     <div class="vista-movil">
-        
         <nav class="mobile-top-bar">
-            <div><a href="{{ route('project.detail') ?? '#' }}" class="brand-name">Estudio Akiraka ,</a></div>
             <div>
-                <a href="{{ route('info') ?? '#' }}">Info ,</a>
-                <a href="{{ route('contacto') ?? '#' }}">Contacto</a>
+                <a href="{{ route('project.detail') ?? '#' }}" class="brand-name {{ request()->routeIs('project.detail') ? 'active-link' : '' }}">Estudio Akiraka ,</a>
+            </div>
+            <div>
+                <a href="{{ route('info') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('info') ? 'active-link' : '' }}">Info ,</a>
+                <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('contacto') ? 'active-link' : '' }}">Contacto</a>
             </div>
         </nav>
 
@@ -263,11 +314,12 @@
         </footer>
     </div>
 
+    {{-- MENU ESCRITORIO --}}
     <div class="vista-escritorio">
         <header class="site-header-main">
-            <a href="{{ route('project.detail') ?? '#' }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Estudio Akiraka ,</a>
-            <a href="{{ route('info') ?? '#' }}" class="nav-link-akira">Info ,</a>
-            <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira">Contacto</a>
+            <a href="{{ route('project.detail') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('project.detail') ? 'active-link' : '' }}">Estudio Akiraka ,</a>
+            <a href="{{ route('info') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('info') ? 'active-link' : '' }}">Info ,</a>
+            <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('contacto') ? 'active-link' : '' }}">Contacto</a>
         </header>
 
         <main class="main-content-grid">

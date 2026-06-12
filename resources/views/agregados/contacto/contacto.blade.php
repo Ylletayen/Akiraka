@@ -5,21 +5,119 @@
     $config = \App\Models\Configuracion::first();
     // Limpiamos el teléfono para el link de WhatsApp
     $whatsappPhone = preg_replace('/[^0-9]/', '', $config->telefono ?? '527221655901');
+    
+    // --- ESTA ES LA LÍNEA QUE DEBES CORREGIR ---
+    $mediaUrl = $config && $config->landing_hero_image 
+                 ? asset('storage/' . $config->landing_hero_image) // <-- DEBE DECIR 'storage/'
+                 : 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=1920';
+                 
+    // Detectamos si es un video MP4
+    $isVideo = preg_match('/\.(mp4|webm)$/i', $mediaUrl);
+    // ... lo demás sigue igual ...
 @endphp
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
 
 <style>
-    .akira-container {
-        max-width: 1100px; 
-        margin: 0 auto;
-        padding: 50px 20px;
-        font-family: "Georgia", "Times New Roman", serif;
-        color: #1a1a1a;
+    /* --- ESTILOS DE LAS COLUMNAS MULTIMEDIA LATERALES (DIFUMINADAS) --- */
+    .side-media {
+        position: fixed;
+        top: 0;
+        width: 14vw; /* Lo reduje del 18% al 14% para darle mucho más respiro al texto */
+        height: 100vh;
+        z-index: -1;
+        overflow: hidden;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        
+        /* Difuminado general y opacidad para que sea un fondo ambiental que no distraiga */
+        filter: blur(6px) opacity(0.45) grayscale(20%); 
+        transition: filter 0.8s ease;
+    }
+
+    /* Degradado para borrar los cortes rectos y que se funda con el blanco */
+    .side-left { 
+        left: 0; 
+        -webkit-mask-image: linear-gradient(to right, black 30%, transparent 100%);
+        mask-image: linear-gradient(to right, black 30%, transparent 100%);
+    }
+    
+    .side-right { 
+        right: 0; 
+        -webkit-mask-image: linear-gradient(to left, black 30%, transparent 100%);
+        mask-image: linear-gradient(to left, black 30%, transparent 100%);
+    }
+    
+    .hero-video-bg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        transform: translateX(-50%) translateY(-50%);
+        object-fit: cover;
+    }
+
+    /* Ocultamos las columnas de video en tablets/celulares */
+    @media (max-width: 1100px) {
+        .side-media { display: none !important; }
+    }
+    /* ------------------------------------------------------------ */
+
+    /* Liberamos el texto central */
+    .akira-container { 
+        max-width: 780px; /* Reducimos el ancho máximo para que no choque con los videos */
+        margin: 0 auto; 
+        padding: 50px 30px; /* Más espacio a los lados para que no se sienta atrapado */
+        font-family: "Georgia", "Times New Roman", serif; 
+        color: #333; 
+        position: relative;
+        z-index: 1; 
     }
 
     .site-header-main { margin-bottom: 60px; }
+
+    /* --- INDICADOR DE PÁGINA ACTUAL (LÍNEA INFERIOR ANIMADA) --- */
+    .nav-link-akira {
+        position: relative;
+        display: inline-block;
+        padding-bottom: 2px;
+        text-decoration: none !important;
+        color: #8c8c8c; /* Color desaturado por defecto */
+        transition: color 0.3s ease;
+    }
+    
+    .nav-link-akira::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 1px;
+        bottom: 0;
+        left: 0;
+        background-color: currentColor;
+        transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    .nav-link-akira:hover {
+        color: #111111;
+    }
+    .nav-link-akira:hover::after {
+        width: 100%;
+    }
+    
+    /* Estilo cuando es la página activa */
+    .active-link {
+        font-weight: bold !important;
+        color: #111111 !important;
+    }
+    .active-link::after {
+        width: 100% !important;
+    }
+    /* ------------------------------------------------------------- */
 
     .contact-label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 1rem; color: #1a1a1a; }
     .contact-value-reset { text-decoration: none; color: #666; font-size: 0.95rem; transition: color 0.3s; line-height: 1.6; cursor: pointer; display: block; }
@@ -69,24 +167,35 @@
     /* --- ESTILOS PARA EL BOTÓN DE REGRESAR FLOTANTE --- */
     .btn-flotante-regresar {
         position: fixed;
-        bottom: clamp(20px, 4vh, 40px);
+        bottom: clamp(25px, 5vh, 45px); 
         left: clamp(30px, 5vw, 60px);
-        font-weight: bold;
-        font-size: 0.95rem;
-        color: #111111 !important;
-        text-decoration: underline !important;
+        font-size: 0.90rem;
+        color: #ffffff !important; 
+        text-decoration: none !important; 
         z-index: 9999;
-        background-color: rgba(253, 253, 253, 0.85);
-        backdrop-filter: blur(5px);
-        padding: 8px 15px 8px 0;
-        border-radius: 4px;
-        transition: all 0.3s ease;
-        font-family: "Garamond", "Baskerville", "Times New Roman", serif;
+        
+        background: rgba(255, 255, 255, 0.03); 
+        backdrop-filter: blur(25px); 
+        -webkit-backdrop-filter: blur(25px); 
+        border: 1px solid rgba(255, 255, 255, 0.1); 
+        
+        padding: 12px 32px; 
+        border-radius: 50px; 
+        
+        opacity: 0.6; 
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        font-family: "Georgia", "Times New Roman", serif;
+        letter-spacing: 1.5px; 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
     }
 
     .btn-flotante-regresar:hover {
-        color: #8c8c8c !important;
-        transform: translateX(-5px);
+        opacity: 1; 
+        background: rgba(0, 0, 0, 0.25); 
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateX(-5px) translateY(-2px); 
+        color: #ffffff !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
     }
     
     /* Regla para que la librería respete el ancho de tu diseño */
@@ -112,13 +221,30 @@
     }
 </style>
 
+{{-- AQUI ESTÁN TUS COLUMNAS DE HTML --}}
+{{-- COLUMNA MULTIMEDIA IZQUIERDA --}}
+<div class="side-media side-left {{ !$isVideo ? 'hero-image-bg' : '' }}" @if(!$isVideo) style="background-image: url('{{ $mediaUrl }}');" @endif>
+    @if($isVideo)
+        <video autoplay loop muted playsinline class="hero-video-bg"><source src="{{ $mediaUrl }}" type="video/mp4"></video>
+    @endif
+</div>
+
+{{-- COLUMNA MULTIMEDIA DERECHA --}}
+<div class="side-media side-right {{ !$isVideo ? 'hero-image-bg' : '' }}" @if(!$isVideo) style="background-image: url('{{ $mediaUrl }}'); transform: scaleX(-1);" @endif>
+    @if($isVideo)
+        <video autoplay loop muted playsinline class="hero-video-bg" style="transform: translateX(-50%) translateY(-50%) scaleX(-1);"><source src="{{ $mediaUrl }}" type="video/mp4"></video>
+    @endif
+</div>
+{{-- FIN DE LAS COLUMNAS MULTIMEDIA --}}
+
 <a href="{{ route('landing') }}" class="btn-flotante-regresar">← regresar</a>
 
 <div class="akira-container">
     <header class="site-header-main">
-        <a href="{{ route('project.detail') ?? '#' }}" style="text-decoration: none; color: #1a1a1a; font-weight: bold;">Estudio Akiraka ,</a>
-            <a href="{{ route('info') ?? '#' }}" class="nav-link-akira">Info ,</a>
-            <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira">Contacto</a>
+        {{-- AQUÍ APLICAMOS LA MAGIA DE LARAVEL (active-link) --}}
+        <a href="{{ route('project.detail') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('project.detail') ? 'active-link' : '' }}">Estudio Akiraka ,</a>
+        <a href="{{ route('info') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('info') ? 'active-link' : '' }}">Info ,</a>
+        <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('contacto') ? 'active-link' : '' }}">Contacto</a>
     </header>
 
     @if(session('success'))
@@ -155,13 +281,9 @@
         </div>
     </div>
 
-    <div class="location-group border-top pt-4 mb-5">
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <span class="location-year-label">Teléfono</span>
-                <span class="contact-value-reset notranslate"><br>{{ $config->telefono ?? '+52 722 165 5901' }}</span>
-            </div>
-        </div>
+    <div class="location-group border-top pt-4 mb-5 d-flex flex-column align-items-center text-center">
+        <span class="location-year-label" style="margin-right: 0; width: auto; margin-bottom: 5px;">Teléfono</span>
+        <span class="contact-value-reset notranslate">{{ $config->telefono ?? '+52 722 165 5901' }}</span>
     </div>
 
     <div class="social-group-section">
