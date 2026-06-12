@@ -35,6 +35,14 @@
         .media-preview-container img, .media-preview-container video {
             max-width: 100%; max-height: 100%; object-fit: contain;
         }
+
+        /* Botón de retroceso estilo píldora */
+        .btn-back-pill {
+            color: #666; font-family: Arial, sans-serif; text-decoration: none; 
+            font-size: 0.9rem; border: 1px solid #ddd; padding: 8px 15px; 
+            border-radius: 20px; transition: background 0.3s, color 0.3s;
+        }
+        .btn-back-pill:hover { background: #f5f5f5; color: #111; }
     </style>
 
     <div class="dashboard-container">
@@ -45,10 +53,11 @@
             
             <div class="header-section">
                 <div>
-                    <a href="{{ route('dashboard.objetos') }}" style="color: #888; text-decoration: none; font-size: 0.9rem;">← Volver al catálogo</a>
-                    <h1 style="font-size: 2rem; margin-top: 10px;">Ficha Técnica: {{ $objeto->titulo }}</h1>
-                    <p style="color: #666;">Añade imágenes o videos del proceso, detalles y materiales de este objeto.</p>
+                    <h1 style="font-size: 2rem; margin-top: 0; font-weight: bold;">Ficha Técnica: {{ $objeto->titulo }}</h1>
+                    <p style="color: #666; font-family: Arial, sans-serif; font-size: 0.9rem;">Añade imágenes o videos del proceso, detalles y materiales de este objeto.</p>
                 </div>
+                {{-- AQUÍ ESTÁ EL BOTÓN MOVIDO A LA DERECHA --}}
+                <a href="{{ route('dashboard.objetos') }}" class="btn-back-pill">&larr; Volver a Objetos</a>
             </div>
 
             @if(session('success'))

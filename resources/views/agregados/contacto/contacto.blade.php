@@ -20,24 +20,20 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
 
 <style>
-    /* --- ESTILOS DE LAS COLUMNAS MULTIMEDIA LATERALES (DIFUMINADAS) --- */
     .side-media {
         position: fixed;
         top: 0;
-        width: 14vw; /* Lo reduje del 18% al 14% para darle mucho más respiro al texto */
+        width: 14vw;
         height: 100vh;
         z-index: -1;
         overflow: hidden;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        
-        /* Difuminado general y opacidad para que sea un fondo ambiental que no distraiga */
         filter: blur(6px) opacity(0.45) grayscale(20%); 
         transition: filter 0.8s ease;
     }
 
-    /* Degradado para borrar los cortes rectos y que se funda con el blanco */
     .side-left { 
         left: 0; 
         -webkit-mask-image: linear-gradient(to right, black 30%, transparent 100%);
@@ -62,17 +58,14 @@
         object-fit: cover;
     }
 
-    /* Ocultamos las columnas de video en tablets/celulares */
     @media (max-width: 1100px) {
         .side-media { display: none !important; }
     }
-    /* ------------------------------------------------------------ */
 
-    /* Liberamos el texto central */
     .akira-container { 
-        max-width: 780px; /* Reducimos el ancho máximo para que no choque con los videos */
+        max-width: 780px;
         margin: 0 auto; 
-        padding: 50px 30px; /* Más espacio a los lados para que no se sienta atrapado */
+        padding: 50px 30px;
         font-family: "Georgia", "Times New Roman", serif; 
         color: #333; 
         position: relative;
@@ -81,13 +74,12 @@
 
     .site-header-main { margin-bottom: 60px; }
 
-    /* --- INDICADOR DE PÁGINA ACTUAL (LÍNEA INFERIOR ANIMADA) --- */
     .nav-link-akira {
         position: relative;
         display: inline-block;
         padding-bottom: 2px;
         text-decoration: none !important;
-        color: #8c8c8c; /* Color desaturado por defecto */
+        color: #8c8c8c;
         transition: color 0.3s ease;
     }
     
@@ -108,8 +100,7 @@
     .nav-link-akira:hover::after {
         width: 100%;
     }
-    
-    /* Estilo cuando es la página activa */
+
     .active-link {
         font-weight: bold !important;
         color: #111111 !important;
@@ -117,7 +108,6 @@
     .active-link::after {
         width: 100% !important;
     }
-    /* ------------------------------------------------------------- */
 
     .contact-label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 1rem; color: #1a1a1a; }
     .contact-value-reset { text-decoration: none; color: #666; font-size: 0.95rem; transition: color 0.3s; line-height: 1.6; cursor: pointer; display: block; }
@@ -134,12 +124,10 @@
     }
     .btn-agendar-cita:hover { background: #333; transform: translateY(-2px); }
 
-    /* ================= REDES SOCIALES ================= */
     .social-group-section { margin-top: 50px; border-top: 1px solid #eee; padding-top: 30px; text-align: center; }
     .social-btn-circle { display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 50%; border: 1px solid #1a1a1a; color: #1a1a1a; text-decoration: none; font-size: 1.2rem; margin: 0 8px; transition: all 0.3s ease; }
     .social-btn-circle:hover { background-color: #1a1a1a; color: #fff; }
 
-    /* ================= ESTILOS DE LOS MODALES ================= */
     .modal-overlay-contact { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 10000; overflow-y: auto; padding: 20px; }
     .modal-overlay-contact.active { display: flex; }
 
@@ -164,7 +152,6 @@
     .btn-submit-contact { width: 100%; padding: 15px; background: #111; color: #fff; border: none; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75rem; cursor: pointer; transition: background 0.3s; }
     .btn-submit-contact:hover { background: #333; }
 
-    /* --- ESTILOS PARA EL BOTÓN DE REGRESAR FLOTANTE --- */
     .btn-flotante-regresar {
         position: fixed;
         bottom: clamp(25px, 5vh, 45px); 
@@ -197,8 +184,7 @@
         color: #ffffff !important;
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
     }
-    
-    /* Regla para que la librería respete el ancho de tu diseño */
+
     .iti { width: 100%; }
 
     .site-footer-info {
@@ -410,39 +396,30 @@
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
-    // =========================================================
-    // SISTEMA DE TRADUCCIÓN (GOOGLE TRANSLATE HACK)
-    // =========================================================
     function cambiarIdioma(idioma, event) {
         event.preventDefault();
         
-        // Forzamos la cookie de traducción de Google
         document.cookie = `googtrans=/es/${idioma}; path=/;`;
         document.cookie = `googtrans=/es/${idioma}; domain=${window.location.hostname}; path=/;`;
-        
-        // Recargamos la página para aplicar
+
         window.location.reload();
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Alternamos botones si ya está en inglés
         if (document.cookie.includes('googtrans=/es/en')) {
             document.getElementById('btn-traducir').style.display = 'none';
             document.getElementById('btn-espanol').style.display = 'inline-block';
         }
     });
 
-    // Variables Modal 1 (Contacto Correos)
     const modalContacto = document.getElementById('modalContactoElegir');
     const btnMailto = document.getElementById('btnMailto');
     const gridOpciones = document.getElementById('opcionesContactoGrid');
     const formDirecto = document.getElementById('formMensajeDirecto');
     const inputDept = document.getElementById('inputDepartamento');
 
-    // Variables Modal 2 (Citas)
     const modalCita = document.getElementById('modalAgendarCita');
 
-    // Funciones Modal Contacto
     function abrirModalContacto(correoDestino) {
         modalContacto.classList.add('active');
         btnMailto.href = "mailto:" + correoDestino;
@@ -465,7 +442,6 @@
         formDirecto.reset(); 
     }
 
-    // Funciones Modal Citas
     function abrirModalCita() {
         modalCita.classList.add('active');
     }
@@ -474,7 +450,6 @@
         modalCita.classList.remove('active');
     }
 
-    // Cerrar modales si se hace clic afuera del cuadro blanco
     window.onclick = function(event) {
         if (event.target == modalContacto) cerrarModalContacto();
         if (event.target == modalCita) cerrarModalCita();
@@ -487,49 +462,38 @@
         const phoneInputField = document.querySelector("#telefonoCita");
 
         if (phoneInputField) {
-            // 1. Inicializar la librería con la bandera de México por defecto
             const phoneInput = window.intlTelInput(phoneInputField, {
                 preferredCountries: ["mx", "us", "es"],
                 utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
             });
 
-            // 2. Interceptar la tecla antes de que se escriba en el input (Bloqueo y Límite)
             phoneInputField.addEventListener('keypress', function (e) {
-                // Si intenta teclear algo que NO sea número (y no es Enter), lo bloqueamos
                 if (!/[0-9]/.test(e.key) && e.key !== 'Enter') {
                     e.preventDefault(); 
                     return; 
                 }
 
-                // Contamos cuántos NÚMEROS hay actualmente (ignorando los espacios de la bandera)
                 const cantidadNumeros = this.value.replace(/[^0-9]/g, '').length;
 
-                // Si ya hay 10 números, bloqueamos cualquier intento de escribir el 11vo
                 if (cantidadNumeros >= 10 && /[0-9]/.test(e.key)) {
                     e.preventDefault();
                 }
             });
 
-        // 3. Interceptar el envío del formulario para mandar el número limpio a Laravel y bloquear el doble clic
             const formCita = phoneInputField.closest('form');
             formCita.addEventListener("submit", function(event) {
-                // Primero validamos si todo el formulario cumple con las reglas (required, pattern, etc.)
                 if (this.checkValidity()) {
                     var boton = document.getElementById('btn-enviar-cita');
-                    
-                    // Deshabilitamos el botón para evitar que le den clics repetidos
+
                     boton.disabled = true;
                     boton.innerText = 'ENVIANDO SOLICITUD...';
 
-                    // Obtenemos el número completo (ej. +527221234567)
                     const numeroCompleto = phoneInput.getNumber();
-                    
-                    // Actualizamos el valor del input justo antes de que se envíe a la base de datos
+
                     if (numeroCompleto) {
                         phoneInputField.value = numeroCompleto;
                     }
                 } else {
-                    // Si el formulario no es válido, no hacemos nada y dejamos que HTML muestre sus alertas
                     return false;
                 }
             });

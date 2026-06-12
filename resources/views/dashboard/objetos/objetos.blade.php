@@ -18,9 +18,14 @@
         .btn-add-new:hover { background: #333; }
         
         .user-table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
-        .user-row { background: #fff; outline: 1px solid #eee; transition: transform 0.2s; }
-        .user-row:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        
+        /* Modificaciones en la Fila para que actúe como botón interactivo */
+        .user-row { background: #fff; outline: 1px solid #eee; transition: transform 0.2s, box-shadow 0.2s, outline 0.2s; cursor: pointer; }
+        .user-row:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); outline-color: #111; }
         .user-row td { padding: 15px 20px; vertical-align: middle; }
+        
+        .project-title-text { transition: color 0.3s ease; }
+        .user-row:hover .project-title-text { color: #666; }
         
         /* ================= ESTILOS DE LOS BOTONES ICONO (MONOCROMÁTICO) ================= */
         .btn-icon-action {
@@ -34,6 +39,7 @@
             transform: scale(1.15); 
             color: #111; /* Negro puro al pasar el ratón (Hover) */
         }
+        .btn-icon-action.delete:hover { color: #d9534f; } /* Rojo advertencia para eliminar */
 
         /* ================= MODAL DE ADVERTENCIA (GLASSMORPHISM) ================= */
         .modal-glass {
@@ -81,12 +87,13 @@
                 </thead>
                 <tbody>
                     @forelse($objetos as $objeto)
-                        <tr class="user-row">
-                            <td style="font-weight: bold; font-size: 1.1rem;">{{ $objeto->titulo }}</td>
+                        {{-- MAGIA AQUÍ: Toda la fila te redirecciona al historial/ficha técnica --}}
+                        <tr class="user-row" onclick="window.location='{{ route('objetos.historias', $objeto->id_objeto) }}'" title="Clic para gestionar ficha técnica y fotos">
+                            <td class="project-title-text" style="font-weight: bold; font-size: 1.1rem;">{{ $objeto->titulo }}</td>
                             <td style="color: #555; font-family: Arial; font-size: 0.9rem;">{{ $objeto->anio ?? 'N/A' }}</td>
                             
-                            {{-- COLUMNA DE ACCIONES MINIMALISTAS --}}
-                            <td style="text-align: right; white-space: nowrap;">
+                            {{-- DETIENE EL CLIC AQUÍ: Si tocan esta celda, no se redirige (evita borrar por error) --}}
+                            <td style="text-align: right; white-space: nowrap;" onclick="event.stopPropagation();">
                                 
                                 {{-- Botón Ficha Técnica (Galería) --}}
                                 <a href="{{ route('objetos.historias', $objeto->id_objeto) }}" class="btn-icon-action" title="Gestionar Ficha Técnica">
@@ -96,7 +103,7 @@
                                 {{-- Botón Eliminar Permanente --}}
                                 <form action="{{ route('objetos.destroy', $objeto->id_objeto) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este objeto permanentemente?');">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn-icon-action" title="Eliminar Objeto">
+                                    <button type="submit" class="btn-icon-action delete" title="Eliminar Objeto">
                                         <i class="bi bi-trash3"></i>
                                     </button>
                                 </form>
