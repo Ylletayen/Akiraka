@@ -1,20 +1,66 @@
 @extends('layouts.app')
 
 @section('content')
+
+@php
+    $config = \App\Models\Configuracion::first();
+    
+    // Obtenemos la ruta del video o imagen
+    $mediaUrl = $config && $config->landing_hero_image 
+                 ? asset('storage/' . $config->landing_hero_image) 
+                 : 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=1920';
+                 
+    // Detectamos si es un video MP4
+    $isVideo = preg_match('/\.(mp4|webm)$/i', $mediaUrl);
+@endphp
+
 <div id="project-view" class="akira-project-view">
 
     <style>
+        /* --- FONDO MULTIMEDIA EN TODA LA PANTALLA --- */
+        .fullscreen-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            background-color: #fdfdfd; /* Fondo claro de respaldo */
+        }
+
+        .fullscreen-media {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translateX(-50%) translateY(-50%);
+            object-fit: cover;
+            
+            /* Filtro mágico: Difumina y aclara el video para que el texto negro se lea perfecto */
+            filter: blur(10px) opacity(0.35) grayscale(15%); 
+            transition: filter 0.8s ease;
+        }
+        /* ------------------------------------------------------------ */
+
+        /* CONTENEDOR PRINCIPAL TRANSPARENTE */
         .akira-project-view {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            background-color: #fdfdfd !important;
+            background-color: transparent !important; 
             padding: clamp(30px, 5vw, 60px);
             font-family: "Garamond", "Baskerville", "Times New Roman", serif !important;
             color: #111111 !important;
             box-sizing: border-box;
             width: 100%;
-            max-width: 100vw;
+            max-width: 1200px; /* Un poco más ancho para aprovechar la pantalla */
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
             overflow-x: hidden;
         }
 
@@ -38,7 +84,7 @@
         .nav-link-akira, .mobile-top-bar a {
             position: relative;
             display: inline-block;
-            padding-bottom: 2px; /* Un ligero espacio para que la línea respire */
+            padding-bottom: 2px; 
         }
         
         .nav-link-akira::after, .mobile-top-bar a::after {
@@ -48,57 +94,55 @@
             height: 1px;
             bottom: 0;
             left: 0;
-            background-color: currentColor; /* Toma el color gris o negro del texto automáticamente */
+            background-color: currentColor; 
             transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         
-        /* Efecto al pasar el cursor */
         .nav-link-akira:hover::after, .mobile-top-bar a:hover::after {
             width: 100%;
         }
         
-        /* Estilo cuando es la página activa */
         .active-link {
             font-weight: bold !important;
             color: #111111 !important;
         }
         .active-link::after {
-            width: 100% !important; /* La línea se queda dibujada al 100% */
+            width: 100% !important; 
         }
-        /* ------------------------------------------------------------- */
 
+        /* --- BOTÓN DE REGRESAR CON LETRAS NEGRAS Y HOVER CLARO --- */
         .btn-flotante-regresar {
-        position: fixed;
-        bottom: clamp(25px, 5vh, 45px); 
-        left: clamp(30px, 5vw, 60px);
-        font-size: 0.90rem;
-        color: #ffffff !important; 
-        text-decoration: none !important; 
-        z-index: 9999;
-        
-        background: rgba(255, 255, 255, 0.03); 
-        backdrop-filter: blur(25px); 
-        -webkit-backdrop-filter: blur(25px); 
-        border: 1px solid rgba(255, 255, 255, 0.1); 
-        
-        padding: 12px 32px; 
-        border-radius: 50px; 
-        
-        opacity: 0.6; 
-        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        font-family: "Georgia", "Times New Roman", serif;
-        letter-spacing: 1.5px; 
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
-    }
+            position: fixed;
+            bottom: clamp(25px, 5vh, 45px); 
+            left: clamp(30px, 5vw, 60px);
+            font-size: 0.90rem;
+            color: #111111 !important; 
+            text-decoration: none !important; 
+            z-index: 9999;
+            
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px); 
+            border: 1px solid rgba(0, 0, 0, 0.1); 
+            
+            padding: 12px 32px; 
+            border-radius: 50px; 
+            
+            opacity: 0.6; 
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            font-family: "Georgia", "Times New Roman", serif;
+            letter-spacing: 1.5px; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
+        }
 
-    .btn-flotante-regresar:hover {
-        opacity: 1; 
-        background: rgba(0, 0, 0, 0.25); 
-        border-color: rgba(255, 255, 255, 0.3);
-        transform: translateX(-5px) translateY(-2px); 
-        color: #ffffff !important;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
-    }
+        .btn-flotante-regresar:hover {
+            opacity: 1; 
+            background: rgba(255, 255, 255, 0.5); 
+            border-color: rgba(0, 0, 0, 0.3);
+            transform: translateX(-5px) translateY(-2px); 
+            color: #111111 !important; 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
+        }
 
         .vista-escritorio { display: none !important; }
         .vista-movil { display: block !important; width: 100%; }
@@ -208,6 +252,15 @@
 
         @media (max-width: 900px) { .hover-preview { display: none; } }
     </style>
+
+    {{-- FONDO MULTIMEDIA EN TODA LA PANTALLA --}}
+    <div class="fullscreen-bg">
+        @if($isVideo)
+            <video autoplay loop muted playsinline class="fullscreen-media"><source src="{{ $mediaUrl }}" type="video/mp4"></video>
+        @else
+            <div class="fullscreen-media" style="background-image: url('{{ $mediaUrl }}'); background-size: cover; background-position: center;"></div>
+        @endif
+    </div>
 
     <a href="{{ route('landing') ?? '#' }}" class="btn-flotante-regresar">&larr; regresar</a>
 
