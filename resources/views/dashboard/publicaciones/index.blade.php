@@ -18,8 +18,8 @@
         .btn-add-new:hover { background: #333; }
         
         .user-table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
-        .user-row { background: #fff; outline: 1px solid #eee; transition: transform 0.2s; }
-        .user-row:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .user-row { background: #fff; outline: 1px solid #eee; transition: transform 0.2s, box-shadow 0.2s, outline 0.2s; }
+        .user-row:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); outline-color: #111; }
         .user-row td { padding: 15px 20px; vertical-align: middle; }
         
         /* ================= ESTILOS DE LOS BOTONES ICONO ================= */
@@ -30,6 +30,7 @@
             color: #888; text-decoration: none;
         }
         .btn-icon-action:hover { transform: scale(1.15); color: #111; }
+        .btn-icon-action.delete:hover { color: #d9534f; } /* Rojo advertencia para eliminar */
 
         /* ================= MODAL DE ADVERTENCIA ================= */
         .modal-glass {
@@ -37,6 +38,21 @@
             border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 12px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
+
+        /* --- ESTILOS DEL BUSCADOR MINIMALISTA --- */
+        .search-wrapper {
+            background: #fff; border: 1px solid #eaeaea; border-radius: 8px;
+            padding: 10px 20px; margin-bottom: 25px; display: flex; align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;
+        }
+        .search-wrapper:focus-within { border-color: #111; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .search-wrapper i { color: #888; font-size: 1.2rem; margin-right: 15px; }
+        .search-wrapper input {
+            border: none; outline: none; width: 100%; font-family: Arial, sans-serif;
+            font-size: 0.95rem; color: #333; background: transparent;
+        }
+        .search-wrapper input::placeholder { color: #bbb; }
+        /* ---------------------------------------- */
     </style>
 
     <div class="dashboard-container">
@@ -57,6 +73,12 @@
                 <div class="alert alert-dark mb-4" style="font-family: Arial; font-size: 0.85rem;">{{ session('success') }}</div>
             @endif
 
+            {{-- BARRA DE BÚSQUEDA INTERACTIVA --}}
+            <div class="search-wrapper">
+                <i class="bi bi-search"></i>
+                <input type="text" id="buscadorPublicaciones" onkeyup="filtrarTabla()" placeholder="Buscar por título de la publicación o fecha...">
+            </div>
+
             <table class="user-table">
                 <thead>
                     <tr style="text-align: left; color: #888; font-family: Arial; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;">
@@ -65,7 +87,7 @@
                         <th style="text-align: right;">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tablaPublicaciones">
                     @forelse($publicaciones as $pub)
                         <tr class="user-row">
                             <td style="font-weight: bold; font-size: 1.1rem;">{{ $pub->titulo }}</td>
@@ -83,57 +105,65 @@
                                 {{-- Botón Eliminar --}}
                                 <form action="{{ route('publicaciones.destroy', $pub->id_publicacion) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar esta publicación?');">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn-icon-action" title="Eliminar">
+                                    <button type="submit" class="btn-icon-action delete" title="Eliminar">
                                         <i class="bi bi-trash3"></i>
                                     </button>
                                 </form>
                             </td>
                         </tr>
                     @empty
-                        <tr>
+                        <tr class="no-results-row">
                             <td colspan="3" class="text-center py-5 text-muted" style="font-style: italic;">No hay publicaciones registradas aún.</td>
                         </tr>
                     @endforelse
-                    @foreach($publicaciones as $pub)
-                    <div class="modal fade" id="modalEditar{{ $pub->id_publicacion }}" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content modal-glass p-4 border-0">
-
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h3 class="m-0 fw-bold">Editar Publicación</h3>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-
-                                <form action="{{ route('publicaciones.update', $pub->id_publicacion) }}" method="POST">
-                                    @csrf
-                                    @method('PUT')
-
-                                    <div class="mb-3">
-                                        <label class="form-label small fw-bold">Título</label>
-                                        <input type="text" name="titulo" class="form-control bg-light border-0" value="{{ $pub->titulo }}" required>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label small fw-bold">Descripción</label>
-                                        <textarea name="descripcion" class="form-control bg-light border-0">{{ $pub->descripcion }}</textarea>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="form-label small fw-bold">URL</label>
-                                        <input type="text" name="url" class="form-control bg-light border-0" value="{{ $pub->url }}">
-                                    </div>
-
-                                    <button type="submit" class="btn-add-new w-100 py-3">
-                                        Actualizar Publicación
-                                    </button>
-
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
+                    
+                    {{-- Fila oculta por si la búsqueda no encuentra nada --}}
+                    <tr id="sinResultados" style="display: none;">
+                        <td colspan="3" class="text-center py-5 text-muted" style="font-style: italic; font-family: Arial;">No se encontraron publicaciones con esa búsqueda.</td>
+                    </tr>
                 </tbody>
             </table>
+            
+            {{-- MODALES DE EDICIÓN GENERADOS DINÁMICAMENTE --}}
+            @foreach($publicaciones as $pub)
+            <div class="modal fade" id="modalEditar{{ $pub->id_publicacion }}" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content modal-glass p-4 border-0">
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="m-0 fw-bold">Editar Publicación</h3>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <form action="{{ route('publicaciones.update', $pub->id_publicacion) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Título</label>
+                                <input type="text" name="titulo" class="form-control bg-light border-0" value="{{ $pub->titulo }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Descripción</label>
+                                <textarea name="descripcion" class="form-control bg-light border-0">{{ $pub->descripcion }}</textarea>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold">URL</label>
+                                <input type="text" name="url" class="form-control bg-light border-0" value="{{ $pub->url }}">
+                            </div>
+
+                            <button type="submit" class="btn-add-new w-100 py-3">
+                                Actualizar Publicación
+                            </button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+            
         </main>
     </div>
 </div>
@@ -144,7 +174,7 @@
         <div class="modal-content modal-glass p-4 border-0">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h3 class="m-0 fw-bold">Nueva Publicación</h3>
-                <button type="button" class="btn-close" data-bs-dismiss="close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
             <form action="{{ route('publicaciones.store') }}" method="POST">
@@ -169,4 +199,41 @@
         </div>
     </div>
 </div>
+
+<script>
+    // ================= FUNCIÓN DE BÚSQUEDA EN TIEMPO REAL =================
+    function filtrarTabla() {
+        let input = document.getElementById("buscadorPublicaciones");
+        let filtro = input.value.toLowerCase();
+        let tbody = document.getElementById("tablaPublicaciones");
+        let filas = tbody.getElementsByClassName("user-row");
+        let sinResultados = document.getElementById("sinResultados");
+        let coincidencias = 0;
+
+        for (let i = 0; i < filas.length; i++) {
+            // Evaluamos la fila completa combinando los textos de sus celdas
+            let celdaTitulo = filas[i].getElementsByTagName("td")[0];
+            let celdaFecha = filas[i].getElementsByTagName("td")[1];
+            
+            if (celdaTitulo && celdaFecha) {
+                let textoFila = (celdaTitulo.textContent || celdaTitulo.innerText) + " " + 
+                                (celdaFecha.textContent || celdaFecha.innerText);
+                                
+                if (textoFila.toLowerCase().indexOf(filtro) > -1) {
+                    filas[i].style.display = "";
+                    coincidencias++;
+                } else {
+                    filas[i].style.display = "none";
+                }
+            }
+        }
+
+        // Si escribes algo y no hay coincidencias, muestra el mensaje de "No se encontraron"
+        if (coincidencias === 0 && filas.length > 0) {
+            sinResultados.style.display = "";
+        } else {
+            sinResultados.style.display = "none";
+        }
+    }
+</script>
 @endsection

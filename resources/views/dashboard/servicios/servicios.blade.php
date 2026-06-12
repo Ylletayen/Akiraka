@@ -71,7 +71,6 @@
                 <table class="table-akiraka">
                     <thead>
                         <tr>
-                            <th style="width: 80px;">ID</th>
                             <th>Servicio</th>
                             <th>Descripción</th>
                             <th style="text-align: right; width: 120px;">Acciones</th>
@@ -80,7 +79,6 @@
                     <tbody>
                         @forelse($servicios as $servicio)
                         <tr>
-                            <td><span style="color: #888; font-size: 0.8rem;">#{{ str_pad($servicio->id_servicio, 3, '0', STR_PAD_LEFT) }}</span></td>
                             <td style="font-weight: bold; color: #111;">{{ $servicio->nombre }}</td>
                             <td style="color: #666; max-width: 450px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                 {{ $servicio->descripcion ?? 'Sin descripción...' }}
@@ -98,7 +96,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4">
+                            <td colspan="3">
                                 <div class="empty-state">
                                     Aún no has registrado ningún servicio arquitectónico. <br>Haz clic en "+ Nuevo Servicio" para comenzar a armar tu catálogo.
                                 </div>
@@ -113,14 +111,12 @@
     </div>
 </div>
 
-<!-- MODAL: CREAR -->
 <div id="modal-crear" class="custom-modal-overlay">
     <div class="custom-modal-box">
         <button class="btn-close-abs" onclick="closeModal('modal-crear')"><i class="fas fa-times"></i></button>
         <h2 class="modal-title">Registrar Nuevo Servicio</h2>
         <form action="{{ route('servicios.store') }}" method="POST">
             @csrf
-            <!-- Input oculto para no romper el controlador -->
             <input type="hidden" name="activo" value="1">
             
             <div class="form-group">
@@ -139,14 +135,12 @@
     </div>
 </div>
 
-<!-- MODAL: EDITAR -->
 <div id="modal-editar" class="custom-modal-overlay">
     <div class="custom-modal-box">
         <button class="btn-close-abs" onclick="closeModal('modal-editar')"><i class="fas fa-times"></i></button>
         <h2 class="modal-title">Editar Servicio</h2>
         <form id="form-editar" method="POST">
             @csrf @method('PUT')
-            <!-- Input oculto para no romper el controlador -->
             <input type="hidden" name="activo" value="1">
             
             <div class="form-group">
@@ -165,7 +159,6 @@
     </div>
 </div>
 
-<!-- MODAL: ELIMINAR -->
 <div id="modal-eliminar" class="custom-modal-overlay">
     <div class="custom-modal-box" style="text-align: center; max-width: 420px;">
         <i class="fas fa-exclamation-triangle" style="font-size: 3.5rem; color: #d9534f; margin-bottom: 20px;"></i>

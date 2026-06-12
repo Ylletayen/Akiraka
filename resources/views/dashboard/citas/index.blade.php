@@ -33,6 +33,20 @@
             border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 12px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1); padding: 30px;
         }
+
+        /* --- ESTILOS DEL BUSCADOR MINIMALISTA --- */
+        .search-wrapper {
+            background: #fff; border: 1px solid #eaeaea; border-radius: 8px;
+            padding: 10px 20px; margin-bottom: 25px; display: flex; align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;
+        }
+        .search-wrapper:focus-within { border-color: #111; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .search-wrapper i { color: #888; font-size: 1.2rem; margin-right: 15px; }
+        .search-wrapper input {
+            border: none; outline: none; width: 100%; font-family: Arial, sans-serif;
+            font-size: 0.95rem; color: #333; background: transparent;
+        }
+        .search-wrapper input::placeholder { color: #bbb; }
     </style>
 
     <div class="dashboard-container" style="max-width: 1400px; margin: 0 auto; display: flex; gap: 20px;">
@@ -51,6 +65,12 @@
                 <div class="alert alert-dark mb-4" style="font-family: Arial; font-size: 0.85rem;">{{ session('success') }}</div>
             @endif
 
+            {{-- BARRA DE BÚSQUEDA INTERACTIVA --}}
+            <div class="search-wrapper">
+                <i class="bi bi-search"></i>
+                <input type="text" id="buscadorCitas" onkeyup="filtrarTabla()" placeholder="Buscar por nombre de cliente, correo o servicio solicitado...">
+            </div>
+
             <table style="width: 100%; border-collapse: separate; border-spacing: 0 12px;">
                 <thead>
                     <tr style="text-align: left; color: #888; font-family: Arial; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;">
@@ -61,9 +81,10 @@
                         <th style="text-align: right;">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tablaCitas">
                     @forelse($solicitudes as $solicitud)
-                        <tr style="background: #fff; outline: 1px solid #eee; transition: transform 0.2s;">
+                        {{-- MAGIA AQUÍ: Añadimos la clase 'cita-row' para que el JS la detecte --}}
+                        <tr class="cita-row" style="background: #fff; outline: 1px solid #eee; transition: transform 0.2s;">
                             <td style="padding: 15px;">
                                 <div style="font-weight: bold; font-size: 1.1rem; color: #111;">{{ $solicitud->cliente_nombre }}</div>
                                 <div style="font-family: Arial; font-size: 0.85rem; color: #666;">
@@ -95,38 +116,43 @@
                                 </span>
                             </td>
                             
-                           {{-- COLUMNA DE ACCIONES MINIMALISTAS --}}
-                <td style="padding: 15px; text-align: right; white-space: nowrap;">
+                            {{-- COLUMNA DE ACCIONES MINIMALISTAS --}}
+                            <td style="padding: 15px; text-align: right; white-space: nowrap;">
+                                
+                                @if($solicitud->estado == 'Pendiente')
+                                    {{-- Botón Aceptar --}}
+                                    <form action="{{ route('dashboard.citas.estado', $solicitud->id_cita) }}" method="POST" style="display: inline-block;">
+                                        @csrf @method('PUT')
+                                        <input type="hidden" name="estado" value="Confirmada">
+                                        <button type="submit" class="btn-icon-action icon-accept" title="Aceptar Cita y Notificar" onclick="return confirm('¿Aceptar esta solicitud y enviar correo al cliente?');">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                        </button>
+                                    </form>
+                                @endif
+
+                                {{-- Botón Rechazar (Abre Modal de Advertencia) - Oculto para Colaboradores --}}
+                                @if(auth()->user()->id_rol != 3)
+                                    <button type="button" class="btn-icon-action icon-reject" title="Rechazar y Eliminar" onclick="abrirModalRechazo('{{ $solicitud->id_cita }}', '{{ addslashes($solicitud->cliente_nombre) }}')">
+                                        <i class="bi bi-x-circle-fill"></i>
+                                    </button>
+                                @endif
+
+                                {{-- Botón Email Directo --}}
+                                <a href="mailto:{{ $solicitud->cliente_correo }}?subject=Sobre tu solicitud de {{ $solicitud->asunto_servicio }}" class="btn-icon-action icon-email" title="Enviar correo manual">
+                                    <i class="bi bi-envelope"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr class="no-results-row">
+                            <td colspan="5" style="text-align: center; padding: 40px; color: #888; font-style: italic;">No hay solicitudes de clientes por el momento.</td>
+                        </tr>
+                    @endforelse
                     
-                    @if($solicitud->estado == 'Pendiente')
-                        {{-- Botón Aceptar --}}
-                        <form action="{{ route('dashboard.citas.estado', $solicitud->id_cita) }}" method="POST" style="display: inline-block;">
-                            @csrf @method('PUT')
-                            <input type="hidden" name="estado" value="Confirmada">
-                            <button type="submit" class="btn-icon-action icon-accept" title="Aceptar Cita y Notificar" onclick="return confirm('¿Aceptar esta solicitud y enviar correo al cliente?');">
-                                <i class="bi bi-check-circle-fill"></i>
-                            </button>
-                        </form>
-                    @endif
-
-                    {{-- Botón Rechazar (Abre Modal de Advertencia) - Oculto para Colaboradores --}}
-                    @if(auth()->user()->id_rol != 3)
-                        <button type="button" class="btn-icon-action icon-reject" title="Rechazar y Eliminar" onclick="abrirModalRechazo('{{ $solicitud->id_cita }}', '{{ addslashes($solicitud->cliente_nombre) }}')">
-                            <i class="bi bi-x-circle-fill"></i>
-                        </button>
-                    @endif
-
-                    {{-- Botón Email Directo --}}
-                    <a href="mailto:{{ $solicitud->cliente_correo }}?subject=Sobre tu solicitud de {{ $solicitud->asunto_servicio }}" class="btn-icon-action icon-email" title="Enviar correo manual">
-                        <i class="bi bi-envelope"></i>
-                    </a>
-                </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="5" style="text-align: center; padding: 40px; color: #888; font-style: italic;">No hay solicitudes de clientes por el momento.</td>
-                </tr>
-                @endforelse
+                    {{-- Fila oculta por si la búsqueda no encuentra nada --}}
+                    <tr id="sinResultados" style="display: none;">
+                        <td colspan="5" class="text-center py-5 text-muted" style="font-style: italic; font-family: Arial;">No se encontraron prospectos con esa búsqueda.</td>
+                    </tr>
                 </tbody>
             </table>
         </main>
@@ -184,6 +210,42 @@
 </div>
 
 <script>
+    // ================= FUNCIÓN DE BÚSQUEDA EN TIEMPO REAL =================
+    function filtrarTabla() {
+        let input = document.getElementById("buscadorCitas");
+        let filtro = input.value.toLowerCase();
+        let tbody = document.getElementById("tablaCitas");
+        let filas = tbody.getElementsByClassName("cita-row");
+        let sinResultados = document.getElementById("sinResultados");
+        let coincidencias = 0;
+
+        for (let i = 0; i < filas.length; i++) {
+            // Buscamos en la celda de Cliente/Contacto (col 0) y Asunto (col 1)
+            let celdaCliente = filas[i].getElementsByTagName("td")[0];
+            let celdaAsunto = filas[i].getElementsByTagName("td")[1];
+            
+            if (celdaCliente && celdaAsunto) {
+                let textoFila = (celdaCliente.textContent || celdaCliente.innerText) + " " + 
+                                (celdaAsunto.textContent || celdaAsunto.innerText);
+                                
+                if (textoFila.toLowerCase().indexOf(filtro) > -1) {
+                    filas[i].style.display = "";
+                    coincidencias++;
+                } else {
+                    filas[i].style.display = "none";
+                }
+            }
+        }
+
+        // Mostrar u ocultar el mensaje de "sin resultados"
+        if (coincidencias === 0 && filas.length > 0) {
+            sinResultados.style.display = "";
+        } else {
+            sinResultados.style.display = "none";
+        }
+    }
+
+    // ================= FUNCIONES DE MODALES =================
     function abrirModalRechazo(idCita, nombreCliente) {
         document.getElementById('nombreClienteModal').innerText = nombreCliente;
         
