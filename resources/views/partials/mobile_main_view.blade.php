@@ -9,6 +9,9 @@
         font-size: 0.85rem;
         font-weight: bold;
         border-bottom: 1px solid transparent; 
+        /* MAGIA AQUÍ: Aseguramos que nada bloquee los toques en la pantalla */
+        position: relative;
+        z-index: 50; 
     }
     .mobile-top-bar a {
         color: #111;
@@ -25,6 +28,8 @@
         width: 100vw;
         padding: 40px 0;
         gap: 15px;
+        position: relative;
+        z-index: 10;
     }
 
     /* Ocultar la barra de scroll para mantener el minimalismo */
@@ -65,11 +70,14 @@
     }
     .item-list .year {
         color: #888;
+        min-width: 35px;
     }
     .item-list a {
         color: #111;
         text-decoration: none;
         text-transform: uppercase;
+        display: block;
+        width: 100%;
     }
 </style>
 
@@ -77,12 +85,13 @@
     
     <nav class="mobile-top-bar">
         <div class="brand">
-            <a href="#">Estudio Akiraka</a>
+            {{-- Rutas corregidas --}}
+            <a href="{{ route('project.detail') ?? '#' }}">Estudio Akiraka ,</a>
         </div>
         <div class="links">
-            <a href="#">Info</a>
+            <a href="{{ route('info') ?? '#' }}">Info</a>
             <span>,</span>
-            <a href="#">Contacto</a>
+            <a href="{{ route('contacto') ?? '#' }}">Contacto</a>
         </div>
     </nav>
 
@@ -91,27 +100,42 @@
         <div class="slider-section">
             <h2 class="section-title">Obras<br><small>Proyectos</small></h2>
             <ul class="item-list">
-                <li><span class="year">2026</span> <a href="#">ASAI</a></li>
-                <li><span class="year">2026</span> <a href="#">MARKETING</a></li>
-                <li><span class="year">2026</span> <a href="#">MEETING ROOM</a></li>
-                <li><span class="year">2026</span> <a href="#">OJON DE CITA</a></li>
-                <li><span class="year">2026</span> <a href="#">REVILLAGIGEDO</a></li>
-                <li><span class="year">2026</span> <a href="#">SUKIYA GENOVA</a></li>
+                {{-- Ciclo Dinámico de Obras en Proceso --}}
+                @forelse($proyectosEnProceso ?? [] as $proyecto)
+                    <li><span class="year">PROC</span> <a href="{{ route('project.main', $proyecto->id_proyecto) }}">{{ $proyecto->titulo }}</a></li>
+                @empty
+                @endforelse
+                
+                {{-- Ciclo Dinámico de Obras Construidas --}}
+                @forelse($proyectosConstruidos ?? [] as $proyecto)
+                    <li><span class="year">{{ $proyecto->anio ?? 'S/A' }}</span> <a href="{{ route('project.main', $proyecto->id_proyecto) }}">{{ $proyecto->titulo }}</a></li>
+                @empty
+                    <li><span style="color: #ccc; font-style: italic;">Ningún proyecto disponible.</span></li>
+                @endforelse
             </ul>
         </div>
 
         <div class="slider-section">
             <h2 class="section-title">Objetos<br>&nbsp;</h2>
             <ul class="item-list">
-                <li><span class="year">2026</span> <a href="#">Mesa Akiraka</a></li>
-                <li><span class="year">2025</span> <a href="#">Silla Akika</a></li>
+                {{-- Ciclo Dinámico de Objetos --}}
+                @forelse($objetos ?? [] as $objeto)
+                    <li><span class="year">{{ $objeto->anio ?? 'S/A' }}</span> <a href="{{ route('objeto.main', $objeto->id_objeto) }}">{{ $objeto->titulo }}</a></li>
+                @empty
+                    <li><span style="color: #ccc; font-style: italic;">Ningún objeto en exhibición.</span></li>
+                @endforelse
             </ul>
         </div>
 
         <div class="slider-section">
             <h2 class="section-title">Publicaciones<br>&nbsp;</h2>
             <ul class="item-list">
-                <li><span class="year">2026</span> <a href="#">Story time house mountain</a></li>
+                {{-- Ciclo Dinámico de Publicaciones --}}
+                @forelse($publicaciones ?? [] as $publicacion)
+                    <li><span class="year">{{ \Carbon\Carbon::parse($publicacion->fecha)->format('Y') }}</span> <a href="{{ route('publicaciones.show', $publicacion->id_publicacion) }}">{{ $publicacion->titulo }}</a></li>
+                @empty
+                    <li><span style="color: #ccc; font-style: italic;">Ninguna publicación disponible.</span></li>
+                @endforelse
             </ul>
         </div>
 
