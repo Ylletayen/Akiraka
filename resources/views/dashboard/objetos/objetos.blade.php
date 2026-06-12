@@ -57,6 +57,21 @@
         .media-preview-container img, .media-preview-container video {
             max-width: 100%; max-height: 100%; object-fit: contain;
         }
+
+        /* --- ESTILOS DEL BUSCADOR MINIMALISTA --- */
+        .search-wrapper {
+            background: #fff; border: 1px solid #eaeaea; border-radius: 8px;
+            padding: 10px 20px; margin-bottom: 25px; display: flex; align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;
+        }
+        .search-wrapper:focus-within { border-color: #111; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .search-wrapper i { color: #888; font-size: 1.2rem; margin-right: 15px; }
+        .search-wrapper input {
+            border: none; outline: none; width: 100%; font-family: Arial, sans-serif;
+            font-size: 0.95rem; color: #333; background: transparent;
+        }
+        .search-wrapper input::placeholder { color: #bbb; }
+        /* ---------------------------------------- */
     </style>
 
     <div class="dashboard-container">
@@ -77,6 +92,12 @@
                 <div class="alert alert-dark mb-4" style="font-family: Arial; font-size: 0.85rem;">{{ session('success') }}</div>
             @endif
 
+            {{-- BARRA DE BÚSQUEDA INTERACTIVA --}}
+            <div class="search-wrapper">
+                <i class="bi bi-search"></i>
+                <input type="text" id="buscadorObjetos" onkeyup="filtrarTabla()" placeholder="Buscar por nombre del objeto o año...">
+            </div>
+
             <table class="user-table">
                 <thead>
                     <tr style="text-align: left; color: #888; font-family: Arial; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;">
@@ -85,7 +106,7 @@
                         <th style="text-align: right;">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tablaObjetos">
                     @forelse($objetos as $objeto)
                         {{-- MAGIA AQUÍ: Toda la fila te redirecciona al historial/ficha técnica --}}
                         <tr class="user-row" onclick="window.location='{{ route('objetos.historias', $objeto->id_objeto) }}'" title="Clic para gestionar ficha técnica y fotos">
@@ -110,10 +131,14 @@
                             </td>
                         </tr>
                     @empty
-                        <tr>
+                        <tr class="no-results-row">
                             <td colspan="3" class="text-center py-5 text-muted" style="font-style: italic;">No hay objetos registrados aún.</td>
                         </tr>
                     @endforelse
+                    {{-- Fila oculta por si la búsqueda no encuentra nada --}}
+                    <tr id="sinResultados" style="display: none;">
+                        <td colspan="3" class="text-center py-5 text-muted" style="font-style: italic; font-family: Arial;">No se encontraron objetos con esa búsqueda.</td>
+                    </tr>
                 </tbody>
             </table>
         </main>
@@ -167,6 +192,41 @@
 </div>
 
 <script>
+    // ================= FUNCIÓN DE BÚSQUEDA EN TIEMPO REAL =================
+    function filtrarTabla() {
+        let input = document.getElementById("buscadorObjetos");
+        let filtro = input.value.toLowerCase();
+        let tbody = document.getElementById("tablaObjetos");
+        let filas = tbody.getElementsByClassName("user-row");
+        let sinResultados = document.getElementById("sinResultados");
+        let coincidencias = 0;
+
+        for (let i = 0; i < filas.length; i++) {
+            // Evaluamos la fila completa combinando los textos de sus celdas
+            let celdaTitulo = filas[i].getElementsByTagName("td")[0];
+            let celdaAnio = filas[i].getElementsByTagName("td")[1];
+            
+            if (celdaTitulo && celdaAnio) {
+                let textoFila = (celdaTitulo.textContent || celdaTitulo.innerText) + " " + 
+                                (celdaAnio.textContent || celdaAnio.innerText);
+                                
+                if (textoFila.toLowerCase().indexOf(filtro) > -1) {
+                    filas[i].style.display = "";
+                    coincidencias++;
+                } else {
+                    filas[i].style.display = "none";
+                }
+            }
+        }
+
+        // Si escribes algo y no hay coincidencias, muestra el mensaje de "No se encontraron"
+        if (coincidencias === 0 && filas.length > 0) {
+            sinResultados.style.display = "";
+        } else {
+            sinResultados.style.display = "none";
+        }
+    }
+
     // ================= FUNCIONES PARA LA PREVISUALIZACIÓN =================
     function cambiarTipoMedia() {
         let tipo = document.getElementById('tipo_media').value;
