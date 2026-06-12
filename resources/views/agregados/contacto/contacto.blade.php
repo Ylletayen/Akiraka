@@ -157,14 +157,14 @@
         bottom: clamp(25px, 5vh, 45px); 
         left: clamp(30px, 5vw, 60px);
         font-size: 0.90rem;
-        color: #ffffff !important; 
+        color: #111111 !important; /* <--- Letras en negro oscuro */
         text-decoration: none !important; 
         z-index: 9999;
         
         background: rgba(255, 255, 255, 0.03); 
         backdrop-filter: blur(25px); 
         -webkit-backdrop-filter: blur(25px); 
-        border: 1px solid rgba(255, 255, 255, 0.1); 
+        border: 1px solid rgba(0, 0, 0, 0.1); /* <--- Borde un poco más oscuro para que combine */
         
         padding: 12px 32px; 
         border-radius: 50px; 
@@ -178,10 +178,10 @@
 
     .btn-flotante-regresar:hover {
         opacity: 1; 
-        background: rgba(0, 0, 0, 0.25); 
-        border-color: rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.5); /* <--- Cristal claro para que las letras negras destaquen */
+        border-color: rgba(0, 0, 0, 0.3);
         transform: translateX(-5px) translateY(-2px); 
-        color: #ffffff !important;
+        color: #111111 !important; /* <--- Letras en negro oscuro en hover */
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
     }
 

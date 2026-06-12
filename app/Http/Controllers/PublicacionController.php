@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class PublicacionController extends Controller
 {
-    // =========================================================
-    // VISTAS PÚBLICAS (Lo que ven los clientes)
-    // =========================================================
+
     public function index()
     {
         $publicaciones = Publicacion::orderBy('fecha','desc')->get();
@@ -24,16 +22,10 @@ class PublicacionController extends Controller
         return view('publicaciones.show', compact('publicacion')); 
     }
 
-    // =========================================================
-    // VISTAS DEL DASHBOARD ADMIN (Lo que ve tu equipo)
-    // =========================================================
     public function adminIndex()
     {
         $publicaciones = Publicacion::orderBy('fecha','desc')->get();
-        
-        // CORRECCIÓN: Apuntando a la carpeta correcta en el Dashboard
-        // Si tu archivo se llama index.blade.php pones '.index', 
-        // si se llama publicaciones.blade.php pones '.publicaciones'
+
         return view('dashboard.publicaciones.index', compact('publicaciones'));
     }
 
