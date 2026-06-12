@@ -14,9 +14,13 @@
         .btn-add-new { background: #111; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: background 0.3s ease; }
         .btn-add-new:hover { background: #333; }
         .project-table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
-        .project-row { background: #fff; outline: 1px solid #eee; transition: all 0.3s ease; }
-        .project-row:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        
+        /* Modificaciones en la Fila para que actúe como botón */
+        .project-row { background: #fff; outline: 1px solid #eee; transition: all 0.3s ease; cursor: pointer; }
+        .project-row:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); outline-color: #111; }
         .project-row td { padding: 15px 20px; vertical-align: middle; }
+        .project-title-text { transition: color 0.3s ease; }
+        .project-row:hover .project-title-text { color: #666; } /* Efecto visual al pasar el mouse */
         
         /* ================= ESTILOS DE LOS BOTONES ICONO ================= */
         .btn-icon-action {
@@ -80,9 +84,10 @@
                 </thead>
                 <tbody>
                     @forelse($proyectos as $proyecto)
-                        <tr class="project-row">
+                        {{-- MAGIA AQUÍ: Toda la fila te redirecciona al historial --}}
+                        <tr class="project-row" onclick="window.location='{{ route('proyectos.historias', $proyecto->id_proyecto) }}'" title="Clic para gestionar historia y fotos">
                             <td>
-                                <div style="font-weight: bold; font-size: 1.05rem; display:flex; align-items:center;">
+                                <div class="project-title-text" style="font-weight: bold; font-size: 1.05rem; display:flex; align-items:center;">
                                     {{ $proyecto->titulo }}
                                     @if($proyecto->anio) <span class="badge-anio">{{ $proyecto->anio }}</span> @endif
                                 </div>
@@ -101,7 +106,8 @@
                                     {{ $nombreEstado }}
                                 </span>
                             </td>
-                            <td style="text-align: right; white-space: nowrap;">
+                            {{-- DETIENE EL CLIC AQUÍ: Si tocan esta celda, no se redirige a la historia --}}
+                            <td style="text-align: right; white-space: nowrap;" onclick="event.stopPropagation();">
                                 <a href="{{ route('proyectos.historias', $proyecto->id_proyecto) }}" class="btn-icon-action" title="Gestionar Ficha Técnica / Fotos">
                                     <i class="bi bi-images"></i>
                                 </a>

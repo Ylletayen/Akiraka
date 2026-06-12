@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
 <div class="dash-admin-view">
     <style>
         /* Mantenemos tus estilos base del dashboard */
@@ -25,10 +27,15 @@
         
         .badge-info { font-family: Arial, sans-serif; font-size: 0.75rem; color: #888; font-weight: bold; margin-right: 15px; }
 
-        /* Estilo para los botones de texto de acción */
-        .btn-text-action { background: none; border: none; font-weight: bold; text-decoration: underline; font-size: 0.75rem; cursor: pointer; text-transform: uppercase; }
-        .btn-text-action.edit { color: #111; margin-bottom: 10px; display: block; }
-        .btn-text-action.delete { color: #d9534f; }
+        /* ================= ESTILOS DE LOS BOTONES ICONO ================= */
+        .btn-icon-action {
+            background: none; border: none; font-size: 1.2rem; cursor: pointer;
+            transition: transform 0.2s ease, color 0.3s ease; padding: 5px; margin-left: 10px;
+            display: inline-flex; align-items: center; justify-content: center;
+            color: #888; text-decoration: none;
+        }
+        .btn-icon-action:hover { transform: scale(1.15); color: #111; }
+        .btn-icon-action.delete:hover { color: #d9534f; } /* Si borras se pone rojito para advertir */
 
         /* Estilos para la previsualización */
         .media-preview-container {
@@ -117,9 +124,9 @@
             <div class="header-section">
                 <div>
                     <h1>Historia: {{ $proyecto->titulo }}</h1>
-                    <p style="font-family: Arial, sans-serif; font-size: 0.9rem; color: #666;">Agrega imágenes o videos para narrar la línea del tiempo de esta obra.</p>
+                    <p style="font-family: Arial, sans-serif; font-size: 0.9rem; color: #666;">Agrega imágenes o videos para narrar la línea del tiempo de este proyecto.</p>
                 </div>
-                <a href="{{ route('dashboard.proyectos') }}" style="color: #666; font-family: Arial; text-decoration: none; font-size: 0.9rem; border: 1px solid #ddd; padding: 8px 15px; border-radius: 20px;">&larr; Volver a Obras</a>
+                <a href="{{ route('dashboard.proyectos') }}" style="color: #666; font-family: Arial; text-decoration: none; font-size: 0.9rem; border: 1px solid #ddd; padding: 8px 15px; border-radius: 20px;">&larr; Volver a Proyectos</a>
             </div>
 
             @if(session('success'))
@@ -193,10 +200,8 @@
                                 {{-- MAGIA PARA MOSTRAR VIDEO O IMAGEN --}}
                                 @php $esVideoFase = preg_match('/\.(mp4|webm)$/i', $img->url_imagen); @endphp
                                 @if($esVideoFase)
-                                    <!-- AÑADIDO: onclick="abrirLightbox(this.src, 'video')" -->
                                     <video src="{{ asset('storage/' . $img->url_imagen) }}" class="img-preview" muted loop playsinline onclick="abrirLightbox(this.src, 'video')"></video>
                                 @else
-                                    <!-- AÑADIDO: onclick="abrirLightbox(this.src, 'imagen')" -->
                                     <img src="{{ asset('storage/' . $img->url_imagen) }}" class="img-preview" alt="Fase" onclick="abrirLightbox(this.src, 'imagen')">
                                 @endif
                             </td>
@@ -218,12 +223,17 @@
                                 </p>
                             </td>
                             
-                            <td style="text-align: right; width: 120px;">
-                                <button type="button" class="btn-text-action edit" onclick='editarFase(@json($img))'>Editar</button>
+                            <td style="text-align: right; width: 120px; white-space: nowrap;">
+                                {{-- BOTONES DE ÍCONO REEMPLAZADOS AQUÍ --}}
+                                <button type="button" class="btn-icon-action" title="Editar Fase" onclick='editarFase(@json($img))'>
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
 
-                                <form action="{{ route('proyectos.historias.destroy', $img->id_imagen) }}" method="POST" onsubmit="return confirm('¿Eliminar esta fase de la historia?');">
+                                <form action="{{ route('proyectos.historias.destroy', $img->id_imagen) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar esta fase de la historia?');">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn-text-action delete">Eliminar</button>
+                                    <button type="submit" class="btn-icon-action delete" title="Eliminar Fase">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
                                 </form>
                             </td>
                             
@@ -239,7 +249,6 @@
     </div>
 </div>
 
-<!-- --- INICIO: VISOR DE IMAGEN A PANTALLA COMPLETA (LIGHTBOX HTML) --- -->
 <div id="mediaLightbox" class="lightbox-overlay" onclick="cerrarLightbox(event)">
     <button class="lightbox-close" onclick="cerrarLightbox(event, true)">✕</button>
     <div class="lightbox-content">
@@ -247,8 +256,6 @@
         <video id="lightboxVideo" src="" controls style="display: none;"></video>
     </div>
 </div>
-<!-- --- FIN: VISOR DE IMAGEN --- -->
-
 <div class="modal fade" id="modalEditarFase" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content p-4 border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-radius: 12px;">
