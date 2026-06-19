@@ -27,83 +27,98 @@
         ]
     ];
 
-    // Si tu controlador no manda la variable $resenas, o viene vacía, usamos los datos de prueba
     $resenasFinales = (isset($resenas) && count($resenas) > 0) ? $resenas : $mockResenas;
 @endphp
 
 <style>
-    /* ================= COMPLEMENTOS DE DISEÑO GENERAL ================= */
     body {
         background-color: #fafafa;
     }
+
+    /* ================= CONTENEDOR PRINCIPAL ================= */
+    .akira-container { 
+        max-width: 1000px; /* Un poco más ancho para que quepan bien las tarjetas */
+        margin: 0 auto; 
+        padding: 60px 30px;
+        font-family: "Georgia", "Times New Roman", serif; 
+        color: #333; 
+        position: relative;
+        z-index: 1; 
+    }
+
+    /* ================= ESTILOS DE TU HEADER MINIMALISTA ================= */
+    .site-header-main { margin-bottom: 70px; text-align: left; }
+
+    .nav-link-akira {
+        position: relative;
+        display: inline-block;
+        padding-bottom: 2px;
+        text-decoration: none !important;
+        color: #8c8c8c;
+        transition: color 0.3s ease;
+        font-size: 1.1rem;
+    }
     
-    /* Mantenemos tus clases originales del Landing para el Header Navbar */
-    .header-floating {
+    .nav-link-akira::after {
+        content: '';
         position: absolute;
-        top: 0;
+        width: 0;
+        height: 1px;
+        bottom: 0;
         left: 0;
-        width: 100%;
-        background: #111111 !important; /* Le ponemos fondo oscuro fijo para que resalte en esta vista */
-        z-index: 20;
+        background-color: currentColor;
+        transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
-    .logo-wrapper { color: #fff; }
-    .logo-img-landing { height: 45px; width: auto; object-fit: contain; }
     
-    .nav-link-akira { 
-        color: #fff !important; 
-        text-decoration: none; 
-        font-size: 0.85rem; 
-        letter-spacing: 1px; 
-        transition: opacity 0.3s; 
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        cursor: pointer;
+    .nav-link-akira:hover {
+        color: #111111;
     }
-    .nav-link-akira:hover { opacity: 0.6; }
-    .social-links-akira a { color: #fff; font-size: 1.2rem; transition: opacity 0.3s ease; }
-    .social-links-akira a:hover { opacity: 0.6; }
-
-    /* ================= HERO SECCIÓN / CONTENEDOR PRINCIPAL ================= */
-    .content-wrapper-reviews {
-        padding-top: 140px; /* Margen para que no tape el Navbar de arriba */
-        min-height: 100vh;
+    .nav-link-akira:hover::after {
+        width: 100%;
     }
 
-    .header-section {
-        border-bottom: 1px solid #eaeaea;
-        padding-bottom: 30px;
-        margin-bottom: 50px;
-        text-align: center;
+    .active-link {
+        font-weight: bold !important;
+        color: #111111 !important;
     }
-    .header-section h1 {
-        font-size: 2.3rem;
-        font-weight: 700;
-        margin-bottom: 12px;
-        color: #111;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-    }
-    .header-section p {
-        color: #666;
-        font-size: 1rem;
-        max-width: 600px;
-        margin: 0 auto 25px auto;
-        line-height: 1.5;
+    .active-link::after {
+        width: 100% !important;
     }
 
     /* ================= GRID DE TARJETAS DE RESEÑAS ================= */
+    .header-section {
+        border-bottom: 1px solid #eaeaea;
+        padding-bottom: 20px;
+        margin-bottom: 40px;
+        font-family: Arial, sans-serif; /* Para contrastar con la tipografía serif del menú */
+    }
+    .header-section h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #111;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .header-section p {
+        color: #666;
+        font-size: 0.95rem;
+        max-width: 600px;
+        line-height: 1.5;
+    }
+
     .reviews-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 30px;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
         margin-bottom: 60px;
+        font-family: Arial, sans-serif;
     }
 
     .review-card {
         background: #fff;
         border: 1px solid #eaeaea;
-        border-radius: 0px; /* Mantenemos el estilo ortogonal minimalista de Akira */
+        border-radius: 0px; 
         padding: 30px;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         display: flex;
@@ -121,31 +136,12 @@
         align-items: flex-start;
         margin-bottom: 18px;
     }
-    .reviewer-info {
-        display: flex;
-        flex-direction: column;
-    }
-    .reviewer-name {
-        font-weight: 700;
-        font-size: 1.05rem;
-        color: #111;
-        margin: 0;
-        letter-spacing: 0.5px;
-    }
-    .review-time {
-        font-size: 0.75rem;
-        color: #999;
-        margin-top: 3px;
-    }
+    .reviewer-info { display: flex; flex-direction: column; }
+    .reviewer-name { font-weight: 700; font-size: 1.05rem; color: #111; margin: 0; }
+    .review-time { font-size: 0.75rem; color: #999; margin-top: 3px; }
 
-    .star-rating {
-        color: #eab308;
-        font-size: 1rem;
-        letter-spacing: 2px;
-    }
-    .star-empty {
-        color: #eaeaea;
-    }
+    .star-rating { color: #eab308; font-size: 1rem; letter-spacing: 2px; }
+    .star-empty { color: #eaeaea; }
 
     .review-body {
         font-size: 0.92rem;
@@ -169,53 +165,32 @@
         display: inline-block;
         background: #111;
         color: #fff;
-        padding: 12px 35px;
+        padding: 10px 25px;
         text-decoration: none;
         font-weight: bold;
         letter-spacing: 1px;
         text-transform: uppercase;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         transition: background 0.3s;
         border: none;
+        margin-top: 15px;
     }
-    .btn-leave-review:hover {
-        background: #333;
-        color: #fff;
-    }
+    .btn-leave-review:hover { background: #333; color: #fff; }
 </style>
 
-<header class="header-floating py-4 px-5 d-flex justify-content-between align-items-center">
-    <div class="logo-wrapper d-flex flex-column align-items-center">
-        <img src="{{ asset('images/logosinbgakira.png') }}" alt="Logo Akiraka" class="logo-img-landing">
-        <span class="logo-brand-text mt-1 fw-bold" style="font-size: 0.75rem; letter-spacing: 2px; color: #fff;">ESTUDIO AKIRAKA</span>
-    </div>
-
-    <nav class="d-none d-lg-flex align-items-center gap-4">
-        <a href="{{ route('project.detail') }}" class="nav-link-akira">PROYECTOS</a>
-        <a href="{{ route('info') }}" class="nav-link-akira">INFORMACIÓN</a>
-        <a href="{{ route('resenas.index') }}" class="nav-link-akira" style="border-bottom: 1px solid #fff;">RESEÑAS</a>
-        <a href="{{ route('contacto') }}" class="nav-link-akira">CONTACTO</a>
-        
-        @guest
-            <a onclick="abrirLogin()" class="nav-link-akira">LOGIN</a>
-        @endguest
-
-        @auth
-            <a href="{{ route('dashboard.main') }}" class="nav-link-akira">
-                <i class="bi bi-speedometer2"></i> PANEL ADMIN
-            </a>
-        @endauth
-        
-        <div class="social-links-akira d-flex gap-3 ms-3">
-            <a href="#" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
-            <a href="#" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
-        </div>
-    </nav>
-</header>
-
-<div class="container content-wrapper-reviews">
+<div class="akira-container">
     
+    {{-- AQUÍ ESTÁ TU MENÚ TIPOGRÁFICO EXACTO CON LA NUEVA PESTAÑA --}}
+    <header class="site-header-main">
+        <a href="{{ route('project.detail') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('project.detail') ? 'active-link' : '' }}">Estudio Akiraka ,</a>
+        <a href="{{ route('info') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('info') ? 'active-link' : '' }}">Info ,</a>
+        
+        {{-- Aquí metimos la vista actual de reseñas para que se pinte en negro por el active-link --}}
+        <a href="{{ route('resenas.index') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('resenas.index') ? 'active-link' : '' }}">Reseñas ,</a>
+        
+        <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('contacto') ? 'active-link' : '' }}">Contacto</a>
+    </header>
+
     <div class="header-section">
         <h1>Experiencia Akira</h1>
         <p>Las opiniones de nuestros clientes avalan el compromiso y rigor técnico depositados en cada obra, plano e idea conceptualizada por nuestro estudio.</p>
@@ -264,10 +239,8 @@
     </div>
 </div>
 
-{{-- MODAL INTEGRADO PARA AGREGAR RESEÑAS --}}
-@include('dashboard.login.login') {{-- Conservamos tus modales globales por si se ejecutan desde el nav --}}
+@include('dashboard.login.login') 
 @include('dashboard.login.registro')
+{{-- @include('partials.modal_resena') --}}
 
-{{-- Aquí mandamos a llamar al modal interactivo que hicimos en el paso anterior --}}
-{{-- Puedes dejar la estructura del modal pegada aquí abajo para pruebas rápidas o usar un @include --}}
 @endsection
