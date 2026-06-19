@@ -243,11 +243,86 @@
         border: none;
         margin-top: 15px;
         font-family: Arial, sans-serif;
+        cursor: pointer;
     }
     .btn-leave-review:hover { 
         background: #333; 
         color: #fff; 
         transform: translateY(-2px); 
+    }
+
+    /* ========================================================
+       NUEVO: ESTILOS DEL MODAL PARA CREAR RESEÑA
+       ======================================================== */
+    .modal-overlay-resena { 
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); 
+        display: none; align-items: center; justify-content: center; 
+        z-index: 10000; overflow-y: auto; padding: 20px; 
+    }
+    .modal-overlay-resena.active { display: flex; }
+    
+    .modal-resena-box { 
+        background: #fff; width: 100%; max-width: 500px; 
+        padding: 50px 40px; position: relative; 
+        box-shadow: 0 30px 60px rgba(0,0,0,0.3); 
+    }
+    
+    .btn-close-modal { 
+        position: absolute; top: 20px; right: 20px; 
+        background: none; border: none; font-size: 1.2rem; 
+        color: #888; cursor: pointer; transition: color 0.3s; 
+    }
+    .btn-close-modal:hover { color: #111; }
+    
+    .modal-resena-title { 
+        font-family: "Georgia", serif; letter-spacing: 2px; 
+        text-transform: uppercase; font-size: 1.2rem; 
+        margin-bottom: 10px; text-align: center; color: #111;
+    }
+    .modal-resena-subtitle { 
+        font-size: 0.8rem; color: #888; text-align: center; 
+        margin-bottom: 30px; font-family: Arial, sans-serif;
+    }
+    
+    .form-input-resena { 
+        width: 100%; padding: 12px 0; border: none; 
+        border-bottom: 1px solid #eee; margin-bottom: 20px; 
+        outline: none; font-family: Arial, sans-serif; 
+        transition: border-color 0.3s; background: transparent; 
+    }
+    .form-input-resena:focus { border-bottom-color: #111; }
+    
+    .form-label-small { 
+        display: block; font-family: Arial, sans-serif; 
+        font-size: 0.75rem; letter-spacing: 1px; color: #888; 
+        margin-bottom: 5px; text-transform: uppercase; 
+    }
+    
+    .btn-submit-resena { 
+        width: 100%; padding: 15px; background: #111; 
+        color: #fff; border: none; text-transform: uppercase; 
+        letter-spacing: 2px; font-size: 0.75rem; cursor: pointer; 
+        transition: background 0.3s; margin-top: 10px; 
+        font-weight: bold;
+    }
+    .btn-submit-resena:hover { background: #333; }
+
+    /* Estrellas interactivas con puro CSS (Magia) */
+    .rating-stars { 
+        display: flex; flex-direction: row-reverse; 
+        justify-content: flex-end; gap: 8px; margin-bottom: 25px; 
+    }
+    .rating-stars input { display: none; }
+    .rating-stars label { 
+        font-size: 2rem; color: #eaeaea; cursor: pointer; 
+        transition: color 0.2s; margin: 0; line-height: 1; 
+    }
+    /* Si seleccionas una, se colorean todas las anteriores */
+    .rating-stars input:checked ~ label, 
+    .rating-stars label:hover, 
+    .rating-stars label:hover ~ label { 
+        color: #eab308; 
     }
 </style>
 
@@ -334,8 +409,56 @@
     </div>
 </div>
 
+{{-- ========================================================
+     MODAL PARA CREAR RESEÑA (NUEVO)
+     ======================================================== --}}
+<div id="modalAñadirResena" class="modal-overlay-resena">
+    <div class="modal-resena-box">
+        <button class="btn-close-modal" onclick="cerrarModalResena()">✕</button>
+        
+        <h3 class="modal-resena-title">Escribir Reseña</h3>
+        <p class="modal-resena-subtitle">Tu opinión será revisada por nuestro equipo para evitar spam antes de publicarse en la web.</p>
+
+        <!-- Asumo que tu ruta en web.php se llama 'resenas.store' -->
+        <form action="{{ route('resenas.store') ?? '#' }}" method="POST">
+            @csrf
+            
+            
+
+            <label class="form-label-small mt-3">TU NOMBRE</label>
+            <input type="text" name="nombre_cliente" class="form-input-resena" placeholder="Ej. Arquitecto Carlos" required maxlength="150">
+
+            <label class="form-label-small">COMENTARIO</label>
+            <textarea name="comentario" class="form-input-resena" rows="3" placeholder="Cuéntanos sobre tu experiencia trabajando con nosotros..." required></textarea>
+
+            <button type="submit" class="btn-submit-resena">Enviar para revisión</button>
+        </form>
+    </div>
+</div>
+
 @include('dashboard.login.login') 
 @include('dashboard.login.registro')
 @include('Principal.cita')
+
+<script>
+    // Lógica para abrir y cerrar el nuevo modal de reseñas
+    function abrirModalResena() {
+        document.getElementById('modalAñadirResena').classList.add('active');
+        document.body.style.overflow = 'hidden'; // Evita que se scrollee la página de fondo
+    }
+
+    function cerrarModalResena() {
+        document.getElementById('modalAñadirResena').classList.remove('active');
+        document.body.style.overflow = 'auto'; // Restaura el scroll
+    }
+
+    // Cerrar si hace clic en el fondo negro
+    window.addEventListener('click', function(event) {
+        var modal = document.getElementById('modalAñadirResena');
+        if (event.target == modal) {
+            cerrarModalResena();
+        }
+    });
+</script>
 
 @endsection
