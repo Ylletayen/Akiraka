@@ -105,6 +105,10 @@
         <nav class="d-none d-lg-flex align-items-center gap-4">
             <a href="{{ route('project.detail') }}" class="nav-link-akira">PROYECTOS</a>
             <a href="{{ route('info') }}" class="nav-link-akira">INFORMACIÓN</a>
+            
+            {{-- NUEVO ENLACE A LAS RESEÑAS --}}
+            <a href="{{ route('resenas.index') }}" class="nav-link-akira">RESEÑAS</a>
+            
             <a href="{{ route('contacto') }}" class="nav-link-akira">CONTACTO</a>
             
             {{-- SECCIÓN ASIGNADA CON LA NUEVA CLASE Y SUS ICONOS DE ACCIÓN --}}

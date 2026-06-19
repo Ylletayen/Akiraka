@@ -15,6 +15,7 @@ use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\DashboardController;
 use App\Models\Proyecto;
 use App\Models\Publicacion;
+use App\Http\Controllers\ResenaController;
 
 use Illuminate\Support\Facades\Artisan;
 
@@ -85,6 +86,14 @@ Route::get('/registro', function () {
     return view('dashboard.login.registro');
 })->name('registro.index');
 Route::post('/registro', [AuthController::class, 'store'])->name('registro.store');
+
+Route::get('/resenas', [ResenaController::class, 'index'])->name('resenas.index');
+
+// Vista con el formulario para que el cliente deje su reseña
+Route::get('/dejar-resena', [ResenaController::class, 'create'])->name('formulario.resena');
+
+// Ruta interna para guardar la reseña en la base de datos
+Route::post('/resenas', [ResenaController::class, 'store'])->name('resenas.store');
 
 
 // --- DASHBOARD (PROTEGIDO) ---
