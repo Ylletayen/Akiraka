@@ -255,12 +255,15 @@
 <a href="{{ route('landing') }}" class="btn-flotante-regresar">&larr; regresar</a>
 
 <div class="akira-container">
-    <div class="akira-header">
-        {{-- AQUÍ APLICAMOS LA MAGIA DE LARAVEL (active-link) --}}
+    <header class="site-header-main">
         <a href="{{ route('project.detail') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('project.detail') ? 'active-link' : '' }}">Estudio Akiraka ,</a>
         <a href="{{ route('info') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('info') ? 'active-link' : '' }}">Info ,</a>
+        
+        {{-- EL NUEVO ENLACE A RESEÑAS --}}
+        <a href="{{ route('resenas.index') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('resenas.index') ? 'active-link' : '' }}">Reseñas ,</a>
+        
         <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('contacto') ? 'active-link' : '' }}">Contacto</a>
-    </div>
+    </header>
 
     <div class="akira-description">
         <strong>¿QUIÉNES SOMOS?</strong><br>

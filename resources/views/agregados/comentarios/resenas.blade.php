@@ -2,7 +2,16 @@
 
 @section('content')
 @php
-    // --- DATOS DE PRUEBA TEMPORALES (Ordenados por mejores valorados) ---
+    $config = \App\Models\Configuracion::first();
+    
+    // Obtenemos el fondo dinámico (imagen o video) tal cual lo hace Contactos
+    $mediaUrl = $config && $config->landing_hero_image 
+                 ? asset('storage/' . $config->landing_hero_image) 
+                 : 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=1920';
+                 
+    $isVideo = preg_match('/\.(mp4|webm)$/i', $mediaUrl);
+
+    // --- DATOS DE PRUEBA TEMPORALES ---
     $mockResenas = [
         (object)[
             'nombre_cliente' => 'Arq. Carlos Mendoza',
@@ -31,23 +40,64 @@
 @endphp
 
 <style>
-    body {
-        background-color: #fafafa;
+    /* ================= ESTILOS GLOBALES Y COLUMNAS MULTIMEDIA ================= */
+    body { background-color: #fafafa; }
+
+    .side-media {
+        position: fixed;
+        top: 0;
+        width: 14vw;
+        height: 100vh;
+        z-index: -1;
+        overflow: hidden;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: blur(6px) opacity(0.45) grayscale(20%); 
+        transition: filter 0.8s ease;
     }
 
-    /* ================= CONTENEDOR PRINCIPAL ================= */
+    .side-left { 
+        left: 0; 
+        -webkit-mask-image: linear-gradient(to right, black 30%, transparent 100%);
+        mask-image: linear-gradient(to right, black 30%, transparent 100%);
+    }
+    
+    .side-right { 
+        right: 0; 
+        -webkit-mask-image: linear-gradient(to left, black 30%, transparent 100%);
+        mask-image: linear-gradient(to left, black 30%, transparent 100%);
+    }
+    
+    .hero-video-bg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        transform: translateX(-50%) translateY(-50%);
+        object-fit: cover;
+    }
+
+    @media (max-width: 1100px) {
+        .side-media { display: none !important; }
+    }
+
+    /* ================= CONTENEDOR PRINCIPAL (IDÉNTICO A CONTACTOS) ================= */
     .akira-container { 
-        max-width: 1000px; /* Un poco más ancho para que quepan bien las tarjetas */
+        max-width: 780px; /* Regresamos al ancho súper elegante y angosto */
         margin: 0 auto; 
-        padding: 60px 30px;
-        font-family: "Georgia", "Times New Roman", serif; 
+        padding: 50px 30px;
+        font-family: "Georgia", "Times New Roman", serif; /* Fuente editorial para todo */
         color: #333; 
         position: relative;
         z-index: 1; 
     }
 
-    /* ================= ESTILOS DE TU HEADER MINIMALISTA ================= */
-    .site-header-main { margin-bottom: 70px; text-align: left; }
+    /* ================= HEADER / MENU TIPOGRÁFICO ================= */
+    .site-header-main { margin-bottom: 60px; }
 
     .nav-link-akira {
         position: relative;
@@ -56,7 +106,7 @@
         text-decoration: none !important;
         color: #8c8c8c;
         transition: color 0.3s ease;
-        font-size: 1.1rem;
+        font-family: "Georgia", "Times New Roman", serif;
     }
     
     .nav-link-akira::after {
@@ -70,64 +120,80 @@
         transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
-    .nav-link-akira:hover {
-        color: #111111;
+    .nav-link-akira:hover { color: #111111; }
+    .nav-link-akira:hover::after { width: 100%; }
+
+    .active-link { font-weight: bold !important; color: #111111 !important; }
+    .active-link::after { width: 100% !important; }
+
+    /* ================= BOTÓN FLOTANTE REGRESAR ================= */
+    .btn-flotante-regresar {
+        position: fixed;
+        bottom: clamp(25px, 5vh, 45px); 
+        left: clamp(30px, 5vw, 60px);
+        font-size: 0.90rem;
+        color: #111111 !important; 
+        text-decoration: none !important; 
+        z-index: 9999;
+        background: rgba(255, 255, 255, 0.03); 
+        backdrop-filter: blur(25px); 
+        -webkit-backdrop-filter: blur(25px); 
+        border: 1px solid rgba(0, 0, 0, 0.1); 
+        padding: 12px 32px; 
+        border-radius: 50px; 
+        opacity: 0.6; 
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        font-family: "Georgia", "Times New Roman", serif;
+        letter-spacing: 1.5px; 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
     }
-    .nav-link-akira:hover::after {
-        width: 100%;
+    .btn-flotante-regresar:hover {
+        opacity: 1; 
+        background: rgba(255, 255, 255, 0.5); 
+        border-color: rgba(0, 0, 0, 0.3);
+        transform: translateX(-5px) translateY(-2px); 
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
     }
 
-    .active-link {
-        font-weight: bold !important;
-        color: #111111 !important;
-    }
-    .active-link::after {
-        width: 100% !important;
-    }
-
-    /* ================= GRID DE TARJETAS DE RESEÑAS ================= */
+    /* ================= SECCIÓN DE RESEÑAS ================= */
     .header-section {
         border-bottom: 1px solid #eaeaea;
         padding-bottom: 20px;
         margin-bottom: 40px;
-        font-family: Arial, sans-serif; /* Para contrastar con la tipografía serif del menú */
     }
     .header-section h1 {
         font-size: 2rem;
-        font-weight: 700;
         margin-bottom: 10px;
         color: #111;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.02em;
+        font-weight: normal; /* Se ajusta a la familia Serif elegantemente */
     }
     .header-section p {
         color: #666;
         font-size: 0.95rem;
-        max-width: 600px;
-        line-height: 1.5;
+        line-height: 1.6;
+        font-style: italic; /* Toque editorial */
     }
 
     .reviews-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
         gap: 25px;
         margin-bottom: 60px;
-        font-family: Arial, sans-serif;
     }
 
     .review-card {
-        background: #fff;
+        background: transparent;
         border: 1px solid #eaeaea;
-        border-radius: 0px; 
         padding: 30px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: transform 0.3s ease, border-color 0.3s ease;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
     }
     .review-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.03);
+        transform: translateY(-3px);
+        border-color: #ccc;
     }
 
     .review-header {
@@ -137,18 +203,18 @@
         margin-bottom: 18px;
     }
     .reviewer-info { display: flex; flex-direction: column; }
-    .reviewer-name { font-weight: 700; font-size: 1.05rem; color: #111; margin: 0; }
-    .review-time { font-size: 0.75rem; color: #999; margin-top: 3px; }
+    .reviewer-name { font-weight: bold; font-size: 1rem; color: #111; margin: 0; }
+    .review-time { font-size: 0.75rem; color: #999; margin-top: 3px; font-family: Arial, sans-serif; letter-spacing: 0.5px; text-transform: uppercase; }
 
-    .star-rating { color: #eab308; font-size: 1rem; letter-spacing: 2px; }
+    .star-rating { color: #eab308; font-size: 0.9rem; letter-spacing: 2px; }
     .star-empty { color: #eaeaea; }
 
     .review-body {
-        font-size: 0.92rem;
+        font-size: 0.95rem;
         color: #444;
-        line-height: 1.6;
+        line-height: 1.7;
         flex-grow: 1;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
         font-style: italic;
     }
 
@@ -156,40 +222,69 @@
         border-top: 1px solid #f5f5f5;
         padding-top: 15px;
         font-size: 0.75rem;
-        color: #999;
+        color: #aaa;
         display: flex;
         justify-content: space-between;
+        font-family: Arial, sans-serif; /* Detalles técnicos en sans-serif para contrastar */
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
 
     .btn-leave-review {
         display: inline-block;
         background: #111;
         color: #fff;
-        padding: 10px 25px;
+        padding: 12px 30px;
         text-decoration: none;
-        font-weight: bold;
-        letter-spacing: 1px;
+        letter-spacing: 2px;
         text-transform: uppercase;
         font-size: 0.75rem;
-        transition: background 0.3s;
+        transition: background 0.3s ease, transform 0.2s ease;
         border: none;
         margin-top: 15px;
+        font-family: Arial, sans-serif;
     }
-    .btn-leave-review:hover { background: #333; color: #fff; }
+    .btn-leave-review:hover { 
+        background: #333; 
+        color: #fff; 
+        transform: translateY(-2px); 
+    }
 </style>
 
+
+{{-- ================= COLUMNAS MULTIMEDIA ================= --}}
+<div class="side-media side-left {{ !$isVideo ? 'hero-image-bg' : '' }}" @if(!$isVideo) style="background-image: url('{{ $mediaUrl }}');" @endif>
+    @if($isVideo)
+        <video autoplay loop muted playsinline class="hero-video-bg"><source src="{{ $mediaUrl }}" type="video/mp4"></video>
+    @endif
+</div>
+
+<div class="side-media side-right {{ !$isVideo ? 'hero-image-bg' : '' }}" @if(!$isVideo) style="background-image: url('{{ $mediaUrl }}'); transform: scaleX(-1);" @endif>
+    @if($isVideo)
+        <video autoplay loop muted playsinline class="hero-video-bg" style="transform: translateX(-50%) translateY(-50%) scaleX(-1);"><source src="{{ $mediaUrl }}" type="video/mp4"></video>
+    @endif
+</div>
+
+{{-- ================= BOTÓN DE REGRESO FLOTANTE ================= --}}
+<a href="{{ route('landing') }}" class="btn-flotante-regresar">← regresar</a>
+
+
+{{-- ================= CONTENEDOR CENTRAL ================= --}}
 <div class="akira-container">
     
-    {{-- AQUÍ ESTÁ TU MENÚ TIPOGRÁFICO EXACTO CON LA NUEVA PESTAÑA --}}
+    {{-- MENÚ TIPOGRÁFICO EXACTO AL DE CONTACTOS --}}
     <header class="site-header-main">
         <a href="{{ route('project.detail') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('project.detail') ? 'active-link' : '' }}">Estudio Akiraka ,</a>
         <a href="{{ route('info') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('info') ? 'active-link' : '' }}">Info ,</a>
-        
-        {{-- Aquí metimos la vista actual de reseñas para que se pinte en negro por el active-link --}}
         <a href="{{ route('resenas.index') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('resenas.index') ? 'active-link' : '' }}">Reseñas ,</a>
-        
         <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('contacto') ? 'active-link' : '' }}">Contacto</a>
     </header>
+
+    @if(session('success'))
+        <div style="background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; padding: 15px; text-align: center; margin-bottom: 30px; font-family: Arial; font-size: 0.9rem; letter-spacing: 1px;">
+            {{ session('success') }}
+        </div>
+    @endif
 
     <div class="header-section">
         <h1>Experiencia Akira</h1>
@@ -241,6 +336,5 @@
 
 @include('dashboard.login.login') 
 @include('dashboard.login.registro')
-{{-- @include('partials.modal_resena') --}}
 
 @endsection
