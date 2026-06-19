@@ -4,9 +4,8 @@
 @php
     $config = \App\Models\Configuracion::first();
     
-    // --- ESTA ES LA LÍNEA QUE DEBES CORREGIR ---
     $mediaUrl = $config && $config->landing_hero_image 
-                 ? asset('storage/' . $config->landing_hero_image) // <-- DEBE DECIR 'storage/'
+                 ? asset('storage/' . $config->landing_hero_image) 
                  : 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=1920';
                  
     // Detectamos si es un video MP4
@@ -127,9 +126,11 @@
         z-index: 1; 
     }
     
-    .akira-header { font-size: 1.2rem; margin-bottom: 60px; }
-    .akira-header strong { font-weight: bold; }
-    .akira-header span { color: #ccc; margin-left: 5px; }
+    /* MAGIA: AQUÍ SE AJUSTA EL ESPACIADO DEL HEADER PARA IGUALAR A CONTACTO */
+    .site-header-main { 
+        margin-bottom: 80px; 
+        font-size: 1rem;
+    }
     
     /* --- INDICADOR DE PÁGINA ACTUAL (LÍNEA INFERIOR ANIMADA) --- */
     .nav-link-akira {
