@@ -336,5 +336,6 @@
 
 @include('dashboard.login.login') 
 @include('dashboard.login.registro')
+@include('Principal.cita')
 
 @endsection
