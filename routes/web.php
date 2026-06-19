@@ -183,3 +183,5 @@ Route::post('/api/chatbot/agendar', [CitaController::class, 'storeDesdeChat'])->
 // PUBLICACIONES (VISTA PÚBLICA EXTERNA)
 Route::get('/publicaciones', [PublicacionController::class,'index'])->name('publicaciones');
 Route::get('/publicaciones/{id}', [PublicacionController::class,'show'])->name('publicaciones.show');
+
+Route::post('/resenas/{id}/votar', [\App\Http\Controllers\ResenaController::class, 'votar'])->name('resenas.votar');

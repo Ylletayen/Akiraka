@@ -2,54 +2,64 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Resena;
 use Illuminate\Http\Request;
-use App\Models\Resena; // Asegúrate de tener este modelo creado
 
 class ResenaController extends Controller
 {
-    /**
-     * Muestra la vista principal con todas las reseñas.
-     */
+    // =====================================================
+    // VISTA PÚBLICA (Muestra la hoja de reseñas)
+    // =====================================================
     public function index()
     {
-        $resenas = Resena::orderBy('calificacion', 'desc')
-                        ->orderBy('created_at', 'desc')
-                        ->get();
-
-        // Cambia 'resenas' por 'agregados.resenas'
-        return view('agregados.comentarios.resenas', compact('resenas')); 
+        $resenas = Resena::orderBy('created_at', 'desc')->get();
+        return view('agregados.comentarios.resenas', compact('resenas'));
     }
 
-    /**
-     * Muestra el formulario para que el cliente deje su reseña.
-     */
-    public function create()
-    {
-        // Aquí mandarías a llamar la vista de tu formulario de reseñas
-        return view('formulario_resena'); 
-    }
-
-    /**
-     * Guarda la reseña en la base de datos.
-     */
+    // =====================================================
+    // GUARDAR NUEVA RESEÑA (Comentario inicial)
+    // =====================================================
     public function store(Request $request)
     {
-        // 1. Validamos que el cliente no mande datos vacíos o manipulados
         $request->validate([
             'nombre_cliente' => 'required|string|max:255',
-            'comentario'     => 'required|string',
-            'calificacion'   => 'required|integer|min:1|max:5',
+            'comentario' => 'required|string',
         ]);
 
-        // 2. Guardamos la reseña en la base de datos
         Resena::create([
             'nombre_cliente' => $request->nombre_cliente,
-            'comentario'     => $request->comentario,
-            'calificacion'   => $request->calificacion,
+            'comentario' => $request->comentario,
+            'calificacion' => 5, // Valor oculto por defecto
+            'votos_count' => 0,
+            'estrellas_sum' => 0,
         ]);
 
-        // 3. Redirigimos de vuelta a la página de reseñas con un mensaje de éxito
-        return redirect()->route('resenas.index')
-                         ->with('success', '¡Gracias por compartir tu experiencia con Estudio Akiraka!');
+        return redirect()->back()->with('success', '¡Gracias por tus comentarios! Tu reseña ha sido publicada exitosamente.');
+    }
+
+    // =====================================================
+    // LÓGICA DE VOTACIÓN (Comunidad)
+    // =====================================================
+    public function votar(Request $request, $id)
+    {
+        $request->validate([
+            'estrellas' => 'required|integer|min:1|max:5',
+        ]);
+
+        $resena = Resena::findOrFail($id);
+        
+        // Sumamos el voto nuevo a la base de datos
+        $resena->increment('votos_count');
+        $resena->increment('estrellas_sum', $request->estrellas);
+
+        // Calculamos el nuevo promedio (Ej. 4.5)
+        $promedio = round($resena->estrellas_sum / $resena->votos_count, 1);
+
+        // Devolvemos los datos en formato JSON para que el Javascript actualice la pantalla sin recargar
+        return response()->json([
+            'success' => true,
+            'promedio' => $promedio,
+            'total_votos' => $resena->votos_count
+        ]);
     }
 }
