@@ -211,17 +211,15 @@
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Token de seguridad obligatorio en Laravel
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
             body: JSON.stringify({ estrellas: estrellas })
         })
         .then(response => response.json())
         .then(data => {
             if(data.success) {
-                // Actualizamos los textos en la pantalla con los nuevos datos
                 document.getElementById('vote-count-' + resenaId).innerText = data.total_votos + ' votos de la comunidad';
-                
-                // Redibujamos las estrellas amarillas según el nuevo promedio
+
                 let estrellasHtml = '';
                 let llenas = Math.round(data.promedio);
                 for(let i = 1; i <= 5; i++) {
@@ -232,11 +230,9 @@
                 
                 document.getElementById('avg-stars-' + resenaId).innerHTML = estrellasHtml;
 
-                // Ocultamos la caja para votar y mostramos el mensaje de agradecimiento
                 document.getElementById('vote-box-' + resenaId).style.display = 'none';
                 document.getElementById('msg-' + resenaId).style.display = 'block';
 
-                // Guardamos en la memoria del navegador que este usuario ya votó esta reseña
                 localStorage.setItem('votado_resena_' + resenaId, true);
             }
         })
@@ -246,9 +242,6 @@
         });
     }
 
-    // ----------------------------------------------------
-    // OCULTAR CAJAS DE VOTACIÓN SI YA HABÍAN VOTADO ANTES
-    // ----------------------------------------------------
     document.addEventListener('DOMContentLoaded', () => {
         // Al cargar la página, revisamos si el usuario ya votó para esconder las estrellas interactivas
         const voteBoxes = document.querySelectorAll('[id^="vote-box-"]');
@@ -262,4 +255,5 @@
         });
     });
 </script>
+@include('Principal.cita')
 @endsection

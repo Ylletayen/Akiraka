@@ -42,9 +42,6 @@
         100% { border-radius: 15px; }
     }
 
-    /* ========================================================
-       VENTANA DEL CHAT
-       ======================================================== */
     .chat-window {
         position: fixed; bottom: 105px; right: 30px; width: 320px; height: 480px; 
         background: #fff; border-radius: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.25);
@@ -75,9 +72,6 @@
         100% { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* ========================================================
-       AVATARES PEQUEÑOS (Zoom sin romper bordes)
-       ======================================================== */
     .msg-bot-container { display: flex; gap: 8px; align-items: flex-end; animation: slideUpPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
     
         .bot-avatar-wrapper { 
@@ -155,7 +149,7 @@
     <div class="chat-footer">
         <span class="small-instruction">Selecciona una opcion:</span>
         <div class="options-wrapper">
-            <button class="chat-option-btn btn-agendar-chip" onclick="procesarEntrada('Agendar Cita')">Agendar Cita</button>
+            <button class="chat-option-btn btn-agendar-chip" onclick="procesarEntrada('Agendar Cita')">Citas</button>
             <button class="chat-option-btn" onclick="procesarEntrada('Horarios')">Horarios</button>
             <button class="chat-option-btn" onclick="procesarEntrada('Costos')">Costos</button>
             <button class="chat-option-btn" onclick="procesarEntrada('Servicios')">Servicios</button>
@@ -217,7 +211,6 @@
         let div = document.createElement('div');
         if (sender === 'bot') {
             div.className = 'msg-bot-container';
-            // Insertamos el wrapper para que la bolita del chat también tenga zoom
             div.innerHTML = `
                 <div class="bot-avatar-wrapper">
                     <img src="${rutaAvatarBot}">
