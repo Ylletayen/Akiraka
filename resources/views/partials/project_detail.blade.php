@@ -477,8 +477,115 @@
 </script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
+        /* ================= ANIMACIONES CON ANIME.JS ================= */
+        if (typeof anime !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            const limpiar = (anim) => {
+                anim.animatables.forEach(item => {
+                    item.target.style.removeProperty('transform');
+                    item.target.style.removeProperty('opacity');
+                });
+            };
+
+            anime({
+                targets: '.fullscreen-bg',
+                opacity: [0, 1],
+                duration: 1400,
+                easing: 'easeOutSine',
+                complete: limpiar
+            });
+
+            anime({
+                targets: '.btn-flotante-regresar',
+                opacity: [0, 0.6],
+                translateX: [-35, 0],
+                duration: 1000,
+                delay: 450,
+                easing: 'easeOutExpo',
+                complete: limpiar
+            });
+
+            if (window.matchMedia('(min-width: 851px)').matches) {
+                anime.timeline({ easing: 'easeOutExpo' })
+                    .add({
+                        targets: '.vista-escritorio .site-header-main',
+                        opacity: [0, 1],
+                        translateY: [-25, 0],
+                        duration: 900,
+                        complete: limpiar
+                    })
+                    .add({
+                        targets: '.vista-escritorio .main-content-grid > section',
+                        opacity: [0, 1],
+                        translateY: [35, 0],
+                        duration: 900,
+                        delay: anime.stagger(150),
+                        complete: limpiar
+                    }, '-=450')
+                    .add({
+                        targets: '.vista-escritorio .site-footer-main',
+                        opacity: [0, 1],
+                        translateY: [20, 0],
+                        duration: 700,
+                        complete: limpiar
+                    }, '-=350');
+            } else {
+                anime.timeline({ easing: 'easeOutExpo' })
+                    .add({
+                        targets: '.vista-movil .mobile-top-bar',
+                        opacity: [0, 1],
+                        translateY: [-22, 0],
+                        duration: 850,
+                        complete: limpiar
+                    })
+                    .add({
+                        targets: '.vista-movil .mobile-nav-tabs .nav-item',
+                        opacity: [0, 1],
+                        translateX: [-18, 0],
+                        duration: 650,
+                        delay: anime.stagger(100),
+                        complete: limpiar
+                    }, '-=400')
+                    .add({
+                        targets: '.vista-movil .tab-content',
+                        opacity: [0, 1],
+                        translateY: [24, 0],
+                        duration: 750,
+                        complete: limpiar
+                    }, '-=300')
+                    .add({
+                        targets: '.vista-movil .mobile-footer',
+                        opacity: [0, 1],
+                        translateY: [18, 0],
+                        duration: 650,
+                        complete: limpiar
+                    }, '-=300');
+
+                document.querySelectorAll('#mobileTab button[data-bs-toggle="tab"]').forEach(button => {
+                    button.addEventListener('shown.bs.tab', function(event) {
+                        const selector = event.target.getAttribute('data-bs-target');
+                        const panel = selector ? document.querySelector(selector) : null;
+                        if (!panel) return;
+
+                        anime.remove(panel);
+                        anime({
+                            targets: panel,
+                            opacity: [0, 1],
+                            translateY: [16, 0],
+                            duration: 550,
+                            easing: 'easeOutCubic',
+                            complete: limpiar
+                        });
+                    });
+                });
+            }
+        }
+        /* ============================================================ */
+
         const previewContainer = document.getElementById('hover-preview');
         const previewImg = document.getElementById('preview-img');
         const projectLinks = document.querySelectorAll('.project-link');
@@ -517,6 +624,21 @@
                     .then(response => response.text())
                     .then(html => {
                         modalContent.innerHTML = html;
+
+                        if (typeof anime !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                            anime({
+                                targets: modalContent,
+                                opacity: [0, 1],
+                                translateY: [25, 0],
+                                duration: 700,
+                                easing: 'easeOutCubic',
+                                complete: function() {
+                                    modalContent.style.removeProperty('transform');
+                                    modalContent.style.removeProperty('opacity');
+                                }
+                            });
+                        }
+
                         const slides = modalContent.querySelectorAll('.akira-slide');
                         if(slides.length > 0) {
                             const observerAnim = new IntersectionObserver((entries) => {

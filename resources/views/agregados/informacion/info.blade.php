@@ -69,7 +69,13 @@
     }
 @endphp
 
+<!-- CARGAMOS ANIME.JS AQUÍ TAMBIÉN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
 <style>
+    /* CLASE PARA OCULTAR ELEMENTOS ANTES DE ANIMARLOS */
+    .anime-hide { opacity: 0; }
+
     /* --- ESTILOS DE LAS COLUMNAS MULTIMEDIA LATERALES (DIFUMINADAS) --- */
     .side-media {
         position: fixed;
@@ -253,37 +259,37 @@
     @endif
 </div>
 
-<a href="{{ route('landing') }}" class="btn-flotante-regresar">&larr; regresar</a>
+<a href="{{ route('landing') }}" class="btn-flotante-regresar anime-hide">&larr; regresar</a>
 
 <div class="akira-container">
     <header class="site-header-main">
-        <a href="{{ route('project.detail') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('project.detail') ? 'active-link' : '' }}">Estudio Akiraka ,</a>
-        <a href="{{ route('info') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('info') ? 'active-link' : '' }}">Info ,</a>
+        <a href="{{ route('project.detail') ?? '#' }}" class="nav-link-akira anime-hide {{ request()->routeIs('project.detail') ? 'active-link' : '' }}">Estudio Akiraka ,</a>
+        <a href="{{ route('info') ?? '#' }}" class="nav-link-akira anime-hide {{ request()->routeIs('info') ? 'active-link' : '' }}">Info ,</a>
         
         {{-- EL NUEVO ENLACE A RESEÑAS --}}
-        <a href="{{ route('resenas.index') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('resenas.index') ? 'active-link' : '' }}">Reseñas ,</a>
+        <a href="{{ route('resenas.index') ?? '#' }}" class="nav-link-akira anime-hide {{ request()->routeIs('resenas.index') ? 'active-link' : '' }}">Reseñas ,</a>
         
-        <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('contacto') ? 'active-link' : '' }}">Contacto</a>
+        <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira anime-hide {{ request()->routeIs('contacto') ? 'active-link' : '' }}">Contacto</a>
     </header>
 
-    <div class="akira-description">
+    <div class="akira-description anime-hide" data-anime-group="1">
         <strong>¿QUIÉNES SOMOS?</strong><br>
         {!! nl2br(e($config->quienes_somos_texto ?? $defaultQuienesSomos)) !!}
     </div>
 
-    <div class="akira-description">
+    <div class="akira-description anime-hide" data-anime-group="2">
         <strong>VALORES DE LA EMPRESA</strong><br>
         {!! nl2br(e($config->valores_texto ?? $defaultValores)) !!}
     </div>
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px;">
-        <div class="team-title" style="margin-bottom: 15px;">Equipo actual</div>
-        <div class="team-title" style="margin-bottom: 15px;">Roles dentro de la empresa</div>
+        <div class="team-title anime-hide" style="margin-bottom: 15px;" data-anime-group="3">Equipo actual</div>
+        <div class="team-title anime-hide" style="margin-bottom: 15px;" data-anime-group="3">Roles dentro de la empresa</div>
     </div>
 
     <ul class="team-list">
         @foreach($miembros as $miembro)
-        <li style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: start;">
+        <li class="anime-hide list-item-anime" style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: start;" data-anime-group="4">
             <div>
                 {{ $miembro['nombre'] }} 
                 <span class="text-muted-akira"><br>{{ $miembro['biografia'] }}</span>
@@ -295,7 +301,7 @@
         @endforeach
     </ul>
 
-    <footer class="site-footer-info">
+    <footer class="site-footer-info anime-hide" data-anime-group="5">
         <div>2026</div>
         <div>
             <a href="#" id="btn-traducir" onclick="cambiarIdioma('en', event)">Read in English</a>
@@ -328,6 +334,70 @@
             document.getElementById('btn-traducir').style.display = 'none';
             document.getElementById('btn-espanol').style.display = 'inline-block';
         }
+
+        // =================================================================
+        // ANIMACIONES CON ANIME.JS Y SCROLL OBSERVER
+        // =================================================================
+
+        // 1. Anima el menú superior y el botón flotante inmediatamente
+        anime({
+            targets: '.site-header-main a, .btn-flotante-regresar',
+            translateY: [-20, 0],
+            opacity: [0, 1],
+            easing: 'easeOutExpo',
+            duration: 1000,
+            delay: anime.stagger(100)
+        });
+
+        // 2. Configura el IntersectionObserver para los elementos al hacer scroll
+        const observerOptions = {
+            root: null, // usa el viewport
+            rootMargin: '0px',
+            threshold: 0.15 // se dispara cuando el 15% del elemento es visible
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    
+                    // Solo animar si no ha sido animado antes
+                    if(el.classList.contains('anime-hide')) {
+                        // Determinar el grupo para animar listas de forma escalonada
+                        const group = el.dataset.animeGroup;
+                        
+                        if(group === "4") {
+                             // Si es de la lista de miembros, se anima en grupo. 
+                             // Para esto, solo ejecutamos el stagger una vez cuando el contenedor principal sea intersectado
+                             // En este caso, para simplificar, animaremos los elementos visibles uno a uno.
+                             anime({
+                                targets: el,
+                                translateY: [30, 0],
+                                opacity: [0, 1],
+                                easing: 'easeOutExpo',
+                                duration: 1000
+                            });
+                        } else {
+                            anime({
+                                targets: el,
+                                translateY: [30, 0],
+                                opacity: [0, 1],
+                                easing: 'easeOutExpo',
+                                duration: 1200
+                            });
+                        }
+                        
+                        el.classList.remove('anime-hide');
+                        observer.unobserve(el);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Selecciona todos los elementos que se van a animar con el scroll
+        document.querySelectorAll('.akira-description, .team-title, .list-item-anime, .site-footer-info').forEach((el) => {
+            observer.observe(el);
+        });
     });
 </script>
 

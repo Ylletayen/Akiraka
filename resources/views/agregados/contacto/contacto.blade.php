@@ -19,7 +19,13 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
 
+<!-- CARGAMOS ANIME.JS AQUÍ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
 <style>
+    /* CLASE VITAL PARA OCULTAR ELEMENTOS ANTES DE ANIMARLOS */
+    .anime-hide { opacity: 0; }
+
     .side-media {
         position: fixed;
         top: 0;
@@ -223,42 +229,43 @@
 </div>
 {{-- FIN DE LAS COLUMNAS MULTIMEDIA --}}
 
-<a href="{{ route('landing') }}" class="btn-flotante-regresar">← regresar</a>
+<a href="{{ route('landing') }}" class="btn-flotante-regresar anime-hide">← regresar</a>
 
 <div class="akira-container">
     <header class="site-header-main">
-        <a href="{{ route('project.detail') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('project.detail') ? 'active-link' : '' }}">Estudio Akiraka ,</a>
-        <a href="{{ route('info') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('info') ? 'active-link' : '' }}">Info ,</a>
+        <a href="{{ route('project.detail') ?? '#' }}" class="nav-link-akira anime-hide {{ request()->routeIs('project.detail') ? 'active-link' : '' }}">Estudio Akiraka ,</a>
+        <a href="{{ route('info') ?? '#' }}" class="nav-link-akira anime-hide {{ request()->routeIs('info') ? 'active-link' : '' }}">Info ,</a>
         
         {{-- EL NUEVO ENLACE A RESEÑAS --}}
-        <a href="{{ route('resenas.index') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('resenas.index') ? 'active-link' : '' }}">Reseñas ,</a>
+        <a href="{{ route('resenas.index') ?? '#' }}" class="nav-link-akira anime-hide {{ request()->routeIs('resenas.index') ? 'active-link' : '' }}">Reseñas ,</a>
         
-        <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('contacto') ? 'active-link' : '' }}">Contacto</a>
+        <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira anime-hide {{ request()->routeIs('contacto') ? 'active-link' : '' }}">Contacto</a>
     </header>
+    
     @if(session('success'))
         <div style="background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; padding: 15px; text-align: center; margin-bottom: 30px; font-family: Arial; font-size: 0.9rem; letter-spacing: 1px;">
             {{ session('success') }}
         </div>
     @endif
 
-    <p class="contact-instruction">Si deseas contactarnos por consultas generales o prensa, selecciona una opción.</p>
+    <p class="contact-instruction anime-hide contact-intro-anim">Si deseas contactarnos por consultas generales o prensa, selecciona una opción.</p>
 
     <div class="row contact-group-section mb-5">
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4 anime-hide contact-item-anim">
             <span class="contact-label">Proyectos y Eventos</span>
             <div class="contact-value-reset notranslate" onclick="abrirModalContacto('{{ $config->correo_contacto ?? 'akiraka.estudio@gmail.com' }}')">
                 {{ $config->correo_contacto ?? 'akiraka.estudio@gmail.com' }}
             </div>
         </div>
 
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4 anime-hide contact-item-anim">
             <span class="contact-label">Prensa</span>
             <div class="contact-value-reset notranslate" onclick="abrirModalContacto('{{ $config->correo_prensa ?? 'proyectos@akirakastudio.com' }}')">
                 {{ $config->correo_prensa ?? 'proyectos@akirakastudio.com' }}
             </div>
         </div>
 
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4 anime-hide contact-item-anim">
             <span class="contact-label">Oportunidades laborales</span>
             <div class="contact-value-reset notranslate" onclick="abrirModalContacto('{{ $config->correo_laboral_1 ?? 'dirección@akirakastudio.com' }}')">
                 {{ $config->correo_laboral_1 ?? 'dirección@akirakastudio.com' }}<br>
@@ -269,25 +276,26 @@
         </div>
     </div>
 
-    <div class="location-group border-top pt-4 mb-5 d-flex flex-column align-items-center text-center">
+    <!-- SECCIONES QUE APARECERÁN CON EL SCROLL -->
+    <div class="location-group border-top pt-4 mb-5 d-flex flex-column align-items-center text-center anime-hide scroll-anim">
         <span class="location-year-label" style="margin-right: 0; width: auto; margin-bottom: 5px;">Teléfono</span>
         <span class="contact-value-reset notranslate">{{ $config->telefono ?? '+52 722 165 5901' }}</span>
     </div>
 
-    <div class="social-group-section">
+    <div class="social-group-section anime-hide scroll-anim">
         <span style="display: block; margin-bottom: 20px; font-family: Arial; font-size: 0.8rem; letter-spacing: 1px; color: #888; text-transform: uppercase;">Síguenos</span>
         <a href="{{ $config->instagram ?? 'https://www.instagram.com/' }}" target="_blank" class="social-btn-circle" title="Instagram"><i class="bi bi-instagram"></i></a>
         <a href="{{ $config->facebook ?? 'https://www.facebook.com/' }}" target="_blank" class="social-btn-circle" title="Facebook"><i class="bi bi-facebook"></i></a>
         <a href="https://wa.me/{{ $whatsappPhone }}" target="_blank" class="social-btn-circle" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
     </div>
 
-    <div style="text-align: center; margin-top: 60px; padding-top: 50px; border-top: 1px solid #eee;">
+    <div class="cta-section anime-hide scroll-anim" style="text-align: center; margin-top: 60px; padding-top: 50px; border-top: 1px solid #eee;">
         <h2 style="font-family: 'Garamond', serif; font-size: 2rem; margin-bottom: 15px;">¿Tienes un proyecto en mente?</h2>
         <p class="contact-instruction" style="margin-bottom: 30px;">Nos encantaría escucharte y hacerlo realidad.</p>
         <button class="btn-agendar-cita" onclick="abrirModalCita()">Iniciar Proyecto / Agendar Cita</button>
     </div>
 
-    <footer class="site-footer-info">
+    <footer class="site-footer-info anime-hide scroll-anim">
         <div>2026</div>
         <div>
             <a href="#" id="btn-traducir" onclick="cambiarIdioma('en', event)">Read in English</a>
@@ -412,6 +420,72 @@
             document.getElementById('btn-traducir').style.display = 'none';
             document.getElementById('btn-espanol').style.display = 'inline-block';
         }
+
+        // =================================================================
+        // ANIMACIONES CON ANIME.JS (Efectos Mixtos)
+        // =================================================================
+        
+        // 1. Animación del Menú (Inmediata)
+        anime({
+            targets: '.site-header-main a',
+            translateY: [-20, 0],
+            opacity: [0, 1],
+            easing: 'easeOutExpo',
+            duration: 1000,
+            delay: anime.stagger(100)
+        });
+
+        // 2. Animación del texto de instrucción (Inmediata)
+        anime({
+            targets: '.contact-intro-anim',
+            translateY: [20, 0],
+            opacity: [0, 1],
+            easing: 'easeOutExpo',
+            duration: 1000,
+            delay: 400
+        });
+
+        // 3. Animación de los bloques de correos (Inmediata, en cascada)
+        anime({
+            targets: '.contact-item-anim',
+            translateY: [30, 0],
+            opacity: [0, 1],
+            easing: 'easeOutExpo',
+            duration: 1200,
+            delay: anime.stagger(150, {start: 600})
+        });
+
+        // 4. El botón flotante de regresar (se desliza desde la izquierda)
+        anime({
+            targets: '.btn-flotante-regresar',
+            translateX: [-50, 0],
+            opacity: [0, 0.6],
+            easing: 'easeOutExpo',
+            duration: 1000,
+            delay: 1000
+        });
+
+        // 5. INTERSECTION OBSERVER para lo que está más abajo (Aparece al hacer scroll)
+        const scrollObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    anime({
+                        targets: entry.target,
+                        translateY: [30, 0],
+                        opacity: [0, 1],
+                        easing: 'easeOutExpo',
+                        duration: 1200
+                    });
+                    entry.target.classList.remove('anime-hide');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.scroll-anim').forEach((el) => {
+            scrollObserver.observe(el);
+        });
+
     });
 
     const modalContacto = document.getElementById('modalContactoElegir');
