@@ -33,18 +33,18 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            transform: translateX(-50%) translateY(-50%);
+            width: 100%;
+            height: 100%;
+            
+            /* LA MAGIA: scale(1.05) le hace un zoom del 5% para comerse los bordes borrosos */
+            transform: translate(-50%, -50%) scale(1.05); 
+            
             object-fit: cover;
             
             /* Filtro mágico: Difumina y aclara el video para que el texto negro se lea perfecto */
             filter: blur(10px) opacity(0.35) grayscale(15%); 
             transition: filter 0.8s ease;
         }
-        /* ------------------------------------------------------------ */
 
         /* CONTENEDOR PRINCIPAL TRANSPARENTE */
         .akira-project-view {
