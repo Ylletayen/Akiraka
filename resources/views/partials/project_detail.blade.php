@@ -26,7 +26,7 @@
             height: 100vh;
             z-index: -1;
             overflow: hidden;
-            background-color: #fdfdfd; /* Fondo claro de respaldo */
+            background-color: #fdfdfd;
         }
 
         .fullscreen-media {
@@ -35,16 +35,15 @@
             left: 50%;
             width: 100%;
             height: 100%;
-            
-            /* LA MAGIA: scale(1.05) le hace un zoom del 5% para comerse los bordes borrosos */
-            transform: translate(-50%, -50%) scale(1.05); 
-            
+            /* El scale(1.05) hace un micro zoom para comerse los bordes difuminados */
+            transform: translate(-50%, -50%) scale(1.05);
             object-fit: cover;
             
             /* Filtro mágico: Difumina y aclara el video para que el texto negro se lea perfecto */
             filter: blur(10px) opacity(0.35) grayscale(15%); 
             transition: filter 0.8s ease;
         }
+        /* ------------------------------------------------------------ */
 
         /* CONTENEDOR PRINCIPAL TRANSPARENTE */
         .akira-project-view {
@@ -57,7 +56,7 @@
             color: #111111 !important;
             box-sizing: border-box;
             width: 100%;
-            max-width: 1200px; /* Un poco más ancho para aprovechar la pantalla */
+            max-width: 1200px;
             margin: 0 auto;
             position: relative;
             z-index: 1;
@@ -230,10 +229,12 @@
         .hover-preview img { width: 100%; height: 100%; object-fit: cover; }
         .hover-preview.active { opacity: 1; }
 
+        /* --- MODAL PARA PROYECTOS --- */
         .akira-modal-fullscreen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #fdfdfd; z-index: 100000; opacity: 0; pointer-events: none;
-            transition: opacity 0.4s ease; overflow-y: auto; padding-top: 60px; 
+            transition: opacity 0.4s ease; overflow-y: auto; 
+            /* Quitamos el padding-top para que no desacomode el scroll-snap */
         }
         .akira-modal-fullscreen.active { opacity: 1; pointer-events: auto; }
         
@@ -373,7 +374,6 @@
         <a href="{{ route('project.detail') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('project.detail') ? 'active-link' : '' }}">Estudio Akiraka ,</a>
         <a href="{{ route('info') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('info') ? 'active-link' : '' }}">Info ,</a>
         
-        {{-- EL NUEVO ENLACE A RESEÑAS --}}
         <a href="{{ route('resenas.index') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('resenas.index') ? 'active-link' : '' }}">Reseñas ,</a>
         
         <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('contacto') ? 'active-link' : '' }}">Contacto</a>
@@ -618,6 +618,8 @@
                 e.preventDefault(); 
                 
                 modalHistoria.classList.add('active');
+                modalHistoria.scrollTop = 0; // Forzamos a que siempre inicie hasta arriba para evitar el barrido extraño
+
                 modalContent.innerHTML = '<div style="text-align:center; padding-top: 20vh; font-family: Garamond, serif; font-size: 1.5rem; color: #888;">Cargando historia...</div>';
 
                 fetch(url)
@@ -629,11 +631,10 @@
                             anime({
                                 targets: modalContent,
                                 opacity: [0, 1],
-                                translateY: [25, 0],
+                                // Se eliminó el translateY que provocaba el micro-salto al finalizar
                                 duration: 700,
                                 easing: 'easeOutCubic',
                                 complete: function() {
-                                    modalContent.style.removeProperty('transform');
                                     modalContent.style.removeProperty('opacity');
                                 }
                             });
