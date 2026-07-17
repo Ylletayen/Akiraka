@@ -35,11 +35,8 @@
             left: 50%;
             width: 100%;
             height: 100%;
-            /* El scale(1.05) hace un micro zoom para comerse los bordes difuminados */
             transform: translate(-50%, -50%) scale(1.05);
             object-fit: cover;
-            
-            /* Filtro mágico: Difumina y aclara el video para que el texto negro se lea perfecto */
             filter: blur(10px) opacity(0.35) grayscale(15%); 
             transition: filter 0.8s ease;
         }
@@ -234,7 +231,6 @@
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #fdfdfd; z-index: 100000; opacity: 0; pointer-events: none;
             transition: opacity 0.4s ease; overflow-y: auto; 
-            /* Quitamos el padding-top para que no desacomode el scroll-snap */
         }
         .akira-modal-fullscreen.active { opacity: 1; pointer-events: auto; }
         
@@ -352,9 +348,7 @@
                         <li style="color: #ccc; font-style: italic; font-size: 0.85rem;">Ninguna publicación disponible.</li>
                     @endforelse
                 </ul>
-                <div style="margin-top: 40px;">
-                    @includeIf('Principal.cita')
-                </div>
+                {{-- Se removió de aquí el include duplicado de la cita --}}
             </div>
 
         </div>
@@ -371,13 +365,11 @@
     {{-- MENU ESCRITORIO --}}
     <div class="vista-escritorio">
         <header class="site-header-main">
-        <a href="{{ route('project.detail') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('project.detail') ? 'active-link' : '' }}">Estudio Akiraka ,</a>
-        <a href="{{ route('info') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('info') ? 'active-link' : '' }}">Info ,</a>
-        
-        <a href="{{ route('resenas.index') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('resenas.index') ? 'active-link' : '' }}">Reseñas ,</a>
-        
-        <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('contacto') ? 'active-link' : '' }}">Contacto</a>
-    </header>
+            <a href="{{ route('project.detail') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('project.detail') ? 'active-link' : '' }}">Estudio Akiraka ,</a>
+            <a href="{{ route('info') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('info') ? 'active-link' : '' }}">Info ,</a>
+            <a href="{{ route('resenas.index') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('resenas.index') ? 'active-link' : '' }}">Reseñas ,</a>
+            <a href="{{ route('contacto') ?? '#' }}" class="nav-link-akira {{ request()->routeIs('contacto') ? 'active-link' : '' }}">Contacto</a>
+        </header>
 
         <main class="main-content-grid">
             <section>
@@ -445,8 +437,7 @@
                         <li style="color: #ccc; font-style: italic; font-size: 0.85rem;">Ninguna publicación disponible.</li>
                     @endforelse
                 </ul>
-
-                @includeIf('Principal.cita')
+                {{-- Se removió de aquí el include de la cita para sacarlo a nivel raíz global --}}
             </section>
         </main>
 
@@ -468,6 +459,9 @@
         <div id="historia-content"></div>
     </div>
 </div>
+
+{{-- SOLUCIÓN MAESTRA: Colocado una única vez de manera global y limpia en la raíz --}}
+@includeIf('Principal.cita')
 
 <div id="google_translate_element" style="display:none;"></div>
 <script type="text/javascript">
@@ -618,7 +612,7 @@
                 e.preventDefault(); 
                 
                 modalHistoria.classList.add('active');
-                modalHistoria.scrollTop = 0; // Forzamos a que siempre inicie hasta arriba para evitar el barrido extraño
+                modalHistoria.scrollTop = 0;
 
                 modalContent.innerHTML = '<div style="text-align:center; padding-top: 20vh; font-family: Garamond, serif; font-size: 1.5rem; color: #888;">Cargando historia...</div>';
 
@@ -631,7 +625,6 @@
                             anime({
                                 targets: modalContent,
                                 opacity: [0, 1],
-                                // Se eliminó el translateY que provocaba el micro-salto al finalizar
                                 duration: 700,
                                 easing: 'easeOutCubic',
                                 complete: function() {
