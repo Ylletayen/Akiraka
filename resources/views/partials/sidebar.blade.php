@@ -226,7 +226,7 @@
                     </a>
                     @endif
 
-                    <a class="nav-link" href="https://calculadora.akiraka.com" target="_blank">
+                    <a class="nav-link" href="http://appcostos.akirakastudio.com" target="_blank">
                         <div><i class="fas fa-calculator me-3"></i> Calculadora</div>
                     </a>
 
